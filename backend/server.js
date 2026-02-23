@@ -30,6 +30,19 @@ app.get('/', (req, res) => {
     res.send('ยินดีต้อนรับสู่ระบบหลังบ้าน (Backend) ของโปรเจกต์ HRM โรงพยาบาล');
 });
 
+// API สำหรับดึงข้อมูลรายชื่อพนักงานทั้งหมด
+app.get('/api/employees', (req, res) => {
+    // สั่ง MySQL ให้ดึงข้อมูลทุกอย่าง (*) จากตาราง tbl_employees
+    db.query("SELECT * FROM tbl_employees", (err, results) => {
+        if (err) {
+            console.error('เกิดข้อผิดพลาดในการดึงข้อมูล:', err);
+            return res.status(500).json({ error: 'ดึงข้อมูลไม่สำเร็จ' });
+        }
+        // ส่งข้อมูลที่ได้กลับไปให้หน้าเว็บในรูปแบบ JSON
+        res.json(results); 
+    });
+});
+
 // สั่งให้เซิร์ฟเวอร์เปิดรอรับคำสั่งที่ช่องทาง (Port) 3000
 app.listen(3000, () => {
     console.log('🚀 เซิร์ฟเวอร์รันอยู่บน http://localhost:3000');
