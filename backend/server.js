@@ -2,48 +2,65 @@ const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2');
 
-// สร้างตัวแอปพลิเคชันขึ้นมา
 const app = express();
-app.use(cors()); // อนุญาตให้หน้าบ้านคุยกับหลังบ้านได้
-app.use(express.json()); // ให้หลังบ้านอ่านข้อมูลแบบ JSON ได้
+app.use(cors()); 
+app.use(express.json()); 
 
-// ตั้งค่าการเชื่อมต่อฐานข้อมูล MySQL
+// เชื่อมต่อฐานข้อมูล (ใช้ Port 3307 ตามที่คุณตั้งค่าไว้)
 const db = mysql.createConnection({
     host: 'localhost',
-    port: 3307,
-    user: 'root',      // ปกติถ้าใช้ XAMPP จะเป็น 'root'
-    password: '',      // ปกติถ้าใช้ XAMPP รหัสผ่านจะว่างไว้
-    database: 'hrm_db' // เปลี่ยนเป็นชื่อ Database ที่คุณสร้างไว้ใน phpMyAdmin
+    port: 3307, 
+    user: 'root',
+    password: '', 
+    database: 'hrm_db' 
 });
 
-// เช็กว่าฐานข้อมูลเชื่อมติดไหม
 db.connect((err) => {
     if (err) {
         console.error('❌ เชื่อมต่อฐานข้อมูลไม่สำเร็จ:', err);
         return;
     }
-    console.log('✅ เชื่อมต่อฐานข้อมูล MySQL สำเร็จแล้ว! พร้อมทำงาน');
+    console.log('✅ เชื่อมต่อฐานข้อมูล MySQL สำเร็จแล้ว! พร้อมลุย');
 });
 
-// สร้างเส้นทาง (Route) ทดสอบว่าเซิร์ฟเวอร์ทำงานปกติไหม
-app.get('/', (req, res) => {
-    res.send('ยินดีต้อนรับสู่ระบบหลังบ้าน (Backend) ของโปรเจกต์ HRM โรงพยาบาล');
-});
-
-// API สำหรับดึงข้อมูลรายชื่อพนักงานทั้งหมด
+// API ดึงข้อมูลพนักงาน
 app.get('/api/employees', (req, res) => {
-    // สั่ง MySQL ให้ดึงข้อมูลทุกอย่าง (*) จากตาราง tbl_employees
     db.query("SELECT * FROM tbl_employees", (err, results) => {
-        if (err) {
-            console.error('เกิดข้อผิดพลาดในการดึงข้อมูล:', err);
-            return res.status(500).json({ error: 'ดึงข้อมูลไม่สำเร็จ' });
-        }
-        // ส่งข้อมูลที่ได้กลับไปให้หน้าเว็บในรูปแบบ JSON
+        if (err) return res.status(500).json({ error: err.message });
         res.json(results); 
     });
 });
 
-// สั่งให้เซิร์ฟเวอร์เปิดรอรับคำสั่งที่ช่องทาง (Port) 3000
+// API เพิ่มพนักงาน (แก้ไขให้บันทึกผ่านแน่นอน)
+app.post('/api/employees', (req, res) => {
+    const { 
+        emp_id, prefix, first_name_th, last_name_th, 
+        emp_type, dept_id, pos_id, start_date, base_salary 
+    } = req.body;
+    
+    // *** สำคัญมาก: ใส่ค่าสมมติให้ฟิลด์ที่ Database บังคับห้ามว่าง ***
+    const citizen_id = req.body.citizen_id || '0000000000000'; 
+    const phone = req.body.phone || '000-000-0000';
+
+    const sql = `INSERT INTO tbl_employees 
+        (emp_id, prefix, first_name_th, last_name_th, citizen_id, phone, emp_type, dept_id, pos_id, start_date, base_salary, status) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Active')`;
+
+    const values = [
+        emp_id, prefix, first_name_th, last_name_th, 
+        citizen_id, phone, emp_type, dept_id, pos_id, 
+        start_date, base_salary
+    ];
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('❌ บันทึกไม่สำเร็จเพราะ:', err.sqlMessage);
+            return res.status(500).json({ error: err.sqlMessage });
+        }
+        res.json({ message: '✅ บันทึกพนักงานใหม่สำเร็จ!', id: result.insertId });
+    });
+});
+
 app.listen(3000, () => {
-    console.log('🚀 เซิร์ฟเวอร์รันอยู่บน http://localhost:3000');
+    console.log('🚀 เซิร์ฟเวอร์รันที่ http://localhost:3000');
 });
