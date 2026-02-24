@@ -35,12 +35,10 @@
           @click="toggleMenu('personnel')" 
           :class="{ 'is-open': openMenus.personnel && !isCollapsed }"
         >
-          <div class="header-left">
-            <span class="icon">
-              <img src="../assets/pim.png" class="pim-icon-img" alt="Personnel">
-            </span>
-            <span class="label" v-if="!isCollapsed">จัดการบุคลากร</span>
-          </div>
+          <span class="icon">
+            <img src="../assets/pim.png" class="pim-icon-img" alt="Personnel">
+          </span>
+          <span class="label" v-if="!isCollapsed">จัดการบุคลากร</span>
           <span class="chevron" v-if="!isCollapsed">❯</span>
         </div>
         
@@ -55,11 +53,15 @@
       </div>
 
       <div class="menu-group">
-        <div class="menu-header" @click="toggleMenu('leave')" :class="{ 'is-open': openMenus.leave && !isCollapsed }">
-          <div class="header-left">
-            <span class="icon">📅</span>
-            <span class="label" v-if="!isCollapsed">การลา</span>
-          </div>
+        <div 
+          class="menu-header leave-header" 
+          @click="toggleMenu('leave')" 
+          :class="{ 'is-open': openMenus.leave && !isCollapsed }"
+        >
+          <span class="icon">
+            <img src="../assets/leave.png" class="leave-icon-img" alt="Leave">
+          </span>
+          <span class="label" v-if="!isCollapsed">การลา</span>
           <span class="chevron" v-if="!isCollapsed">❯</span>
         </div>
         <transition name="slide">
@@ -71,11 +73,15 @@
       </div>
 
       <div class="menu-group">
-        <div class="menu-header" @click="toggleMenu('finance')" :class="{ 'is-open': openMenus.finance && !isCollapsed }">
-          <div class="header-left">
-            <span class="icon">💰</span>
-            <span class="label" v-if="!isCollapsed">การเงิน</span>
-          </div>
+        <div 
+          class="menu-header finance-header" 
+          @click="toggleMenu('finance')" 
+          :class="{ 'is-open': openMenus.finance && !isCollapsed }"
+        >
+          <span class="icon">
+            <img src="../assets/finance.png" class="finance-icon-img" alt="Finance">
+          </span>
+          <span class="label" v-if="!isCollapsed">การเงิน</span>
           <span class="chevron" v-if="!isCollapsed">❯</span>
         </div>
         <transition name="slide">
@@ -114,7 +120,6 @@ const toggleMenu = (menuName) => {
 </script>
 
 <style scoped>
-/* พื้นฐาน Sidebar */
 .sidebar-hybrid {
   width: 280px; height: 100vh; background: #ffffff; color: #1e2433;
   border-radius: 0 40px 40px 0; display: flex; flex-direction: column;
@@ -123,7 +128,6 @@ const toggleMenu = (menuName) => {
 }
 .sidebar-hybrid.collapsed { width: 85px; }
 
-/* ปุ่ม Toggle */
 .toggle-floating-btn {
   position: absolute; right: -15px; top: 80px; background: #f97316;
   color: white; border: none; width: 32px; height: 32px; border-radius: 50%;
@@ -131,60 +135,70 @@ const toggleMenu = (menuName) => {
   box-shadow: 0 4px 10px rgba(249, 115, 22, 0.4); z-index: 1001;
 }
 
-/* เมนูหลัก */
+/* 📏 จัดระเบียบเมนู (Flex-Row) และกึ่งกลางเป๊ะ */
 .menu-item.single, .menu-header {
-  display: flex; align-items: center; padding: 14px 20px; margin-bottom: 8px;
-  border-radius: 15px; cursor: pointer; transition: 0.2s; font-size: 18px;
-  background: transparent !important; position: relative;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important; 
+  padding: 12px 20px;
+  margin-bottom: 8px;
+  border-radius: 15px; 
+  cursor: pointer; 
+  transition: 0.2s; 
+  font-size: 18px;
+  background: transparent !important; 
+  position: relative;
 }
 
-/* 🌟 เส้นแอบตัดสีทอง (Dashboard & บุคลากรเวลาเปิด) */
+/* 📏 ฟิกซ์ความกว้างไอคอน */
+.icon { 
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center; 
+  flex-shrink: 0; margin-right: 12px;
+}
+
+.home-icon-img, .pim-icon-img, .leave-icon-img, .finance-icon-img {
+  width: 26px; height: 26px; object-fit: contain;
+  filter: grayscale(100%) opacity(0.6); transition: 0.3s;
+}
+
+/* 🌟 สีทองพาสเทลและเส้นแอบตัด (สำหรับทุกเมนูหลัก) */
 .dashboard-item.active::before,
-.personnel-header.is-open::before {
+.personnel-header.is-open::before,
+.leave-header.is-open::before,
+.finance-header.is-open::before {
   content: ''; position: absolute; left: 0; top: 15%; height: 70%;
   width: 5px; background: #c5a073 !important; border-radius: 0 5px 5px 0;
 }
 
-/* 🌟 สีทองพาสเทลสำหรับ Dashboard และจัดการบุคลากร */
 .dashboard-item.active .label,
-.personnel-header.is-open .label {
+.personnel-header.is-open .label,
+.leave-header.is-open .label,
+.finance-header.is-open .label {
   color: #c5a073 !important; font-weight: 800 !important;
 }
 
-/* 🌟 สไตล์รูปไอคอน Dashboard & Personnel */
-.home-icon-img, .pim-icon-img {
-  width: 26px; height: 26px; filter: grayscale(100%) opacity(0.6); transition: 0.3s;
-}
-
-/* เปลี่ยนรูปเป็นสีทองเวลา Active/Open */
 .dashboard-item.active .home-icon-img,
-.personnel-header.is-open .pim-icon-img {
+.personnel-header.is-open .pim-icon-img,
+.leave-header.is-open .leave-icon-img,
+.finance-header.is-open .finance-icon-img {
   filter: invert(74%) sepia(13%) saturate(1001%) hue-rotate(352deg) brightness(88%) contrast(85%) !important;
 }
 
-/* เมนูทั่วไปเวลา Active (แอบตัดสีกรมท่า) */
-.menu-item.active::before {
-  content: ''; position: absolute; left: 0; top: 15%; height: 70%;
-  width: 5px; background: #1e2433; border-radius: 0 5px 5px 0;
-}
-
-.icon { font-size: 24px; min-width: 35px; text-align: center; color: #94a3b8; display: flex; align-items: center; justify-content: center; }
-.label { margin-left: 10px; font-weight: 600; }
+.label { margin: 0 !important; font-weight: 600; white-space: nowrap; }
 .chevron { margin-left: auto; font-size: 11px; transition: 0.3s; color: #cbd5e1; }
 .is-open .chevron { transform: rotate(90deg); color: #f97316; }
 
 /* รายการย่อย */
-.sub-menu-list { padding-left: 20px; border-left: 1px dashed #e2e8f0; margin-left: 35px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 5px; }
+.sub-menu-list { 
+  padding-left: 0; margin-left: 72px; 
+  border-left: 1px dashed #e2e8f0; margin-bottom: 10px; 
+  display: flex; flex-direction: column; gap: 5px; 
+}
 .sub-item { padding: 10px 20px; border-radius: 12px; font-size: 17px; font-weight: 500; cursor: pointer; color: #64748b; text-align: left; }
 .sub-item.active { color: #1e2433 !important; font-weight: 800 !important; }
 
-/* Header & Footer */
 .sidebar-header { padding: 30px 20px; }
 .logo-text h2 { margin: 0; color: #1e2433; font-size: 24px; font-weight: 800; }
-.sidebar-footer { padding: 25px 20px; border-top: 1px solid #f1f5f9; }
-.avatar { width: 45px; height: 45px; border-radius: 50%; background: #e2e8f0; color: #1e2433; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
-.btn-logout-hybrid { width: 100%; padding: 12px; border-radius: 15px; border: 1px solid #fecaca; background: #fff5f5; color: #ef4444; font-weight: bold; cursor: pointer; font-size: 15px; }
-
-.slide-enter-active, .slide-leave-active { transition: all 0.3s ease; overflow: hidden; }
-.slide-enter-from, .slide-leave-to { opacity: 0; transform: translateY(-10px); }
+.btn-logout-hybrid { width: 100%; padding: 12px; border-radius: 15px; border: 1px solid #fecaca; background: #fff5f5; color: #ef4444; font-weight: bold; }
 </style>
