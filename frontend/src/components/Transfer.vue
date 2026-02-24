@@ -96,7 +96,7 @@
                     </div>
                   </div>
                   <div class="form-group mt-3">
-                    <label>เรื่อง / เหตุผลในการย้าย</label>
+                    <label> เรื่อง / เหตุผลในการย้าย</label>
                     <input v-model="formData.title" type="text" placeholder="ระบุเรื่องหรือเหตุผลประกอบคำสั่ง">
                   </div>
                 </div>
