@@ -5,9 +5,13 @@ import axios from 'axios'
 import Login from './components/Login.vue'
 import Sidebar from './components/Sidebar.vue'
 import Dashboard from './components/Dashboard.vue'
-import EmployeeList from './components/EmployeeList.vue' // มีแค่บรรทัดเดียวแล้ว ✅
+import EmployeeList from './components/EmployeeList.vue' 
 import OrgStructure from './components/OrgStructure.vue' 
 import Transfer from './components/Transfer.vue'
+import License from './components/License.vue'
+import Schedule from './components/Schedule.vue'
+import LeaveSystem from './components/LeaveSystem.vue' // ✅ Import ระบบการลา
+import Payroll from './components/Payroll.vue'
 
 const isLoggedIn = ref(false)
 const employees = ref([])
@@ -39,9 +43,6 @@ onMounted(() => { if (isLoggedIn.value) fetchEmployees() })
         <div class="banner-txt">
           <span class="p-white">➕</span>
           <h1>Hospital HRM Website</h1>
-          <p style="background: yellow; color: black; padding: 5px; text-align: center;">
-            Debug: ตอนนี้ activeMenu คือ {{ activeMenu }}
-          </p>
         </div>
       </header>
 
@@ -49,6 +50,11 @@ onMounted(() => { if (isLoggedIn.value) fetchEmployees() })
       <EmployeeList v-else-if="activeMenu === 'emp-list'" :employees="employees" />
       <OrgStructure v-else-if="activeMenu === 'org-struct'" />
       <Transfer v-else-if="activeMenu === 'transfer'" />
+      <License v-else-if="activeMenu === 'license'" />
+      <Schedule v-else-if="activeMenu === 'schedule'" />
+      <Payroll v-else-if="activeMenu === 'payroll'" />
+
+      <LeaveSystem v-else-if="activeMenu === 'leave-sys'" />
       
       <section v-else class="placeholder-page">
         <h2>กำลังพัฒนาหน้า: {{ activeMenu }}</h2>
