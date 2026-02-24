@@ -1,11 +1,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+
 import Login from './components/Login.vue'
 import Sidebar from './components/Sidebar.vue'
 import Dashboard from './components/Dashboard.vue'
-import EmployeeList from './components/EmployeeList.vue' 
-import OrgStructure from './components/OrgStructure.vue' // ✅ Import ถูกต้องและไม่ซ้ำแล้ว
+import EmployeeList from './components/EmployeeList.vue' // มีแค่บรรทัดเดียวแล้ว ✅
+import OrgStructure from './components/OrgStructure.vue' 
+import Transfer from './components/Transfer.vue'
 
 const isLoggedIn = ref(false)
 const employees = ref([])
@@ -44,16 +46,16 @@ onMounted(() => { if (isLoggedIn.value) fetchEmployees() })
       </header>
 
       <Dashboard v-if="activeMenu === 'dashboard'" :employees="employees" />
-      
       <EmployeeList v-else-if="activeMenu === 'emp-list'" :employees="employees" />
-      
       <OrgStructure v-else-if="activeMenu === 'org-struct'" />
+      <Transfer v-else-if="activeMenu === 'transfer'" />
       
       <section v-else class="placeholder-page">
         <h2>กำลังพัฒนาหน้า: {{ activeMenu }}</h2>
         <p>คุณ Wanwisa สามารถสร้างไฟล์ Component ใหม่มาใส่ตรงนี้ได้เลยครับ</p>
       </section>
-      </main>
+      
+    </main>
   </div>
 </template>
 
