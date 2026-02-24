@@ -6,7 +6,7 @@ const app = express();
 app.use(cors()); 
 app.use(express.json()); 
 
-// เชื่อมต่อฐานข้อมูล (ใช้ Port 3307 ตามที่คุณตั้งค่าไว้)
+// เชื่อมต่อฐานข้อมูล11 (ใช้ Port 3307 ตามที่คุณตั้งค่าไว้)
 const db = mysql.createConnection({
     host: 'localhost',
     port: 3307, 
