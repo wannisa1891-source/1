@@ -152,11 +152,27 @@ body { margin: 0; font-family: 'Sarabun', sans-serif; background: #e5e7eb; }
 .login-box-design input { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #ddd; box-sizing: border-box; }
 .btn-login-navy { width: 100%; padding: 15px; background: var(--navy); color: white; border: none; border-radius: 12px; cursor: pointer; }
 
-/* SYSTEM LAYOUT */
-.system-container { display: flex; height: 100vh; padding: 15px; box-sizing: border-box; gap: 15px; }
+.system-container {
+  display: flex;
+  height: 100vh;
+}
 
 /* SIDEBAR ดีไซน์นุ่มนวล */
-.hospital-sidebar { width: 280px; background: var(--sidebar-dark); border-radius: 25px; color: white; display: flex; flex-direction: column; box-shadow: 8px 0 20px rgba(0,0,0,0.1); }
+.hospital-sidebar {
+  width: 280px;
+  background: var(--sidebar-dark);
+  color: white;
+  display: flex;
+  flex-direction: column;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+
+  border-radius: 0;
+  box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+}
 .sidebar-brand { padding: 30px; text-align: center; }
 .nav-scroll { flex: 1; overflow-y: auto; padding-bottom: 20px; }
 .nav-grp { padding: 15px 25px; cursor: pointer; }
@@ -166,7 +182,15 @@ body { margin: 0; font-family: 'Sarabun', sans-serif; background: #e5e7eb; }
 .sub-list span { cursor: pointer; color: #bdc3c7; transition: 0.3s; font-size: 0.95em; }
 .sub-list span:hover { color: var(--gold-theme); }
 
-.main-content-view { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.main-content-view {
+  margin-left: 280px; 
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  height: 100vh;
+  box-sizing: border-box;
+}
 .navy-banner { background: var(--navy); color: white; padding: 25px 40px; border-radius: 18px; margin-bottom: 15px; }
 
 /* DASHBOARD STATS */
