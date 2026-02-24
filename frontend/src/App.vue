@@ -4,7 +4,8 @@ import axios from 'axios'
 import Login from './components/Login.vue'
 import Sidebar from './components/Sidebar.vue'
 import Dashboard from './components/Dashboard.vue'
-import EmployeeList from './components/EmployeeList.vue' // 1. เพิ่มการ Import ไฟล์นี้
+import EmployeeList from './components/EmployeeList.vue' 
+import OrgStructure from './components/OrgStructure.vue' // ✅ Import ถูกต้องและไม่ซ้ำแล้ว
 
 const isLoggedIn = ref(false)
 const employees = ref([])
@@ -37,8 +38,8 @@ onMounted(() => { if (isLoggedIn.value) fetchEmployees() })
           <span class="p-white">➕</span>
           <h1>Hospital HRM Website</h1>
           <p style="background: yellow; color: black; padding: 5px; text-align: center;">
-  Debug: ตอนนี้ activeMenu คือ {{ activeMenu }}
-</p>
+            Debug: ตอนนี้ activeMenu คือ {{ activeMenu }}
+          </p>
         </div>
       </header>
 
@@ -46,11 +47,13 @@ onMounted(() => { if (isLoggedIn.value) fetchEmployees() })
       
       <EmployeeList v-else-if="activeMenu === 'emp-list'" :employees="employees" />
       
+      <OrgStructure v-else-if="activeMenu === 'org-struct'" />
+      
       <section v-else class="placeholder-page">
         <h2>กำลังพัฒนาหน้า: {{ activeMenu }}</h2>
         <p>คุณ Wanwisa สามารถสร้างไฟล์ Component ใหม่มาใส่ตรงนี้ได้เลยครับ</p>
       </section>
-    </main>
+      </main>
   </div>
 </template>
 
