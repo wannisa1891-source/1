@@ -108,12 +108,12 @@ const toggleMenu = (menuName) => {
 </script>
 
 <style scoped>
-/* 1. เปลี่ยนพื้นหลังเป็นขาวและตัวอักษรเป็นสีกรมท่า */
+/* 1. พื้นหลังขาวสะอาด ขอบมนพรีเมียม */
 .sidebar-hybrid {
   width: 280px;
   height: 100vh;
-  background: #ffffff; /* พื้นหลังขาวสะอาด */
-  color: #1e2433; /* ตัวอักษรสีกรมท่าเข้ม */
+  background: #ffffff;
+  color: #1e2433; 
   border-radius: 0 40px 40px 0;
   display: flex;
   flex-direction: column;
@@ -121,11 +121,11 @@ const toggleMenu = (menuName) => {
   left: 0; top: 0;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1000;
-  box-shadow: 4px 0 20px rgba(0,0,0,0.05); /* เพิ่มเงาเบาๆ ให้ดูมีมิติ */
+  box-shadow: 4px 0 20px rgba(0,0,0,0.05);
 }
 .sidebar-hybrid.collapsed { width: 85px; border-radius: 0 30px 30px 0; }
 
-/* ปุ่มส้มลอยๆ */
+/* ปุ่มส้มลอยๆ สำหรับยุบแถบ */
 .toggle-floating-btn {
   position: absolute;
   right: -15px; top: 80px;
@@ -139,7 +139,81 @@ const toggleMenu = (menuName) => {
   z-index: 1001;
 }
 
-/* Header */
+/* 2. เมนูแบบโปร่งใส (เอาพื้นหลังสีน้ำตาลออกไปเลย) */
+.menu-item.single, .menu-header {
+  display: flex; align-items: center;
+  padding: 14px 20px;
+  margin-bottom: 8px;
+  border-radius: 15px; cursor: pointer;
+  transition: 0.2s;
+  font-size: 18px;
+  background: transparent !important; /* บังคับไม่มีสีพื้นหลัง */
+  position: relative; /* เตรียมไว้สำหรับแอบตัดเส้นด้านซ้าย */
+}
+
+/* 3. "แอบตัด" ด้วยเส้นแนวตั้งสีกรมท่าเวลา Active */
+.menu-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  height: 70%;
+  width: 5px; /* เส้นแอบตัดเล็กๆ */
+  background: #1e2433; /* สีกรมท่าเข้ม (Navy) */
+  border-radius: 0 5px 5px 0;
+}
+
+/* 4. พอกดเลือก (Active) ให้ตัวหนังสือและไอคอนเป็นสีกรมท่าเข้ม */
+.menu-item.active .label, 
+.menu-item.active .icon,
+.menu-header.is-open .label,
+.menu-header.is-open .icon {
+  color: #1e2433 !important; 
+  font-weight: 800 !important; /* ทำให้ตัวหนาขึ้นเวลาเลือก */
+}
+
+/* เอฟเฟกต์ตอนชี้ให้เป็นสีส้ม */
+.menu-item:hover, .menu-header:hover { color: #f97316; }
+
+.icon { 
+  font-size: 24px; 
+  min-width: 35px; 
+  text-align: center; 
+  color: #94a3b8; /* สีไอคอนปกติเป็นเทาจางๆ */
+  transition: color 0.2s ease;
+}
+
+.label { margin-left: 10px; font-weight: 600; }
+.chevron { margin-left: auto; font-size: 11px; transition: 0.3s; color: #cbd5e1; }
+.is-open .chevron { transform: rotate(90deg); color: #f97316; }
+
+/* 5. รายการย่อยแอบตัดเส้นประนำสายตาจางๆ */
+.sub-menu-list { 
+  padding-left: 20px; 
+  border-left: 1px dashed #e2e8f0; /* เส้นประแอบตัดบางๆ */
+  margin-left: 35px;
+  margin-bottom: 10px; 
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.sub-item {
+  padding: 10px 20px; 
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+  color: #64748b;
+  text-align: left;
+}
+.sub-item:hover { color: #f97316; }
+.sub-item.active { 
+  color: #1e2433 !important; 
+  font-weight: 800 !important; 
+  background: transparent !important;
+}
+
 .sidebar-header { padding: 30px 20px; }
 .logo-box { display: flex; align-items: center; gap: 15px; }
 .logo-icon {
@@ -151,60 +225,16 @@ const toggleMenu = (menuName) => {
 .logo-text h2 { margin: 0; color: #1e2433; font-size: 24px; font-weight: 800; }
 .logo-text small { color: #f97316; font-weight: bold; font-size: 13px; }
 
-/* Menu Styles */
 .sidebar-nav { flex: 1; padding: 10px 15px; overflow-y: auto; }
 
-.menu-item.single, .menu-header {
-  display: flex; align-items: center;
-  padding: 14px 20px; /* เพิ่ม Padding ให้ดูโปร่งขึ้น */
-  margin-bottom: 8px;
-  border-radius: 15px; cursor: pointer;
-  transition: 0.2s;
-  font-size: 17px; /* ขยายขนาดฟอนต์หัวข้อหลัก */
-}
-
-.menu-item:hover, .menu-header:hover { background: #f8fafc; color: #f97316; }
-
-/* 2. พอกดเลือก (Active) ให้เป็นสีทองพาสเทลที่คุณชอบ */
-.menu-item.active { background: #c5a073; color: white; box-shadow: 0 4px 12px rgba(197, 160, 115, 0.3); }
-.menu-item.active .icon { color: white; }
-
-.icon { font-size: 22px; min-width: 35px; text-align: center; color: #1e2433; }
-.label { margin-left: 10px; font-weight: 600; }
-.chevron { margin-left: auto; font-size: 11px; transition: 0.3s; color: #cbd5e1; }
-.is-open .chevron { transform: rotate(90deg); color: #f97316; }
-
-/* 3. รายการย่อย (ไม่ชิดขวา และขยายฟอนต์) */
-.sub-menu-list { 
-  padding-left: 20px; /* ลดระยะเยื้องเพื่อให้ดูไม่ชิดขวาเกินไป */
-  margin-bottom: 10px; 
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.sub-item {
-  padding: 10px 20px; 
-  border-radius: 12px;
-  font-size: 15px; /* ขยายขนาดฟอนต์เมนูย่อย */
-  font-weight: 500;
-  cursor: pointer;
-  transition: 0.2s;
-  color: #64748b;
-  text-align: left; /* บังคับให้ชิดซ้าย */
-}
-.sub-item:hover { color: #f97316; background: #f8fafc; }
-/* เมนูย่อยเวลาเลือกให้เด่นขึ้น */
-.sub-item.active { color: #c5a073; font-weight: 800; background: rgba(197, 160, 115, 0.05); }
-
-/* Footer */
 .sidebar-footer { padding: 25px 20px; border-top: 1px solid #f1f5f9; }
 .user-block { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
 .avatar {
   width: 45px; height: 45px; border-radius: 50%;
-  background: #c5a073; color: white;
+  background: #e2e8f0; color: #1e2433;
   display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;
 }
-.user-info strong { display: block; color: #1e2433; font-size: 15px; }
+.user-info strong { display: block; color: #1e2433; font-size: 16px; }
 .user-info small { color: #94a3b8; font-size: 12px; }
 
 .btn-logout-hybrid {
@@ -213,12 +243,10 @@ const toggleMenu = (menuName) => {
   font-weight: bold; cursor: pointer; font-size: 15px;
 }
 
-/* Slide Transition */
 .slide-enter-active, .slide-leave-active { transition: all 0.3s ease; overflow: hidden; }
 .slide-enter-from, .slide-leave-to { opacity: 0; transform: translateY(-10px); }
 
-/* Collapsed Styles */
 .collapsed .menu-item, .collapsed .menu-header { justify-content: center; padding: 15px 0; }
-.collapsed .icon { margin: 0; font-size: 24px; }
+.collapsed .icon { margin: 0; font-size: 26px; }
 .collapsed .user-block { justify-content: center; }
 </style>
