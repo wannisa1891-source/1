@@ -24,7 +24,7 @@
       <section class="summary-section-v15">
         <div class="section-header-v15">
           <h3 class="main-title-v15">สถิติทรัพยากรบุคคล</h3>
-          <button class="btn-print-v15">📋 พิมพ์รายงาน</button>
+          <button class="btn-print-v15"></button>
         </div>
         <div class="stats-grid-v15">
           <div class="stat-card-v15 border-gold">
