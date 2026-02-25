@@ -45,7 +45,7 @@
             <div class="stat-icon-v15">⚠️</div>
             <div class="stat-data-v15">
               <p class="stat-label">อัตรากำลังว่าง</p>
-              <h2 class="stat-value">5 <span>อัตรา</span></h2>
+              <h2 class="stat-value">0 <span>อัตรา</span></h2>
             </div>
           </div>
         </div>

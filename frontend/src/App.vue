@@ -25,8 +25,11 @@ const handleLoginSuccess = () => {
 const fetchEmployees = async () => {
   try {
     const response = await axios.get('http://localhost:3000/api/employees')
-    employees.value = response.data
-  } catch (error) { console.error(error) }
+    console.log(response.data)
+    employees.value = response.data.employees || response.data
+  } catch (error) { 
+    console.error(error) 
+  }
 }
 
 onMounted(() => { if (isLoggedIn.value) fetchEmployees() })
