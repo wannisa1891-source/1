@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-
 import Login from './components/Login.vue'
 import Sidebar from './components/Sidebar.vue'
 import Dashboard from './components/Dashboard.vue'
@@ -10,12 +9,13 @@ import OrgStructure from './components/OrgStructure.vue'
 import Transfer from './components/Transfer.vue'
 import License from './components/License.vue'
 import Schedule from './components/Schedule.vue'
-import LeaveSystem from './components/LeaveSystem.vue' // ✅ Import ระบบการลา
+import LeaveSystem from './components/LeaveSystem.vue'
 import Payroll from './components/Payroll.vue'
 
 const isLoggedIn = ref(false)
 const employees = ref([])
 const activeMenu = ref('dashboard')
+const isSidebarCollapsed = ref(false) // ✅ เก็บสถานะ Sidebar ไว้ที่นี่
 
 const handleLoginSuccess = () => {
   isLoggedIn.value = true
@@ -36,16 +36,15 @@ onMounted(() => { if (isLoggedIn.value) fetchEmployees() })
   <Login v-if="!isLoggedIn" @login-success="handleLoginSuccess" />
 
   <div v-else class="system-container">
-    <Sidebar :activeMenu="activeMenu" @change-menu="(menu) => activeMenu = menu" @logout="isLoggedIn = false" />
+    <Sidebar 
+      :activeMenu="activeMenu" 
+      @change-menu="(menu) => activeMenu = menu" 
+      @logout="isLoggedIn = false"
+      @toggle-collapse="(val) => isSidebarCollapsed = val" 
+    />
 
-    <main class="main-content-view">
-      <header class="navy-banner">
-        <div class="banner-txt">
-          <span class="p-white">➕</span>
-          <h1>Hospital HRM Website</h1>
-        </div>
-      </header>
-
+    <main :class="['main-content-view', { 'expanded': isSidebarCollapsed }]">
+      
       <Dashboard v-if="activeMenu === 'dashboard'" :employees="employees" />
       <EmployeeList v-else-if="activeMenu === 'emp-list'" :employees="employees" />
       <OrgStructure v-else-if="activeMenu === 'org-struct'" />
@@ -53,12 +52,10 @@ onMounted(() => { if (isLoggedIn.value) fetchEmployees() })
       <License v-else-if="activeMenu === 'license'" />
       <Schedule v-else-if="activeMenu === 'schedule'" />
       <Payroll v-else-if="activeMenu === 'payroll'" />
-
       <LeaveSystem v-else-if="activeMenu === 'leave-sys'" />
       
       <section v-else class="placeholder-page">
         <h2>กำลังพัฒนาหน้า: {{ activeMenu }}</h2>
-        <p>คุณ Wanwisa สามารถสร้างไฟล์ Component ใหม่มาใส่ตรงนี้ได้เลยครับ</p>
       </section>
       
     </main>
@@ -67,9 +64,29 @@ onMounted(() => { if (isLoggedIn.value) fetchEmployees() })
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap');
-body { margin: 0; font-family: 'Sarabun', sans-serif; background: #e5e7eb; }
-.system-container { display: flex; height: 100vh; }
-.main-content-view { margin-left: 280px; flex: 1; display: flex; flex-direction: column; padding: 15px; height: 100vh; box-sizing: border-box; }
-.navy-banner { background: #003366; color: white; padding: 25px 40px; border-radius: 18px; margin-bottom: 15px; }
-.placeholder-page { background: white; padding: 40px; border-radius: 30px; text-align: center; }
+body { 
+  margin: 0; 
+  font-family: 'Sarabun', sans-serif; 
+  background: #333333; /* ✅ ถมสีเทาเข้มตั้งแต่ข้างนอกสุดตามเรพ */
+  overflow: hidden; /* ❌ ฆ่าแถบเลื่อนตัวนอกสุดทิ้ง */
+}
+
+.system-container { display: flex; height: 100vh; background: #333333; }
+
+.main-content-view { 
+  /* 💡 ใช้ transition เพื่อให้ขยับตาม Sidebar นิ่มๆ */
+  margin-left: 280px; 
+  flex: 1; 
+  display: flex; 
+  flex-direction: column; 
+  height: 100vh; 
+  box-sizing: border-box; 
+  transition: all 0.35s ease;
+  background: #333333;
+}
+
+/* 💡 เมื่อ Sidebar ย่อ ตัวเนื้อหาจะขยับมาชิดขอบเหลือแค่ 85px */
+.main-content-view.expanded { margin-left: 85px; }
+
+.placeholder-page { background: white; padding: 40px; margin: 20px; border-radius: 30px; text-align: center; }
 </style>
