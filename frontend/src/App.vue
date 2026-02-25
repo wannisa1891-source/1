@@ -15,7 +15,7 @@ import Payroll from './components/Payroll.vue'
 const isLoggedIn = ref(false)
 const employees = ref([])
 const activeMenu = ref('dashboard')
-const isSidebarCollapsed = ref(false) // ✅ เก็บสถานะ Sidebar ไว้ที่นี่
+const isSidebarCollapsed = ref(false)
 
 const handleLoginSuccess = () => {
   isLoggedIn.value = true
@@ -44,7 +44,6 @@ onMounted(() => { if (isLoggedIn.value) fetchEmployees() })
     />
 
     <main :class="['main-content-view', { 'expanded': isSidebarCollapsed }]">
-      
       <Dashboard v-if="activeMenu === 'dashboard'" :employees="employees" />
       <EmployeeList v-else-if="activeMenu === 'emp-list'" :employees="employees" />
       <OrgStructure v-else-if="activeMenu === 'org-struct'" />
@@ -57,7 +56,6 @@ onMounted(() => { if (isLoggedIn.value) fetchEmployees() })
       <section v-else class="placeholder-page">
         <h2>กำลังพัฒนาหน้า: {{ activeMenu }}</h2>
       </section>
-      
     </main>
   </div>
 </template>
@@ -67,14 +65,13 @@ onMounted(() => { if (isLoggedIn.value) fetchEmployees() })
 body { 
   margin: 0; 
   font-family: 'Sarabun', sans-serif; 
-  background: #333333; /* ✅ ถมสีเทาเข้มตั้งแต่ข้างนอกสุดตามเรพ */
-  overflow: hidden; /* ❌ ฆ่าแถบเลื่อนตัวนอกสุดทิ้ง */
+  background: #333333; 
+  overflow: hidden; 
 }
 
 .system-container { display: flex; height: 100vh; background: #333333; }
 
 .main-content-view { 
-  /* 💡 ใช้ transition เพื่อให้ขยับตาม Sidebar นิ่มๆ */
   margin-left: 280px; 
   flex: 1; 
   display: flex; 
@@ -83,9 +80,12 @@ body {
   box-sizing: border-box; 
   transition: all 0.35s ease;
   background: #333333;
+  
+  /* 💡 แก้ปัญหาชิดขอบบน: เพิ่ม padding ด้านบน 35px และด้านข้างเพื่อให้ดูสมดุล */
+  padding: 5px 1px 0 0; 
 }
 
-/* 💡 เมื่อ Sidebar ย่อ ตัวเนื้อหาจะขยับมาชิดขอบเหลือแค่ 85px */
+/* 💡 เมื่อย่อ Sidebar เนื้อหาจะขยับมาชิดขอบมากขึ้น */
 .main-content-view.expanded { margin-left: 85px; }
 
 .placeholder-page { background: white; padding: 40px; margin: 20px; border-radius: 30px; text-align: center; }

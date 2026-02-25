@@ -1,7 +1,7 @@
 <template>
   <aside :class="['sidebar-hybrid', { 'collapsed': isCollapsed }]">
     
-    <button class="toggle-floating-btn" @click="isCollapsed = !isCollapsed">
+    <button class="toggle-floating-btn" @click="toggleSidebar">
       <span v-if="isCollapsed">❯</span>
       <span v-else>❮</span>
     </button>
@@ -110,6 +110,12 @@
 <script setup>
 import { ref } from 'vue'
 defineProps(['activeMenu'])
+
+const emit = defineEmits(['change-menu', 'logout', 'toggle-collapse']) // 💡 เพิ่ม toggle-collapse
+const toggleSidebar = () => {
+  isCollapsed.value = !isCollapsed.value
+  emit('toggle-collapse', isCollapsed.value) // 💡 ส่งค่าไปบอก App.vue
+}
 
 const isCollapsed = ref(false)
 const openMenus = ref({ personnel: true, leave: false, finance: false })
@@ -224,5 +230,15 @@ const toggleMenu = (menuName) => {
 .btn-logout-hybrid { 
   width: 100%; max-width: 220px; padding: 12px; border-radius: 15px; border: 1px solid #fecaca; 
   background: #fff5f5; color: #ef4444; font-weight: bold; cursor: pointer; font-size: 15px;
+}
+
+.main-content-view {
+  margin-left: 280px; /* ค่าเริ่มต้น */
+  transition: all 0.35s ease; /* 💡 สำคัญ: เพื่อให้ขยับนิ่มๆ */
+}
+
+/* 💡 เมื่อย่อ Sidebar (85px) ให้ขยับ Dashboard มาชิดขอบ */
+.main-content-view.expanded { 
+  margin-left: 85px; 
 }
 </style>
