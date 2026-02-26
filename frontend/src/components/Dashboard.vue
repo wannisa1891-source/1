@@ -1,429 +1,358 @@
 <template>
   <div class="dashboard-wrapper">
-    <div class="dashboard-content">
+    <div class="bg-decoration"></div>
 
+    <div class="dashboard-content">
       <header class="dashboard-header">
-        <div>
-          <h1>สวัสดีครับ, คุณ Wanwisa 👋</h1>
-          <p>ยินดีต้อนรับเข้าสู่ระบบจัดการบุคลากรโรงพยาบาลชะอำ</p>
+        <div class="welcome-text">
+          <span class="date-chip">26 กุมภาพันธ์ 2569</span>
+          <h1>สวัสดีครับ, <span class="name">คุณ Wanwisa</span></h1>
+          <p>มาดูความเคลื่อนไหวของบุคลากรวันนี้กันครับ</p>
         </div>
 
-        <div class="header-right">
-          <div class="search-box">
-            <span>🔍</span>
-            <input type="text" placeholder="ค้นหาข้อมูลบุคลากร..." />
+        <div class="header-actions">
+          <div class="search-glass">
+            <span class="icon">🔍</span>
+            <input type="text" placeholder="ค้นหาข้อมูล..." />
           </div>
-          <div class="profile">W</div>
+          <div class="user-profile">
+            <div class="avatar">W</div>
+            <div class="status-dot"></div>
+          </div>
         </div>
       </header>
 
-      <section class="stats-grid">
-        <div class="card stat clickable" @click="$emit('change-menu', 'emp-list')">
-          <div class="card-top">
-            <span class="icon">👥</span>
-            <span class="label">บุคลากรทั้งหมด</span>
+      <div class="main-grid">
+        
+        <div class="left-col">
+          <section class="stats-row">
+            <div class="glass-card stat clickable" @click="$emit('change-menu', 'emp-list')">
+              <div class="stat-head">
+                <div class="icon-circle sage">👥</div>
+                <span class="trend up">↑ 2%</span>
+              </div>
+              <div class="stat-body">
+                <span class="label">บุคลากรทั้งหมด</span>
+                <h2 class="value">{{ employees?.length || 0 }} <small>คน</small></h2>
+              </div>
+            </div>
+
+            <div class="glass-card stat clickable" @click="$emit('change-menu', 'leave-sys')">
+              <div class="stat-head">
+                <div class="icon-circle red">📉</div>
+                <span class="trend">วันนี้</span>
+              </div>
+              <div class="stat-body">
+                <span class="label">ลางาน/พักร้อน</span>
+                <h2 class="value">0 <small>คน</small></h2>
+              </div>
+            </div>
+
+            <div class="glass-card stat clickable" @click="$emit('change-menu', 'org-struct')">
+              <div class="stat-head">
+                <div class="icon-circle gold">📊</div>
+                <span class="trend">คงเหลือ</span>
+              </div>
+              <div class="stat-body">
+                <span class="label">อัตรากำลังว่าง</span>
+                <h2 class="value">0 <small>อัตรา</small></h2>
+              </div>
+            </div>
+          </section>
+
+          <section class="chart-section glass-card">
+            <div class="card-title">
+              <h3>สถิติวิชาชีพบุคลากร</h3>
+              <div class="tabs">
+                <span class="active">ทั้งหมด</span>
+                <span>รายแผนก</span>
+              </div>
+            </div>
+            <div class="chart-main">
+              <div class="viz-container">
+                <div class="donut-box">
+                  <svg viewBox="0 0 36 36" class="circular-chart">
+                    <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path class="circle sage-path" stroke-dasharray="50, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831" />
+                    <path class="circle gold-path" stroke-dasharray="10, 100" stroke-dashoffset="-50" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831" />
+                  </svg>
+                  <div class="percentage">100%</div>
+                </div>
+                <div class="custom-legend">
+                  <div class="leg-item"><span class="dot sage"></span> พยาบาล <strong>50%</strong></div>
+                  <div class="leg-item"><span class="dot gold"></span> แพทย์ <strong>10%</strong></div>
+                  <div class="leg-item"><span class="dot gray"></span> อื่นๆ <strong>40%</strong></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="right-col">
+          <div class="glass-card task-card">
+            <h3>📌 รายการรออนุมัติ</h3>
+            <div class="task-list">
+              <div class="task-item">
+                <div class="task-icon">📄</div>
+                <div class="task-info">
+                  <p>คำขอย้ายแผนก</p>
+                  <span>3 รายการใหม่</span>
+                </div>
+                <button class="btn-arrow">→</button>
+              </div>
+              <div class="task-item">
+                <div class="task-icon">🏖️</div>
+                <div class="task-info">
+                  <p>ใบลาพักร้อน</p>
+                  <span>1 รายการใหม่</span>
+                </div>
+                <button class="btn-arrow">→</button>
+              </div>
+            </div>
           </div>
-          <div class="value">
-            {{ employees?.length || 0 }}
-            <span>คน</span>
+
+          <div class="alert-premium">
+            <div class="premium-content">
+              <span class="tag">System Alert</span>
+              <h4>ใบประกอบวิชาชีพ</h4>
+              <p>พบข้อมูลใกล้หมดอายุใน 30 วัน</p>
+              <button class="btn-action">ตรวจสอบทันที</button>
+            </div>
+            <div class="premium-bg-icon">🔔</div>
           </div>
         </div>
 
-        <div class="card stat clickable" @click="$emit('change-menu', 'leave-sys')">
-          <div class="card-top">
-            <span class="icon">📉</span>
-            <span class="label">ลางานวันนี้</span>
-          </div>
-          <div class="value">
-            0 <span>คน</span>
-          </div>
-        </div>
-
-        <div class="card stat clickable" @click="$emit('change-menu', 'org-struct')">
-          <div class="card-top">
-            <span class="icon">📊</span>
-            <span class="label">อัตรากำลังว่างแผนกที่ขาดคน</span>
-          </div>
-          <div class="value">
-            0 <span>อัตรา</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="charts-grid">
-        <div class="card chart">
-          <h3>สัดส่วนบุคลากรแยกตามวิชาชีพ</h3>
-          <div class="chart-row">
-            <div class="donut"></div>
-            <ul class="legend">
-              <li><span class="dot sage"></span> พยาบาล 50%</li>
-              <li><span class="dot gold"></span> แพทย์ 10%</li>
-              <li><span class="dot gray"></span> อื่นๆ 40%</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="card chart">
-          <h3>แนวโน้มบุคลากรรายเดือน</h3>
-          <div class="bars">
-            <div class="bar" style="height: 60%"></div>
-            <div class="bar" style="height: 40%"></div>
-            <div class="bar sage-bg" style="height: 85%"></div>
-            <div class="bar" style="height: 55%"></div>
-            <div class="bar gold-bg" style="height: 95%"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="footer-grid">
-        <div class="card list-card">
-          <h3>📌 รายการที่ต้องอนุมัติ</h3>
-          <div class="list-row">
-            <span>คำขอย้ายแผนก</span>
-            <span class="badge">3 รายการ</span>
-          </div>
-          <div class="list-row">
-            <span>ใบลาพักร้อน</span>
-            <span class="badge">1 รายการ</span>
-          </div>
-        </div>
-
-        <div class="alert-card">
-          <h3>🔔 แจ้งเตือนระบบ</h3>
-          <p>ใบประกอบวิชาชีพใกล้หมดอายุใน 30 วัน</p>
-          <button>ดูรายละเอียดทั้งหมด</button>
-        </div>
-      </section>
-
+      </div>
     </div>
   </div>
 </template>
 
-<script setup>
-defineProps(['employees'])
-defineEmits(['change-menu'])
-</script>
-
 <style scoped>
-/* 🌟 สไตล์สำหรับการ์ดที่คลิกได้ (clickable) */
-.clickable {
-  cursor: pointer;
-  transition: all 0.2s ease-in-out !important;
-}
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
 
-.clickable:hover {
-  transform: translateY(-8px) !important;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
-  background-color: #fafafa !important;
-}
-
-.clickable:active {
-  transform: scale(0.96) !important;
-}
-
+/* Base & Layout */
 .dashboard-wrapper {
-  flex: 1;
-  width: 100%;
-  height: 100vh;
-  padding: 2.5vh 40px;
-  background: #636874; /* สีพื้นหลังที่คุณเลือกไว้ */
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  font-family: 'Sarabun', sans-serif;
+  color: #1a1a1a;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
   display: flex;
   justify-content: center;
-  overflow: hidden;
+}
+
+.bg-decoration {
+  position: absolute;
+  top: -10%; right: -5%;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(74,86,68,0.08) 0%, rgba(255,255,255,0) 70%);
+  z-index: 0;
 }
 
 .dashboard-content {
   width: 100%;
-  max-width: 1280px;
-  height: 100%;
+  max-width: 1400px;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 1.5vh;
+  gap: 30px;
 }
 
+/* Header */
 .dashboard-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 5px;
+  align-items: flex-end;
 }
 
-.dashboard-header h1 {
-  font-size: 32px;
-  font-weight: 800;
-  margin: 0;
-  color: #1e2433;
+.date-chip {
+  background: #fff;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #4A5644;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-.dashboard-header p {
-  font-size: 15px;
-  color: #777;
-  margin-top: 5px;
-}
+.welcome-text h1 { font-size: 32px; font-weight: 700; margin: 10px 0 5px 0; }
+.welcome-text h1 .name { color: #4A5644; }
+.welcome-text p { color: #666; margin: 0; }
 
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
+.header-actions { display: flex; align-items: center; gap: 20px; }
 
-.search-box {
+.search-glass {
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid white;
+  padding: 10px 18px;
+  border-radius: 15px;
   display: flex;
   align-items: center;
   gap: 10px;
-  background: white;
-  padding: 12px 20px;
-  border-radius: 50px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
 }
 
-.search-box input {
-  border: none;
-  outline: none;
-  background: transparent;
-  font-family: 'Sarabun';
-  width: 220px;
-  font-size: 15px;
+.search-glass input {
+  border: none; outline: none; background: transparent; width: 180px;
 }
 
-.profile {
-  width: 45px;
-  height: 45px;
-  background: #6c500a;
-  color: white;
-  font-weight: bold;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
+.user-profile {
+  position: relative;
+  width: 45px; height: 45px;
 }
 
-.card {
-  background: white;
-  border-radius: 35px;
-  padding: 3vh 35px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
+.avatar {
+  width: 100%; height: 100%;
+  background: #4A5644; color: white;
+  border-radius: 15px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
 }
 
-.stats-grid {
+.status-dot {
+  position: absolute; bottom: -2px; right: -2px;
+  width: 12px; height: 12px;
+  background: #4cd137; border: 2px solid #f0f2f5; border-radius: 50%;
+}
+
+/* Main Grid */
+.main-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+}
+
+.left-col { display: flex; flex-direction: column; gap: 30px; }
+
+/* Stats */
+.stats-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
-  flex: 1;
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-}
-
-.stat .card-top {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 10px;
-}
-
-.icon {
-  background: #F8F7F2;
-  padding: 15px;
-  border-radius: 20px;
-  font-size: 24px;
-}
-
-.stat .label {
-  font-size: 12px;
-  text-transform: uppercase;
-  color: #AAA;
-  font-weight: 800;
-  letter-spacing: 1px;
-}
-
-.value {
-  font-size: 46px;
-  font-weight: 900;
-  color: #1e2433;
-  margin-top: auto;
-}
-
-.value span {
-  font-size: 16px;
-  color: #999;
-  font-weight: 500;
-  margin-left: 5px;
-}
-
-.charts-grid {
-  display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: 25px;
-  flex: 1.3;
-}
-
-.chart h3 {
-  font-size: 18px;
-  font-weight: 800;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.chart-row {
-  display: flex;
-  justify-content: center;
-  gap: 50px;
-  align-items: center;
-  flex: 1;
-}
-
-.donut {
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
-  background: conic-gradient( #4A5644 0% 50%, #C5A073 50% 60%, #EFEFEF 60% 100% );
-  position: relative;
-}
-
-.donut::after {
-  content: "";
-  position: absolute;
-  width: 75px;
-  height: 75px;
-  background: white;
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-}
-
-.legend {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  font-size: 14px;
-  font-weight: 700;
-  color: #555;
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  display: inline-block;
-  margin-right: 12px;
-}
-
-.sage { background: #4A5644; }
-.gold { background: #C5A073; }
-.gray { background: #EFEFEF; }
-
-.bars {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
   gap: 20px;
-  flex: 1;
 }
 
-.bar {
-  width: 35px;
-  background: #F2F2F2;
-  border-radius: 12px;
-  transition: 0.3s;
+.glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 30px;
+  padding: 25px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.03);
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-.bar:hover {
-  transform: scaleY(1.05);
+.clickable:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 25px 45px rgba(0,0,0,0.07);
+  background: white;
 }
 
-.sage-bg { background: #4A5644; }
-.gold-bg { background: #C5A073; }
-
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 25px;
-  flex: 1;
+.stat-head {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
 }
 
-.list-card h3 {
-  font-size: 18px;
-  font-weight: 800;
-  color: #333;
-  margin-bottom: 10px;
+.icon-circle {
+  width: 50px; height: 50px; border-radius: 18px;
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
 }
 
-.list-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 14px 0;
-  border-bottom: 2px solid #F9F9F9;
-  font-weight: 700;
-  color: #555;
+.icon-circle.sage { background: #EBF0E9; color: #4A5644; }
+.icon-circle.red { background: #FFF0F0; color: #E74C3C; }
+.icon-circle.gold { background: #FFF9EB; color: #C5A073; }
+
+.trend { font-size: 12px; font-weight: 700; color: #999; }
+.trend.up { color: #27ae60; }
+
+.stat-body .label { font-size: 13px; color: #888; font-weight: 600; display: block; margin-bottom: 5px; }
+.stat-body .value { font-size: 36px; font-weight: 700; margin: 0; }
+.stat-body .value small { font-size: 16px; color: #bbb; font-weight: 400; }
+
+/* Chart Section */
+.chart-section .card-title {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;
 }
 
-.list-row:last-child {
-  border-bottom: none;
+.tabs {
+  background: #f0f2f5; padding: 5px; border-radius: 12px; display: flex; gap: 5px;
 }
 
-.badge {
-  background: #F2F2F2;
-  padding: 6px 15px;
-  border-radius: 12px;
-  font-size: 12px;
-  color: #888;
+.tabs span {
+  padding: 6px 15px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 600;
 }
 
-.alert-card {
-  background: #A39160; /* สีทองที่คุณเลือกไว้ */
+.tabs span.active { background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+.viz-container {
+  display: flex; justify-content: space-around; align-items: center; padding: 20px 0;
+}
+
+.donut-box { position: relative; width: 180px; }
+.circular-chart { display: block; margin: 0 auto; max-width: 100%; }
+.circle-bg { fill: none; stroke: #eee; stroke-width: 3.8; }
+.circle { fill: none; stroke-width: 3.8; stroke-linecap: round; transition: stroke-dasharray 1s ease; }
+.sage-path { stroke: #4A5644; }
+.gold-path { stroke: #C5A073; }
+
+.percentage {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-size: 24px; font-weight: 700;
+}
+
+.custom-legend { display: flex; flex-direction: column; gap: 15px; }
+.leg-item { display: flex; align-items: center; gap: 12px; font-size: 14px; color: #555; }
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+
+/* Task Card */
+.task-card h3 { font-size: 18px; margin-top: 0; margin-bottom: 20px; }
+.task-list { display: flex; flex-direction: column; gap: 15px; }
+
+.task-item {
+  background: #F9FBFA; padding: 15px; border-radius: 20px;
+  display: flex; align-items: center; gap: 15px;
+}
+
+.task-icon { font-size: 20px; }
+.task-info { flex: 1; }
+.task-info p { margin: 0; font-weight: 700; font-size: 14px; }
+.task-info span { font-size: 12px; color: #888; }
+
+.btn-arrow {
+  background: white; border: none; width: 35px; height: 35px; border-radius: 10px;
+  cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.3s;
+}
+.btn-arrow:hover { background: #4A5644; color: white; }
+
+/* Alert Premium */
+.alert-premium {
+  margin-top: 30px;
+  background: linear-gradient(135deg, #4A5644 0%, #2d3436 100%);
+  border-radius: 30px;
+  padding: 30px;
   color: white;
-  border-radius: 35px;
-  padding: 3vh 40px;
-  box-shadow: 0 20px 45px rgba(74,86,68,0.25);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
-.alert-card h3 {
-  font-size: 20px;
-  font-weight: 900;
-  margin-bottom: 5px;
+.premium-content { position: relative; z-index: 2; }
+.tag {
+  background: rgba(255,255,255,0.2);
+  padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 700; text-transform: uppercase;
 }
 
-.alert-card p {
-  opacity: 0.8;
-  font-size: 15px;
-  margin-bottom: 20px;
-  line-height: 1.5;
+.alert-premium h4 { font-size: 20px; margin: 15px 0 5px 0; }
+.alert-premium p { font-size: 14px; opacity: 0.8; margin-bottom: 25px; }
+
+.btn-action {
+  background: #C5A073; border: none; padding: 12px 25px; border-radius: 12px;
+  color: white; font-weight: 700; cursor: pointer; transition: 0.3s;
 }
 
-.alert-card button {
-  background: rgba(255,255,255,0.15);
-  border: none;
-  padding: 14px;
-  border-radius: 20px;
-  color: white;
-  font-weight: 900;
-  cursor: pointer;
-  transition: 0.3s;
-  font-size: 16px;
-}
+.btn-action:hover { background: #D4B185; transform: scale(1.05); }
 
-.alert-card button:hover {
-  background: rgba(255,255,255,0.25);
-  transform: translateY(-2px);
+.premium-bg-icon {
+  position: absolute; right: -20px; bottom: -20px;
+  font-size: 120px; opacity: 0.1; transform: rotate(-15deg);
 }
 </style>
