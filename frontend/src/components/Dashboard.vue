@@ -23,7 +23,7 @@
         <div class="card stat">
           <div class="card-top">
             <span class="icon">👥</span>
-            <span class="label">Total Staff</span>
+            <span class="label">บุคลากรทั้งหมด</span>
           </div>
           <div class="value">
             {{ employees?.length || 0 }}
@@ -34,7 +34,7 @@
         <div class="card stat">
           <div class="card-top">
             <span class="icon">📉</span>
-            <span class="label">On Leave</span>
+            <span class="label">ลางานวันนี้</span>
           </div>
           <div class="value">
             0 <span>คน</span>
@@ -44,7 +44,7 @@
         <div class="card stat">
           <div class="card-top">
             <span class="icon">📊</span>
-            <span class="label">Vacant</span>
+            <span class="label">อัตรากำลังว่างแผนกที่ขาดคน</span>
           </div>
           <div class="value">
             0 <span>อัตรา</span>
@@ -115,7 +115,7 @@ defineProps(['employees'])
   width: 100%;
   height: 100vh; /* 🌟 ล็อคความสูงให้เท่ากับหน้าจอเป๊ะ */
   padding: 2.5vh 40px; /* 🌟 ใช้ vh ให้ระยะขอบบน-ล่างยืดหยุ่นตามความสูงหน้าจอ */
-  background: #F5F4F1; /* สีครีมนวล */
+  background: #636874; /* สีครีมนวล */
   display: flex;
   justify-content: center; /* 🌟 ดันเนื้อหาทั้งหมดให้อยู่กึ่งกลางหน้าจอเสมอ */
   overflow: hidden; /* 🌟 ปิดแถบเลื่อน 100% ป้องกันการทะลุขอบ */
@@ -181,7 +181,7 @@ defineProps(['employees'])
 .profile {
   width: 45px;
   height: 45px;
-  background: #4A5644;
+  background: #6c500a;
   color: white;
   font-weight: bold;
   border-radius: 50%;
@@ -386,7 +386,7 @@ defineProps(['employees'])
 }
 
 .alert-card {
-  background: #4A5644;
+  background: #A39160;
   color: white;
   border-radius: 35px;
   padding: 3vh 40px;
