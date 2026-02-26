@@ -1,5 +1,10 @@
 <template>
-  <div class="sidebar">
+  <aside :class="['sidebar', { collapsed: isCollapsed }]">
+    
+    <button class="toggle-floating-btn" @click="toggleSidebar">
+      <span v-if="isCollapsed">❯</span>
+      <span v-else>❮</span>
+    </button>
 
     <div class="sidebar-header">
       <h2>HRM</h2>
@@ -19,26 +24,53 @@
       <button class="logout-btn">ออกจากระบบ</button>
     </div>
 
-  </div>
+  </aside>
 </template>
 
 <script setup>
-defineProps(['activeMenu'])
+import { ref } from 'vue'
+
+const emit = defineEmits(['toggle-collapse'])
+
+const isCollapsed = ref(false)
+
+const toggleSidebar = () => {
+  isCollapsed.value = !isCollapsed.value
+  emit('toggle-collapse', isCollapsed.value)
+}
 </script>
 
 <style scoped>
 
-/* ===== SIDEBAR CONTAINER ===== */
+/* ===== SIDEBAR ===== */
 .sidebar {
   width: 260px;
   height: 100vh;
-  background-color: #002D55; /* น้ำเงินโรงพยาบาล */
+  background-color: #002D55;
   color: #ffffff;
   display: flex;
   flex-direction: column;
   padding: 20px 16px;
-  box-sizing: border-box;
-  transition: all 0.3s ease;
+  transition: all 0.35s ease;
+  position: relative;
+}
+
+.sidebar.collapsed {
+  width: 85px;
+}
+
+/* ===== TOGGLE BUTTON ===== */
+.toggle-floating-btn {
+  position: absolute;
+  right: -12px;
+  top: 40px;
+  background: #A39160;
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 /* ===== HEADER ===== */
@@ -49,12 +81,11 @@ defineProps(['activeMenu'])
 .sidebar-header h2 {
   font-size: 22px;
   font-weight: 700;
-  margin-bottom: 4px;
 }
 
 .sidebar-header span {
   font-size: 12px;
-  color: #A39160; /* ทอง */
+  color: #A39160;
   letter-spacing: 2px;
 }
 
@@ -69,17 +100,14 @@ defineProps(['activeMenu'])
   border-radius: 10px;
   cursor: pointer;
   transition: 0.3s;
-  font-weight: 500;
 }
 
 .menu-item:hover {
   background-color: rgba(255,255,255,0.1);
 }
 
-/* ===== ACTIVE MENU ===== */
 .menu-item.active {
   background-color: #A39160;
-  color: #ffffff;
 }
 
 /* ===== USER SECTION ===== */
@@ -88,17 +116,6 @@ defineProps(['activeMenu'])
   padding-top: 20px;
 }
 
-.name {
-  font-weight: 600;
-}
-
-.role {
-  font-size: 12px;
-  color: #cbd5e1;
-  margin-bottom: 12px;
-}
-
-/* ===== LOGOUT BUTTON ===== */
 .logout-btn {
   width: 100%;
   padding: 10px;
@@ -108,7 +125,6 @@ defineProps(['activeMenu'])
   color: #002D55;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
 }
 
 .logout-btn:hover {
