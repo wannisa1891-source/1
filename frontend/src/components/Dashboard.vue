@@ -2,7 +2,6 @@
   <div class="dashboard-wrapper">
     <div class="dashboard-content">
 
-      <!-- HEADER -->
       <header class="dashboard-header">
         <div>
           <h1>สวัสดีครับ, คุณ Wanwisa 👋</h1>
@@ -18,9 +17,8 @@
         </div>
       </header>
 
-      <!-- STATS -->
       <section class="stats-grid">
-        <div class="card stat">
+        <div class="card stat clickable" @click="$emit('change-menu', 'emp-list')">
           <div class="card-top">
             <span class="icon">👥</span>
             <span class="label">บุคลากรทั้งหมด</span>
@@ -31,7 +29,7 @@
           </div>
         </div>
 
-        <div class="card stat">
+        <div class="card stat clickable" @click="$emit('change-menu', 'leave-sys')">
           <div class="card-top">
             <span class="icon">📉</span>
             <span class="label">ลางานวันนี้</span>
@@ -41,7 +39,7 @@
           </div>
         </div>
 
-        <div class="card stat">
+        <div class="card stat clickable" @click="$emit('change-menu', 'org-struct')">
           <div class="card-top">
             <span class="icon">📊</span>
             <span class="label">อัตรากำลังว่างแผนกที่ขาดคน</span>
@@ -52,7 +50,6 @@
         </div>
       </section>
 
-      <!-- CHARTS -->
       <section class="charts-grid">
         <div class="card chart">
           <h3>สัดส่วนบุคลากรแยกตามวิชาชีพ</h3>
@@ -78,7 +75,6 @@
         </div>
       </section>
 
-      <!-- FOOTER -->
       <section class="footer-grid">
         <div class="card list-card">
           <h3>📌 รายการที่ต้องอนุมัติ</h3>
@@ -105,39 +101,52 @@
 
 <script setup>
 defineProps(['employees'])
+defineEmits(['change-menu'])
 </script>
 
 <style scoped>
+/* 🌟 สไตล์สำหรับการ์ดที่คลิกได้ (clickable) */
+.clickable {
+  cursor: pointer;
+  transition: all 0.2s ease-in-out !important;
+}
 
-/* ===== Wrapper: ล็อคความสูงหน้าจอ และปิดการเลื่อน (Scroll) ===== */
+.clickable:hover {
+  transform: translateY(-8px) !important;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+  background-color: #fafafa !important;
+}
+
+.clickable:active {
+  transform: scale(0.96) !important;
+}
+
 .dashboard-wrapper {
   flex: 1;
   width: 100%;
-  height: 100vh; /* 🌟 ล็อคความสูงให้เท่ากับหน้าจอเป๊ะ */
-  padding: 2.5vh 40px; /* 🌟 ใช้ vh ให้ระยะขอบบน-ล่างยืดหยุ่นตามความสูงหน้าจอ */
-  background: #636874; /* สีครีมนวล */
+  height: 100vh;
+  padding: 2.5vh 40px;
+  background: #636874; /* สีพื้นหลังที่คุณเลือกไว้ */
   display: flex;
-  justify-content: center; /* 🌟 ดันเนื้อหาทั้งหมดให้อยู่กึ่งกลางหน้าจอเสมอ */
-  overflow: hidden; /* 🌟 ปิดแถบเลื่อน 100% ป้องกันการทะลุขอบ */
+  justify-content: center;
+  overflow: hidden;
 }
 
-/* ===== สั่งให้เนื้อหากระจายตัวพอดีกับพื้นที่ที่ล็อคไว้ ===== */
 .dashboard-content {
   width: 100%;
-  max-width: 1280px; /* ล็อคความกว้างไม่ให้ยืดเป็นเส้นก๋วยเตี๋ยว */
-  height: 100%; /* 🌟 สั่งให้เนื้อหากางเต็มความสูง 100vh */
+  max-width: 1280px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* 🌟 กระจายช่องไฟ บน-กลาง-ล่าง อัตโนมัติ */
-  gap: 1.5vh; /* 🌟 ระยะห่างระหว่างแถวปรับตามความสูงจอ */
+  justify-content: space-between;
+  gap: 1.5vh;
 }
 
-/* ===== Header ===== */
 .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 5px; /* ลดระยะห่างด้านล่างเล็กน้อยให้พอดี */
+  margin-bottom: 5px;
 }
 
 .dashboard-header h1 {
@@ -191,43 +200,36 @@ defineProps(['employees'])
   font-size: 18px;
 }
 
-/* ===== Cards ===== */
 .card {
   background: white;
-  border-radius: 35px; /* มนแบบน้องหมี */
-  padding: 3vh 35px; /* 🌟 ใช้ vh เพื่อให้ Padding ขยับตามความสูงหน้าจอ */
+  border-radius: 35px;
+  padding: 3vh 35px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.03);
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* 🌟 ให้เนื้อหาในการ์ดกระจายตัวไม่แออัด */
-  height: 100%; /* 🌟 ให้สูงเต็มพื้นที่ Grid ที่กำหนดให้ */
+  justify-content: space-between;
+  height: 100%;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.05);
-}
-
-/* ===== Stats ===== */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 25px;
-  flex: 1; /* 🌟 แบ่งพื้นที่ความสูง 1 ส่วน */
+  flex: 1;
 }
 
 .stat {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%; /* 🌟 ให้ยืดตามการ์ดแม่ ไม่ใช้ min-height แล้ว */
+  height: 100%;
 }
 
 .stat .card-top {
   display: flex;
   align-items: center;
-  gap: 15px; /* จัดไอคอนกับข้อความให้อยู่ใกล้กัน */
+  gap: 15px;
   margin-bottom: 10px;
 }
 
@@ -260,12 +262,11 @@ defineProps(['employees'])
   margin-left: 5px;
 }
 
-/* ===== Charts ===== */
 .charts-grid {
   display: grid;
   grid-template-columns: 1.3fr 1fr;
   gap: 25px;
-  flex: 1.3; /* 🌟 แบ่งพื้นที่ความสูง 1.3 ส่วน (ให้กล่องกราฟใหญ่สุด) */
+  flex: 1.3;
 }
 
 .chart h3 {
@@ -277,14 +278,14 @@ defineProps(['employees'])
 
 .chart-row {
   display: flex;
-  justify-content: center; /* จัดกราฟให้อยู่ตรงกลาง ไม่ผลักไปติดขอบ */
-  gap: 50px; /* เว้นระยะกราฟกับคำอธิบายให้พอดี */
+  justify-content: center;
+  gap: 50px;
   align-items: center;
-  flex: 1; /* 🌟 ใช้ flex แทนการล็อคความสูง (height) */
+  flex: 1;
 }
 
 .donut {
-  width: 130px; /* ลดขนาดลงนิดนึงเพื่อไม่ให้เบียดกรอบตอนจอสั้น */
+  width: 130px;
   height: 130px;
   border-radius: 50%;
   background: conic-gradient( #4A5644 0% 50%, #C5A073 50% 60%, #EFEFEF 60% 100% );
@@ -330,9 +331,9 @@ defineProps(['employees'])
 .bars {
   display: flex;
   align-items: flex-end;
-  justify-content: center; /* จัดกราฟแท่งให้อยู่ตรงกลาง */
+  justify-content: center;
   gap: 20px;
-  flex: 1; /* 🌟 ใช้ flex แทนการล็อคความสูง */
+  flex: 1;
 }
 
 .bar {
@@ -349,12 +350,11 @@ defineProps(['employees'])
 .sage-bg { background: #4A5644; }
 .gold-bg { background: #C5A073; }
 
-/* ===== Footer ===== */
 .footer-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 25px;
-  flex: 1; /* 🌟 แบ่งพื้นที่ความสูง 1 ส่วน */
+  flex: 1;
 }
 
 .list-card h3 {
@@ -367,7 +367,7 @@ defineProps(['employees'])
 .list-row {
   display: flex;
   justify-content: space-between;
-  padding: 14px 0; /* ลด padding เพื่อให้พอดีกรอบล่าง */
+  padding: 14px 0;
   border-bottom: 2px solid #F9F9F9;
   font-weight: 700;
   color: #555;
@@ -386,7 +386,7 @@ defineProps(['employees'])
 }
 
 .alert-card {
-  background: #A39160;
+  background: #A39160; /* สีทองที่คุณเลือกไว้ */
   color: white;
   border-radius: 35px;
   padding: 3vh 40px;

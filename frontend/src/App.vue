@@ -48,9 +48,9 @@ onMounted(() => {
     <Sidebar 
       :activeMenu="activeMenu" 
       :collapsed="isSidebarCollapsed"
-      @change-menu="(menu) => activeMenu = menu" 
+      @change-menu="activeMenu = $event" 
       @logout="isLoggedIn = false"
-      @toggle-collapse="(val) => isSidebarCollapsed = val" 
+      @toggle-collapse="isSidebarCollapsed = $event" 
     />
 
     <main 
@@ -60,6 +60,7 @@ onMounted(() => {
       <Dashboard 
         v-if="activeMenu === 'dashboard'" 
         :employees="employees" 
+        @change-menu="activeMenu = $event"
       />
 
       <EmployeeList 
@@ -100,13 +101,13 @@ html, body, #app {
 body {
   font-family: 'Sarabun', sans-serif;
   background: #F5F4F1;   
-  overflow-x: hidden; /* 🌟 สำคัญ: ล็อคไม่ให้เกิดแถบเลื่อนแนวนอน */
+  overflow-x: hidden; 
 }
 
 /* ===== Layout หลัก ===== */
 .system-container {
-  display: flex;
-  width: 100vw; /* 🌟 บังคับกว้างเท่าหน้าจอมอนิเตอร์เป๊ะๆ */
+  /* 🌟 ลบ display: flex ออก เพื่อไม่ให้ตีกับระบบ Sidebar ที่ลอยอยู่ */
+  width: 100%; 
   min-height: 100vh;
   background: #F5F4F1; 
 }
@@ -114,8 +115,8 @@ body {
 /* ===== Main Content ===== */
 .main-content-view {
   margin-left: 280px; 
-  /* 🌟 สูตรพระเจ้า: เอาความกว้างจอ (100vw) ลบด้วยความกว้าง Sidebar (280px) */
-  width: calc(100vw - 280px); 
+  /* 🌟 เปลี่ยนจาก 100vw เป็น 100% เพื่อป้องกันปัญหาหน้าจอเพี้ยนเวลาเกิดแถบเลื่อน */
+  width: calc(100% - 280px); 
   min-height: 100vh;
   transition: all 0.35s ease;
   background: transparent; 
@@ -128,7 +129,7 @@ body {
 .main-content-view.expanded {
   margin-left: 85px;
   /* 🌟 คำนวณใหม่ตอน Sidebar หดตัว */
-  width: calc(100vw - 85px); 
+  width: calc(100% - 85px); 
 }
 
 /* ===== Placeholder Page ===== */
