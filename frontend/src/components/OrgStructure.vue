@@ -129,73 +129,258 @@
     </div>
   </div>
 </template>
+<style>
+body {
+  margin: 0;
+  background: #f4f6f9;
+}
+.sidebar {
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+}
+
+.sidebar .logo {
+  font-weight: 700;
+  font-size: 22px;
+  color: #002D55;
+}
+
+.sidebar .menu-item {
+  padding: 10px 18px;
+  font-size: 14px;
+  color: #334155;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.sidebar .menu-item:hover {
+  background: #f1f5f9;
+}
+
+.sidebar .menu-item.active {
+  background: #002D55;
+  color: white;
+}
+</style>
 
 <style scoped>
-/* ภาพรวม */
-.org-modern-wrapper { padding: 10px 20px; animation: fadeIn 0.4s ease; }
-.org-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: white; padding: 15px 25px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-.card-title { margin: 0; font-size: 22px; color: #1e293b; font-weight: 700; }
+/* ===== GLOBAL BACKGROUND ===== */
+.org-modern-wrapper {
+  padding: 40px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc, #eef2f7);
+}
 
-/* ช่องค้นหา */
-.search-pill { display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 50px; padding: 8px 20px; width: 300px; }
-.search-input-clean { border: none; background: transparent; outline: none; width: 100%; margin-left: 10px; color: #334155; }
+/* ===== HEADER GLASS CARD ===== */
+.org-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(10px);
+  padding: 22px 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,45,85,0.08);
+  margin-bottom: 35px;
+}
 
-/* โครงสร้าง Grid ซ้าย-ขวา */
-.org-grid-layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; align-items: start; }
+.card-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #002D55;
+}
 
-/* ฝั่งซ้าย: Tree View (พื้นหลังสีทองอ่อนตามแบบ) */
-.dept-tree-card { background: #e6ccb2; border-radius: 15px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); min-height: 70vh; }
-.tree-title { color: white; text-align: center; font-size: 20px; margin-top: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); margin-bottom: 5px;}
-.tree-subtitle { text-align: center; color: #5c4033; font-size: 14px; font-weight: 600; margin-bottom: 20px; }
-.tree-list { list-style: none; padding: 0; margin: 0; color: #3e2723; font-weight: 600; }
-.tree-item { margin-bottom: 12px; cursor: pointer; }
-.toggle-icon { display: inline-block; width: 20px; font-size: 12px; }
-.active-group { color: #1e293b; }
-.sub-tree-list { list-style: none; padding-left: 25px; margin-top: 8px; font-weight: 400; font-size: 14.5px; }
-.sub-tree-list li { margin-bottom: 8px; padding: 5px 10px; border-radius: 8px; transition: 0.2s; }
-.sub-tree-list li:hover { background: rgba(255,255,255,0.4); }
+/* ===== SEARCH MODERN ===== */
+.search-pill {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 10px 16px;
+  border-radius: 50px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  transition: 0.3s;
+}
 
-/* ฝั่งขวา: พื้นที่รายละเอียด */
-.dept-detail-area { display: flex; flex-direction: column; gap: 20px; }
-.section-title { margin: 0 0 15px 0; color: #1e293b; font-size: 18px; }
-.overview-section { background: #fef0ba; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-.overview-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.stat-card { padding: 25px; border-radius: 15px; text-align: center; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; align-items: center;}
-.stat-card h4 { margin: 0 0 10px 0; font-weight: normal; font-size: 16px; }
-.stat-card h2 { margin: 0; font-size: 28px; }
-.brown-dark { background: #7f4f4f; } /* สีน้ำตาลแดงตามแบบ */
-.yellow-light { background: #fef0ba; border: 2px solid #eab308; color: #854d0e; } /* สีเหลืองอ่อนตามแบบ */
+.search-pill input {
+  border: none;
+  outline: none;
+  margin-left: 10px;
+  font-size: 14px;
+}
 
-/* กล่องรายละเอียดแผนก */
-.detail-box-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
-.detail-header-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; }
-.mb-0 { margin-bottom: 0; }
-.dept-select-group { display: flex; align-items: center; gap: 10px; background: #e2e8f0; padding: 5px 15px; border-radius: 20px;}
-.input-row { display: flex; align-items: center; margin-bottom: 10px; }
-.input-row .label { width: 80px; font-weight: 600; color: #475569; }
-.input-modern { padding: 8px 15px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; flex: 1; }
-.bg-disabled { background-color: #e2e8f0; color: #64748b;}
+.search-pill:focus-within {
+  box-shadow: 0 8px 20px rgba(0,45,85,0.15);
+}
 
-/* 3 การ์ดสถิติย่อย */
-.three-stat-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-.mini-stat { padding: 15px; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-.mini-stat p { margin: 0 0 5px 0; font-size: 14px; font-weight: 600; }
-.mini-stat h3 { margin: 0; font-size: 22px; }
-.orange-bg { background: #d97706; color: white; }
-.green-bg { background: #bbf7d0; color: #166534; }
-.pink-bg { background: #fecdd3; color: #9f1239; }
+/* ===== GRID LAYOUT ===== */
+.org-grid-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 30px;
+}
 
-/* ตารางด้านล่าง */
-.table-filters { display: flex; justify-content: flex-end; gap: 15px; font-size: 13px; color: #64748b; }
-.mini-select { border: 1px solid #cbd5e1; border-radius: 5px; padding: 2px 5px; }
-.modern-dept-table { width: 100%; border-collapse: collapse; text-align: left; }
-.modern-dept-table th { background: #94a3b8; color: white; padding: 12px; font-size: 14px; }
-.modern-dept-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #334155; }
-.btn-action { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; }
-.btn-action:hover { background: #e2e8f0; }
-.mt-10 { margin-top: 10px; }
-.mt-15 { margin-top: 15px; }
-.mt-20 { margin-top: 20px; }
+/* ===== TREE CARD ===== */
+.dept-tree-card {
+  background: white;
+  border-radius: 18px;
+  padding: 25px;
+  box-shadow: 0 15px 35px rgba(0,45,85,0.08);
+}
 
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.tree-title {
+  font-weight: 700;
+  color: #002D55;
+  margin-bottom: 5px;
+}
+
+.tree-subtitle {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 20px;
+}
+
+.tree-list {
+  list-style: none;
+  padding: 0;
+}
+
+.tree-item {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  transition: 0.25s;
+  cursor: pointer;
+}
+
+.tree-item:hover {
+  background: #002D55;
+}
+
+.active-group {
+  background: linear-gradient(90deg, #002D55, #0a4a7a);
+  color: white;
+  font-weight: 600;
+}
+
+/* ===== OVERVIEW ===== */
+.overview-section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-weight: 700;
+  color: #002D55;
+  margin-bottom: 15px;
+}
+
+.overview-cards {
+  display: flex;
+  gap: 20px;
+}
+
+.stat-card {
+  flex: 1;
+  padding: 25px;
+  border-radius: 16px;
+  color: white;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+  transition: 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+
+.brown-dark {
+  background: linear-gradient(135deg, #002D55, #001f3a);
+}
+
+.yellow-light {
+  background: linear-gradient(135deg, #A39160, #8f7e4e);
+}
+
+/* ===== DETAIL CARD ===== */
+.detail-box-card {
+  background: white;
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0 15px 35px rgba(0,45,85,0.08);
+}
+
+/* ===== MINI STAT ===== */
+.three-stat-cards {
+  display: flex;
+  gap: 20px;
+}
+
+.mini-stat {
+  flex: 1;
+  padding: 20px;
+  border-radius: 14px;
+  background: #f8fafc;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+  transition: 0.3s;
+}
+
+.mini-stat:hover {
+  transform: scale(1.03);
+}
+
+.mini-stat h3 {
+  color: #002D55;
+  font-size: 20px;
+  margin-top: 5px;
+}
+
+/* ===== TABLE PREMIUM ===== */
+.modern-dept-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.modern-dept-table thead {
+  background: linear-gradient(90deg, #002D55, #0a4a7a);
+  color: white;
+}
+
+.modern-dept-table th {
+  padding: 14px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modern-dept-table td {
+  padding: 14px;
+  font-size: 14px;
+}
+
+.modern-dept-table tbody tr {
+  transition: 0.2s;
+}
+
+.modern-dept-table tbody tr:hover {
+  background: #f1f5f9;
+}
+
+/* ===== BUTTON MODERN ===== */
+.btn-action {
+  background: linear-gradient(135deg, #002D55, #0a4a7a);
+  border: none;
+  color: white;
+  padding: 7px 16px;
+  border-radius: 50px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.btn-action:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 18px rgba(0,45,85,0.25);
+}
 </style>
