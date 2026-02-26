@@ -1,7 +1,7 @@
 <template>
   <aside :class="['sidebar-hybrid', { 'collapsed': isCollapsed }]">
     
-    <button class="toggle-floating-btn" @click="isCollapsed = !isCollapsed">
+    <button class="toggle-floating-btn" @click="toggleSidebar">
       <span v-if="isCollapsed">❯</span>
       <span v-else>❮</span>
     </button>
@@ -109,10 +109,21 @@
 
 <script setup>
 import { ref } from 'vue'
+
+// รับค่า activeMenu จาก App.vue
 defineProps(['activeMenu'])
+
+// ส่งเหตุการณ์กลับไปยัง App.vue
+const emit = defineEmits(['change-menu', 'logout', 'toggle-collapse'])
 
 const isCollapsed = ref(false)
 const openMenus = ref({ personnel: true, leave: false, finance: false })
+
+// ฟังก์ชัน Toggle Sidebar และส่งค่าไปบอก App.vue เพื่อขยับเนื้อหา
+const toggleSidebar = () => {
+  isCollapsed.value = !isCollapsed.value
+  emit('toggle-collapse', isCollapsed.value)
+}
 
 const toggleMenu = (menuName) => {
   if (isCollapsed.value) isCollapsed.value = false;
@@ -121,7 +132,7 @@ const toggleMenu = (menuName) => {
 </script>
 
 <style scoped>
-/* 1. Sidebar หลัก: ปล่อยให้ปุ่มยื่นออกได้ ห้ามใส่ overflow: hidden ที่นี่ */
+/* พื้นฐาน Sidebar */
 .sidebar-hybrid {
   width: 280px; height: 100vh; background: #ffffff; color: #1e2433;
   border-radius: 0 40px 40px 0; display: flex; flex-direction: column;
@@ -130,7 +141,6 @@ const toggleMenu = (menuName) => {
 }
 .sidebar-hybrid.collapsed { width: 85px; }
 
-/* 💡 แผ่นใสสำหรับเลื่อนขึ้น-ลง */
 .sidebar-scroll-wrapper {
   width: 100%; height: 100%;
   overflow-y: auto; overflow-x: hidden;
@@ -138,91 +148,47 @@ const toggleMenu = (menuName) => {
 }
 
 /* ซ่อน Scrollbar */
-.sidebar-scroll-wrapper::-webkit-scrollbar {
-  width: 0px; background: transparent;
-}
+.sidebar-scroll-wrapper::-webkit-scrollbar { width: 0px; }
 
-/* 2. ปุ่ม Toggle สีส้ม: ให้ยื่นออกไปนอกขอบ */
+/* ปุ่ม Toggle สีส้มที่ยื่นออกมา */
 .toggle-floating-btn {
   position: absolute; right: -16px; top: 80px; 
-  background: #f97316;
-  color: white; border: none; width: 32px; height: 32px; border-radius: 50%;
+  background: #f97316; color: white; border: none; width: 32px; height: 32px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center; cursor: pointer;
-  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.4); z-index: 1001;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 1001;
 }
 
-/* 3. จัดระเบียบเมนู */
+/* จัดการเมนู */
 .menu-item.single, .menu-header {
-  display: flex !important; flex-direction: row !important; align-items: center !important; 
-  padding: 12px 20px; margin-bottom: 8px; border-radius: 15px; cursor: pointer; 
-  transition: 0.2s; font-size: 18px; background: transparent !important; position: relative;
+  display: flex; align-items: center; padding: 12px 20px;
+  margin-bottom: 8px; border-radius: 15px; cursor: pointer; 
+  transition: 0.2s; font-size: 18px; position: relative;
 }
 
-.icon { 
-  width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; 
-  flex-shrink: 0; margin-right: 12px;
-}
+.icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin-right: 12px; }
 
 .home-icon-img, .pim-icon-img, .leave-icon-img, .finance-icon-img {
-  width: 26px; height: 26px; object-fit: contain; filter: grayscale(100%) opacity(0.6); transition: 0.3s;
+  width: 26px; height: 26px; object-fit: contain; filter: grayscale(100%) opacity(0.6);
 }
 
-/* 🌟 สีทองและเส้นแอบตัด */
-.dashboard-item.active::before,
-.personnel-header.is-open::before,
-.leave-header.is-open::before,
-.finance-header.is-open::before {
-  content: ''; position: absolute; left: 0; top: 15%; height: 70%;
-  width: 5px; background: #c5a073 !important; border-radius: 0 5px 5px 0;
-}
-
-.dashboard-item.active .label,
-.personnel-header.is-open .label,
-.leave-header.is-open .label,
-.finance-header.is-open .label {
-  color: #c5a073 !important; font-weight: 800 !important;
-}
-
-.dashboard-item.active .home-icon-img,
-.personnel-header.is-open .pim-icon-img,
-.leave-header.is-open .leave-icon-img,
-.finance-header.is-open .finance-icon-img {
+/* สถานะ Active และสีทอง */
+.dashboard-item.active .label, .is-open .label { color: #c5a073 !important; font-weight: 800; }
+.dashboard-item.active .home-icon-img, .is-open img {
   filter: invert(74%) sepia(13%) saturate(1001%) hue-rotate(352deg) brightness(88%) contrast(85%) !important;
 }
-
-.label { margin: 0 !important; font-weight: 600; white-space: nowrap; }
-.chevron { margin-left: auto; font-size: 11px; transition: 0.3s; color: #cbd5e1; }
-.is-open .chevron { transform: rotate(90deg); color: #f97316; }
 
 /* รายการย่อย */
 .sub-menu-list { 
   padding-left: 0; margin-left: 72px; border-left: 1px dashed #e2e8f0; 
   margin-bottom: 10px; display: flex; flex-direction: column; gap: 5px; 
 }
-.sub-item { padding: 10px 20px; border-radius: 12px; font-size: 17px; font-weight: 500; cursor: pointer; color: #64748b; text-align: left; }
-.sub-item.active { color: #1e2433 !important; font-weight: 800 !important; }
+.sub-item { padding: 10px 20px; border-radius: 12px; font-size: 17px; color: #64748b; cursor: pointer; }
+.sub-item.active { color: #1e2433 !important; font-weight: 800; }
 
-/* 4. ส่วนหัวและท้าย */
 .sidebar-header { padding: 30px 20px; }
-.logo-text h2 { margin: 0; color: #1e2433; font-size: 24px; font-weight: 800; }
-.logo-text small { color: #f97316; font-weight: bold; font-size: 13px; }
-
-.sidebar-footer { 
-  padding: 20px 15px 30px 15px; border-top: 1px solid #f1f5f9; margin-top: auto;
-  display: flex; flex-direction: column; align-items: center;
-}
-
-.user-block { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; width: 100%; }
-.avatar { 
-  width: 48px; height: 48px; border-radius: 50%; background: #e2e8f0; color: #1e2433; 
-  display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; flex-shrink: 0;
-}
-.user-info { display: flex; flex-direction: column; align-items: center; line-height: 1.2; }
-.username { display: block; color: #1e2433; font-size: 17px; font-weight: 800; }
-.role { display: block; color: #94a3b8; font-size: 13px; font-weight: 500; }
-
-.btn-logout-hybrid { 
-  width: 100%; max-width: 220px; padding: 12px; border-radius: 15px; border: 1px solid #fecaca; 
-  background: #fff5f5; color: #ef4444; font-weight: bold; cursor: pointer; font-size: 15px;
-}
+.logo-text h2 { margin: 0; font-size: 24px; font-weight: 800; }
+.sidebar-footer { padding: 20px 15px 30px 15px; border-top: 1px solid #f1f5f9; margin-top: auto; }
+.user-block { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; }
+.avatar { width: 48px; height: 48px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+.btn-logout-hybrid { width: 100%; padding: 12px; border-radius: 15px; border: 1px solid #fecaca; background: #fff5f5; color: #ef4444; font-weight: bold; cursor: pointer; }
 </style>
