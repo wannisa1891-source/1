@@ -109,20 +109,27 @@ defineProps(['employees'])
 
 <style scoped>
 
-/* ===== Wrapper ===== */
+/* ===== Wrapper: ล็อคความสูงหน้าจอ และปิดการเลื่อน (Scroll) ===== */
 .dashboard-wrapper {
   flex: 1;
   width: 100%;
-  min-height: 100%;
-  padding: 28px 36px;   /* 🔥 ค่าบาลานซ์พอดี */
-  background: linear-gradient(135deg,#F5F4F1,#ECEBE6);
-  box-sizing: border-box;
+  height: 100vh; /* 🌟 ล็อคความสูงให้เท่ากับหน้าจอเป๊ะ */
+  padding: 2.5vh 40px; /* 🌟 ใช้ vh ให้ระยะขอบบน-ล่างยืดหยุ่นตามความสูงหน้าจอ */
+  background: #F5F4F1; /* สีครีมนวล */
+  display: flex;
+  justify-content: center; /* 🌟 ดันเนื้อหาทั้งหมดให้อยู่กึ่งกลางหน้าจอเสมอ */
+  overflow: hidden; /* 🌟 ปิดแถบเลื่อน 100% ป้องกันการทะลุขอบ */
 }
 
+/* ===== สั่งให้เนื้อหากระจายตัวพอดีกับพื้นที่ที่ล็อคไว้ ===== */
 .dashboard-content {
+  width: 100%;
+  max-width: 1280px; /* ล็อคความกว้างไม่ให้ยืดเป็นเส้นก๋วยเตี๋ยว */
+  height: 100%; /* 🌟 สั่งให้เนื้อหากางเต็มความสูง 100vh */
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  justify-content: space-between; /* 🌟 กระจายช่องไฟ บน-กลาง-ล่าง อัตโนมัติ */
+  gap: 1.5vh; /* 🌟 ระยะห่างระหว่างแถวปรับตามความสูงจอ */
 }
 
 /* ===== Header ===== */
@@ -130,46 +137,50 @@ defineProps(['employees'])
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 5px; /* ลดระยะห่างด้านล่างเล็กน้อยให้พอดี */
 }
 
 .dashboard-header h1 {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 800;
   margin: 0;
+  color: #1e2433;
 }
 
 .dashboard-header p {
-  font-size: 14px;
+  font-size: 15px;
   color: #777;
-  margin-top: 4px;
+  margin-top: 5px;
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 15px;
 }
 
 .search-box {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: white;
-  padding: 8px 14px;
-  border-radius: 12px;
-  border: 1px solid #E5E5E5;
+  padding: 12px 20px;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
 }
 
 .search-box input {
   border: none;
   outline: none;
   background: transparent;
-  font-family: Sarabun;
+  font-family: 'Sarabun';
+  width: 220px;
+  font-size: 15px;
 }
 
 .profile {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   background: #4A5644;
   color: white;
   font-weight: bold;
@@ -177,50 +188,75 @@ defineProps(['employees'])
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 18px;
 }
 
 /* ===== Cards ===== */
 .card {
   background: white;
-  border-radius: 20px;
-  padding: 22px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.05);
-  transition: 0.3s;
+  border-radius: 35px; /* มนแบบน้องหมี */
+  padding: 3vh 35px; /* 🌟 ใช้ vh เพื่อให้ Padding ขยับตามความสูงหน้าจอ */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 🌟 ให้เนื้อหาในการ์ดกระจายตัวไม่แออัด */
+  height: 100%; /* 🌟 ให้สูงเต็มพื้นที่ Grid ที่กำหนดให้ */
 }
 
 .card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.05);
 }
 
 /* ===== Stats ===== */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  flex: 1; /* 🌟 แบ่งพื้นที่ความสูง 1 ส่วน */
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%; /* 🌟 ให้ยืดตามการ์ดแม่ ไม่ใช้ min-height แล้ว */
 }
 
 .stat .card-top {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 15px; /* จัดไอคอนกับข้อความให้อยู่ใกล้กัน */
   margin-bottom: 10px;
 }
 
+.icon {
+  background: #F8F7F2;
+  padding: 15px;
+  border-radius: 20px;
+  font-size: 24px;
+}
+
 .stat .label {
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
-  color: #BBB;
-  font-weight: bold;
+  color: #AAA;
+  font-weight: 800;
+  letter-spacing: 1px;
 }
 
 .value {
-  font-size: 32px;
-  font-weight: 800;
+  font-size: 46px;
+  font-weight: 900;
+  color: #1e2433;
+  margin-top: auto;
 }
 
 .value span {
-  font-size: 14px;
+  font-size: 16px;
   color: #999;
+  font-weight: 500;
   margin-left: 5px;
 }
 
@@ -228,29 +264,30 @@ defineProps(['employees'])
 .charts-grid {
   display: grid;
   grid-template-columns: 1.3fr 1fr;
-  gap: 20px;
+  gap: 25px;
+  flex: 1.3; /* 🌟 แบ่งพื้นที่ความสูง 1.3 ส่วน (ให้กล่องกราฟใหญ่สุด) */
 }
 
 .chart h3 {
-  font-size: 15px;
-  margin-bottom: 18px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #333;
+  margin-bottom: 20px;
 }
 
 .chart-row {
   display: flex;
-  justify-content: space-around;
+  justify-content: center; /* จัดกราฟให้อยู่ตรงกลาง ไม่ผลักไปติดขอบ */
+  gap: 50px; /* เว้นระยะกราฟกับคำอธิบายให้พอดี */
   align-items: center;
+  flex: 1; /* 🌟 ใช้ flex แทนการล็อคความสูง (height) */
 }
 
 .donut {
-  width: 130px;
+  width: 130px; /* ลดขนาดลงนิดนึงเพื่อไม่ให้เบียดกรอบตอนจอสั้น */
   height: 130px;
   border-radius: 50%;
-  background: conic-gradient(
-    #4A5644 0% 50%,
-    #C5A073 50% 60%,
-    #EFEFEF 60% 100%
-  );
+  background: conic-gradient( #4A5644 0% 50%, #C5A073 50% 60%, #EFEFEF 60% 100% );
   position: relative;
 }
 
@@ -270,17 +307,20 @@ defineProps(['employees'])
   list-style: none;
   padding: 0;
   margin: 0;
-  font-size: 13px;
-  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 700;
   color: #555;
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   display: inline-block;
-  margin-right: 8px;
+  margin-right: 12px;
 }
 
 .sage { background: #4A5644; }
@@ -288,15 +328,16 @@ defineProps(['employees'])
 .gray { background: #EFEFEF; }
 
 .bars {
-  height: 130px;
   display: flex;
   align-items: flex-end;
-  gap: 12px;
+  justify-content: center; /* จัดกราฟแท่งให้อยู่ตรงกลาง */
+  gap: 20px;
+  flex: 1; /* 🌟 ใช้ flex แทนการล็อคความสูง */
 }
 
 .bar {
-  width: 26px;
-  background: #EAEAEA;
+  width: 35px;
+  background: #F2F2F2;
   border-radius: 12px;
   transition: 0.3s;
 }
@@ -312,50 +353,77 @@ defineProps(['employees'])
 .footer-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 25px;
+  flex: 1; /* 🌟 แบ่งพื้นที่ความสูง 1 ส่วน */
+}
+
+.list-card h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #333;
+  margin-bottom: 10px;
 }
 
 .list-row {
   display: flex;
   justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid #F2F2F2;
-  font-weight: 600;
+  padding: 14px 0; /* ลด padding เพื่อให้พอดีกรอบล่าง */
+  border-bottom: 2px solid #F9F9F9;
+  font-weight: 700;
+  color: #555;
+}
+
+.list-row:last-child {
+  border-bottom: none;
 }
 
 .badge {
-  background: #F0F0F0;
-  padding: 4px 10px;
-  border-radius: 10px;
+  background: #F2F2F2;
+  padding: 6px 15px;
+  border-radius: 12px;
   font-size: 12px;
-  color: #777;
+  color: #888;
 }
 
 .alert-card {
   background: #4A5644;
   color: white;
-  border-radius: 20px;
-  padding: 28px;
-  box-shadow: 0 20px 40px rgba(74,86,68,0.25);
+  border-radius: 35px;
+  padding: 3vh 40px;
+  box-shadow: 0 20px 45px rgba(74,86,68,0.25);
   display: flex;
   flex-direction: column;
   justify-content: center;
+  height: 100%;
+}
+
+.alert-card h3 {
+  font-size: 20px;
+  font-weight: 900;
+  margin-bottom: 5px;
+}
+
+.alert-card p {
+  opacity: 0.8;
+  font-size: 15px;
+  margin-bottom: 20px;
+  line-height: 1.5;
 }
 
 .alert-card button {
-  margin-top: 12px;
   background: rgba(255,255,255,0.15);
   border: none;
-  padding: 10px;
-  border-radius: 14px;
+  padding: 14px;
+  border-radius: 20px;
   color: white;
-  font-weight: bold;
+  font-weight: 900;
   cursor: pointer;
   transition: 0.3s;
+  font-size: 16px;
 }
 
 .alert-card button:hover {
   background: rgba(255,255,255,0.25);
+  transform: translateY(-2px);
 }
-
 </style>
