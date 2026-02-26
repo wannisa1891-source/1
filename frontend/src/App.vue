@@ -48,9 +48,15 @@ onMounted(() => {
     <Sidebar 
       :activeMenu="activeMenu" 
       :collapsed="isSidebarCollapsed"
+<<<<<<< HEAD
       @change-menu="(menu) => activeMenu = menu" 
        @logout="isLoggedIn = false"
       @toggle-collapse="(val) => isSidebarCollapsed = val" 
+=======
+      @change-menu="activeMenu = $event" 
+      @logout="isLoggedIn = false"
+      @toggle-collapse="isSidebarCollapsed = $event" 
+>>>>>>> b30d892a44b5bf844bb0ad9a406da21edf96a19c
     />
 
     <main 
@@ -60,6 +66,7 @@ onMounted(() => {
       <Dashboard 
         v-if="activeMenu === 'dashboard'" 
         :employees="employees" 
+        @change-menu="activeMenu = $event"
       />
 
       <EmployeeList 
@@ -101,20 +108,36 @@ html, body, #app {
   width: 100%;
   height: 100%;
   font-family: 'Sarabun', sans-serif;
+<<<<<<< HEAD
   background: #F5F4F1;
   overflow-x: hidden;
+=======
+  background: #F5F4F1;   
+  overflow-x: hidden; 
+>>>>>>> b30d892a44b5bf844bb0ad9a406da21edf96a19c
 }
 
 /* ===== Layout หลัก ===== */
 .system-container {
+<<<<<<< HEAD
   display: flex;
   width: 100%;
+=======
+  /* 🌟 ลบ display: flex ออก เพื่อไม่ให้ตีกับระบบ Sidebar ที่ลอยอยู่ */
+  width: 100%; 
+>>>>>>> b30d892a44b5bf844bb0ad9a406da21edf96a19c
   min-height: 100vh;
 }
 
 /* ===== Main Content ===== */
 .main-content-view {
+<<<<<<< HEAD
   flex: 1;              /* ⭐ ใช้ flex อย่างเดียว */
+=======
+  margin-left: 280px; 
+  /* 🌟 เปลี่ยนจาก 100vw เป็น 100% เพื่อป้องกันปัญหาหน้าจอเพี้ยนเวลาเกิดแถบเลื่อน */
+  width: calc(100% - 280px); 
+>>>>>>> b30d892a44b5bf844bb0ad9a406da21edf96a19c
   min-height: 100vh;
   transition: 0.35s ease;
   background: #F5F4F1;
@@ -122,7 +145,18 @@ html, body, #app {
   overflow: auto;
 }
 
+<<<<<<< HEAD
 /* ===== Placeholder ===== */
+=======
+/* เมื่อ Sidebar ย่อ */
+.main-content-view.expanded {
+  margin-left: 85px;
+  /* 🌟 คำนวณใหม่ตอน Sidebar หดตัว */
+  width: calc(100% - 85px); 
+}
+
+/* ===== Placeholder Page ===== */
+>>>>>>> b30d892a44b5bf844bb0ad9a406da21edf96a19c
 .placeholder-page {
   background: white;
   padding: 40px;
