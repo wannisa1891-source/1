@@ -1,15 +1,18 @@
 <template>
   <div class="login-full-page">
-    <div class="login-box-design">
-      <img src="https://cdn-icons-png.flaticon.com/512/3063/3063176.png" class="login-logo">
-      <h2>HOSPITAL HRM</h2>
-      
-      <div class="input-group">
-        <input v-model="username" placeholder="ชื่อผู้ใช้งาน">
-        <input v-model="password" type="password" placeholder="รหัสผ่าน">
-      </div>
+    <div class="bear-card">
+      <div class="bear-ears"></div>
+      <div class="login-box-design">
+        <img src="https://cdn-icons-png.flaticon.com/512/3063/3063176.png" class="login-logo">
+        <h2 class="system-title">HOSPITAL HRM</h2>
+        
+        <div class="input-group">
+          <input v-model="username" placeholder="admin" class="bear-input">
+          <input v-model="password" type="password" placeholder="••••" class="bear-input">
+        </div>
 
-      <button @click="handleLogin" class="btn-login-navy">เข้าสู่ระบบ</button>
+        <button @click="handleLogin" class="btn-login-sage">เข้าสู่ระบบ</button>
+      </div>
     </div>
   </div>
 </template>
@@ -22,7 +25,7 @@ const username = ref('')
 const password = ref('')
 
 const handleLogin = () => {
-  // ตรวจสอบข้อมูลเหมือนเดิมที่คุณตั้งค่าไว้
+  // ตรวจสอบข้อมูลตามที่คุณ Wannisa ตั้งค่าไว้
   if (username.value === 'admin' && password.value === '1234') {
     emit('login-success')
   } else {
@@ -32,42 +35,83 @@ const handleLogin = () => {
 </script>
 
 <style scoped>
-/* 🎨 พื้นหลังสีครีมเบจเพื่อให้เข้ากับหน้า Dashboard */
+/* 🎨 1. ล็อคหน้าจอให้เต็ม Viewport และทับทุกอย่าง (รวมถึงขอบดำ Sidebar) */
 .login-full-page { 
+  position: fixed; /* 🌟 บังคับให้หลุดจากโครงสร้าง Grid/Flex ของ App.vue เพื่อลบขอบดำ */
+  top: 0;
+  left: 0;
   height: 100vh; 
+  width: 100vw;
+  z-index: 9999; /* 🌟 มั่นใจว่าอยู่บนสุดแน่นอน */
   display: flex; 
   justify-content: center; 
   align-items: center; 
-  background-color: #F4F3F0; /* */
+  background-color: #F2F2F2 !important; /* สีเทานวลตามต้นฉบับ */
   font-family: 'Sarabun', sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
-/* 📦 กล่อง Login แบบขอบมนจัดๆ (Bento Style) */
-.login-box-design { 
+/* 🐻 2. bear-card: จัดกึ่งกลางเป๊ะ */
+.bear-card {
+  position: relative;
   width: 100%;
-  max-width: 450px; 
-  padding: 60px 45px; 
-  border-radius: 50px; /* */
-  background: white;
-  text-align: center; 
-  box-shadow: 0 20px 60px rgba(0,0,0,0.03); /* */
+  max-width: 420px;
   display: flex;
   flex-direction: column;
-  align-items: center; /* 🌟 จัดกึ่งกลางแนวนอนทุกอย่างในกล่อง */
+  align-items: center;
 }
 
-/* 🖼️ จัดโลโก้ให้อยู่ตรงกลาง */
+/* 👂 3. หูหมี: สีครีมขอบมนและลายในหูสีน้ำตาล */
+.bear-ears::before,
+.bear-ears::after {
+  content: "";
+  position: absolute;
+  top: -40px; 
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #EFE9D9; /* สีขาวครีม */
+  z-index: 1;
+}
+
+/* ลายในหูสีน้ำตาลเข้ม */
+.bear-ears::before {
+  left: 15px;
+  background: radial-gradient(circle, #8D5B3E 42%, #EFE9D9 43%); 
+}
+
+.bear-ears::after {
+  right: 15px;
+  background: radial-gradient(circle, #8D5B3E 42%, #EFE9D9 43%);
+}
+
+/* 🐻 4. ตัวใบหน้าหมี: ทรงป่องๆ สีขาวครีม */
+.login-box-design { 
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  padding: 60px 45px; 
+  border-radius: 80px 80px 115px 115px; /* ปรับทรงให้เหมือนรูปเป๊ะ */
+  background: #EFE9D9; 
+  text-align: center; 
+  box-shadow: 0 25px 50px rgba(0,0,0,0.06); 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .login-logo { 
-  width: 100px;
-  height: auto;
-  display: block;
-  margin: 0 auto 25px auto; /* 🌟 จัดกึ่งกลางเป๊ะด้วย margin auto */
+  width: 95px;
+  margin-bottom: 15px;
 }
 
-.login-box-design h2 {
-  font-weight: 900;
-  color: #1A1A1A;
+.system-title {
+  font-weight: 800;
+  color: #444;
   margin-bottom: 35px;
+  font-size: 1.2rem;
   letter-spacing: 1px;
 }
 
@@ -75,30 +119,29 @@ const handleLogin = () => {
   width: 100%;
 }
 
-/* ⌨️ ช่อง Input แบบนุ่มๆ */
-.login-box-design input { 
+/* ⌨️ 5. ช่อง Input สีเทาฟ้า (Grey Blue) */
+.bear-input { 
   width: 100%; 
   padding: 18px 25px; 
   margin-bottom: 15px; 
-  border-radius: 20px; 
-  border: 1px solid #F0EFEA; 
-  background-color: #F8F7F2; 
+  border-radius: 20px;
+  border: none; 
+  background-color: #BCC3D1; /* สีตามภาพ */
   box-sizing: border-box; 
-  font-size: 16px;
   outline: none;
-  transition: all 0.3s ease;
+  font-size: 16px;
+  color: #333;
 }
 
-.login-box-design input:focus {
-  border-color: #4D5B4A;
-  background-color: #ffffff;
+.bear-input::placeholder {
+  color: #f8f8f8;
 }
 
-/* 🔘 ปุ่มกดสีเดียวกับ Dashboard */
-.btn-login-navy { 
+/* 🔘 6. ปุ่มล็อกอินสีเขียวขี้ม้า */
+.btn-login-sage { 
   width: 100%; 
   padding: 18px; 
-  background: #4D5B4A; /* สี Sage Green ตามที่คุณชอบ */
+  background: #4A5644; /* สีเขียว Dark Olive */
   color: white; 
   border: none; 
   border-radius: 20px; 
@@ -107,12 +150,13 @@ const handleLogin = () => {
   font-size: 18px;
   margin-top: 10px;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 25px rgba(77, 91, 74, 0.2);
+  box-shadow: 0 10px 20px rgba(74, 86, 68, 0.2);
 }
 
-.btn-login-navy:hover {
-  background: #3D4B3A;
-  transform: translateY(-3px);
-  box-shadow: 0 15px 30px rgba(77, 91, 74, 0.3);
+.btn-login-sage:hover {
+  background: #3A4634;
+  transform: translateY(-2px);
 }
+
+
 </style>

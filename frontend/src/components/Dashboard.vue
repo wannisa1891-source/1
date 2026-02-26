@@ -101,108 +101,62 @@ defineProps(['employees'])
 </script>
 
 <style scoped>
-/* 🎨 1. พื้นฐานและสี (Soft Cream & Minimal) */
-.bento-dashboard-wrapper {
-  flex-grow: 1;
-  width: 100%;
-  min-height: 100vh;
-  background-color: #F4F3F0; /* สีพื้นหลังเบจครีม */
-  padding: 40px;
-  box-sizing: border-box;
-  overflow-y: auto;
-}
-
-.bento-container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* 🌟 2. Header Style */
-.bento-header {
+/* 🎨 1. ล็อคความสูงให้พอดีหน้าจอ และห้ามเลื่อน (No Scroll) */
+.min-h-screen {
+  height: 100vh; /* ล็อคความสูงเท่าขนาดหน้าจอพอดี */
+  overflow: hidden; /* 🌟 ปิดแถบเลื่อน */
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 40px;
-}
-.welcome-text h1 { font-size: 28px; font-weight: 800; color: #1a1a1a; margin: 0; }
-.welcome-text p { color: #64748b; margin: 5px 0 0; }
-
-.header-actions { display: flex; gap: 20px; align-items: center; }
-.search-box-bento {
-  background: white;
-  padding: 10px 20px;
-  border-radius: 50px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-  display: flex; gap: 10px;
-}
-.search-box-bento input { border: none; outline: none; background: transparent; }
-.icon-btn { background: white; border: none; padding: 10px; border-radius: 50%; cursor: pointer; }
-.icon-btn-profile { background: #1a1a1a; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-weight: bold; }
-
-/* 📊 3. Grid Layout (Bento Style) */
-.bento-grid-stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin-bottom: 20px;
+  flex-direction: column;
 }
 
-.stat-card-bento, .analysis-card-bento, .action-card-bento, .alert-card-bento {
-  background: white;
-  border-radius: 35px; /* ขอบมนจัดๆ ตามรูปตัวอย่าง */
-  padding: 30px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02); /* เงาบางมากๆ */
-  transition: transform 0.3s ease;
+.max-w-7xl {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 🌟 กระจายข้อมูลให้เต็มหน้าจอพอดี */
+  padding-bottom: 20px;
 }
 
-.stat-card-bento:hover { transform: translateY(-5px); }
-
-.card-top { display: flex; justify-content: space-between; margin-bottom: 15px; }
-.stat-label { color: #64748b; font-weight: 600; font-size: 14px; }
-.stat-value { font-size: 32px; font-weight: 800; margin: 0; color: #1a1a1a; }
-.stat-value span { font-size: 16px; color: #94a3b8; font-weight: 400; }
-
-/* 🌑 Dark Card */
-.stat-card-bento.dark-theme { background: #4D5B4A; color: white; } /* สีเขียวหม่น Sage Green */
-.text-white { color: white !important; }
-
-/* 🍩 Analysis Section */
-.bento-grid-analysis {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 20px;
-  margin-bottom: 20px;
+/* 🌟 2. ปรับระยะห่าง Header ให้เล็กลง */
+header {
+  margin-bottom: 20px !important;
 }
 
-.card-title-bento { font-size: 18px; color: #1a1a1a; margin-bottom: 25px; }
-
-.chart-flex-bento { display: flex; align-items: center; gap: 30px; justify-content: space-around; }
-.donut-visual {
-  width: 140px; height: 140px; border-radius: 50%;
-  background: conic-gradient(#4D5B4A 0% 60%, #C5A073 60% 85%, #E2E8F0 85% 100%);
-  display: flex; align-items: center; justify-content: center;
-}
-.donut-inner { width: 100px; height: 100px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-
-.bar-visual-bento { display: flex; align-items: flex-end; gap: 15px; height: 150px; justify-content: center; }
-.bar-item { width: 35px; background: #E2E8F0; border-radius: 10px; transition: 0.3s; }
-.bar-item.dark { background: #4D5B4A; }
-
-.bento-grid-footer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+/* 📊 3. ปรับขนาดการ์ดสถิติให้กระชับขึ้น */
+.grid-cols-3 {
+  gap: 15px !important;
+  margin-bottom: 15px !important;
 }
 
-.list-item-bento { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F1F5F9; font-weight: 600; }
-.badge-mini { background: #F1F5F9; padding: 4px 12px; border-radius: 10px; font-size: 12px; }
-.btn-action-bento { width: 100%; margin-top: 15px; padding: 12px; border-radius: 15px; border: 1px solid #E2E8F0; background: white; cursor: pointer; font-weight: bold; transition: 0.2s; }
-.btn-action-bento:hover { background: #F8F9FA; }
+.bg-white.p-8 {
+  padding: 20px 25px !important; /* ลด padding เพื่อประหยัดพื้นที่ */
+  border-radius: 30px !important;
+}
 
-/* ✨ Animations */
+.text-4xl {
+  font-size: 2rem !important; /* ปรับขนาดตัวเลขให้เล็กลงเล็กน้อย */
+}
+
+/* 🍩 4. ปรับส่วนกราฟและรายการอนุมัติ */
+.grid-cols-2 {
+  gap: 15px !important;
+  margin-bottom: 15px !important;
+}
+
+.p-10 {
+  padding: 20px 25px !important; /* ลด padding ของการ์ดใหญ่ */
+  border-radius: 30px !important;
+}
+
+/* 5. ปรับความสูงกราฟแท่งให้เล็กลงเพื่อให้พอดีหน้าเดียว */
+.h-40 {
+  height: 120px !important;
+}
+
+/* ✨ แอนิเมชันตอนโหลด */
 .fade-in { animation: fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 </style>
