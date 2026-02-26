@@ -1,96 +1,103 @@
 <template>
-  <div class="min-h-screen w-full bg-[#F4F3F0] p-10 font-['Sarabun'] overflow-y-auto">
-    <div class="max-w-7xl mx-auto">
-      
-      <header class="flex justify-between items-center mb-10">
+  <div class="dashboard-wrapper">
+    <div class="dashboard-content">
+
+      <!-- HEADER -->
+      <header class="dashboard-header">
         <div>
-          <h1 class="text-3xl font-black text-gray-800">สวัสดีครับ, คุณ Wanwisa! 👋</h1>
-          <p class="text-gray-500">ยินดีต้อนรับเข้าสู่ระบบจัดการบุคลากรโรงพยาบาล</p>
+          <h1>สวัสดีครับ, คุณ Wanwisa 👋</h1>
+          <p>ยินดีต้อนรับเข้าสู่ระบบจัดการบุคลากรโรงพยาบาลชะอำ</p>
         </div>
-        <div class="flex gap-4 items-center">
-          <div class="bg-white px-5 py-2 rounded-full shadow-sm flex items-center gap-2">
-            🔍 <input type="text" placeholder="ค้นหาข้อมูล..." class="outline-none bg-transparent">
+
+        <div class="header-right">
+          <div class="search-box">
+            <span>🔍</span>
+            <input type="text" placeholder="ค้นหาข้อมูลบุคลากร..." />
           </div>
-          <div class="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center font-bold">W</div>
+          <div class="profile">W</div>
         </div>
       </header>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        
-        <div class="bg-white p-8 rounded-[40px] shadow-[0_10px_40px_rgba(0,0,0,0.02)] transition-all hover:scale-105 duration-300">
-          <div class="flex justify-between items-start mb-6">
-            <div class="bg-[#F8F7F2] p-4 rounded-2xl text-2xl">👥</div>
-            <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Total Staff</span>
+      <!-- STATS -->
+      <section class="stats-grid">
+        <div class="card stat">
+          <div class="card-top">
+            <span class="icon">👥</span>
+            <span class="label">Total Staff</span>
           </div>
-          <p class="text-gray-500 font-medium text-sm">บุคลากรทั้งหมด</p>
-          <h2 class="text-4xl font-black text-[#1A1A1A] mt-1">
-            {{ employees.length }} <span class="text-lg font-normal text-gray-400">คน</span>
-          </h2>
+          <div class="value">
+            {{ employees?.length || 0 }}
+            <span>คน</span>
+          </div>
         </div>
 
-        <div class="bg-white p-8 rounded-[40px] shadow-[0_10px_40px_rgba(0,0,0,0.02)]">
-          <div class="flex justify-between items-start mb-6">
-            <div class="bg-[#F8F7F2] p-4 rounded-2xl text-2xl">📉</div>
-            <span class="text-xs font-bold uppercase tracking-wider text-gray-400">On Leave</span>
+        <div class="card stat">
+          <div class="card-top">
+            <span class="icon">📉</span>
+            <span class="label">On Leave</span>
           </div>
-          <p class="text-gray-500 font-medium text-sm">ลางานวันนี้</p>
-          <h2 class="text-4xl font-black text-[#1A1A1A] mt-1">0 <span class="text-lg font-normal text-gray-400">คน</span></h2>
+          <div class="value">
+            0 <span>คน</span>
+          </div>
         </div>
 
-        <div class="bg-white p-8 rounded-[40px] shadow-[0_10px_40px_rgba(0,0,0,0.02)]">
-          <div class="flex justify-between items-start mb-6">
-            <div class="bg-[#F8F7F2] p-4 rounded-2xl text-2xl">📊</div>
-            <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Vacant</span>
+        <div class="card stat">
+          <div class="card-top">
+            <span class="icon">📊</span>
+            <span class="label">Vacant</span>
           </div>
-          <p class="text-gray-500 font-medium text-sm">อัตรากำลังว่าง</p>
-          <h2 class="text-4xl font-black text-[#1A1A1A] mt-1">0 <span class="text-lg font-normal text-gray-400">อัตรา</span></h2>
+          <div class="value">
+            0 <span>อัตรา</span>
+          </div>
         </div>
+      </section>
 
-
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-        <div class="bg-white p-10 rounded-[40px] shadow-[0_10px_40px_rgba(0,0,0,0.02)]">
-          <h4 class="font-bold text-gray-800 mb-8">สัดส่วนบุคลากรแยกตามวิชาชีพ</h4>
-          <div class="flex items-center justify-around">
-            <div class="w-40 h-40 rounded-full border-[15px] border-[#4D5B4A] flex items-center justify-center font-bold">วิชาชีพ</div>
-            <ul class="space-y-3">
-              <li class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#4D5B4A]"></span> พยาบาล 50%</li>
-              <li class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#C5A073]"></span> แพทย์ 10%</li>
-              <li class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-gray-200"></span> อื่นๆ 40%</li>
+      <!-- CHARTS -->
+      <section class="charts-grid">
+        <div class="card chart">
+          <h3>สัดส่วนบุคลากรแยกตามวิชาชีพ</h3>
+          <div class="chart-row">
+            <div class="donut"></div>
+            <ul class="legend">
+              <li><span class="dot sage"></span> พยาบาล 50%</li>
+              <li><span class="dot gold"></span> แพทย์ 10%</li>
+              <li><span class="dot gray"></span> อื่นๆ 40%</li>
             </ul>
           </div>
         </div>
 
-        <div class="bg-white p-10 rounded-[40px] shadow-[0_10px_40px_rgba(0,0,0,0.02)]">
-          <h4 class="font-bold text-gray-800 mb-8">แนวโน้มบุคลากรรายเดือน</h4>
-          <div class="flex items-end justify-between h-40 gap-3">
-            <div class="bg-gray-100 w-full rounded-2xl" style="height: 60%"></div>
-            <div class="bg-gray-100 w-full rounded-2xl" style="height: 40%"></div>
-            <div class="bg-[#4D5B4A] w-full rounded-2xl" style="height: 85%"></div>
-            <div class="bg-gray-100 w-full rounded-2xl" style="height: 55%"></div>
-            <div class="bg-[#C5A073] w-full rounded-2xl" style="height: 95%"></div>
+        <div class="card chart">
+          <h3>แนวโน้มบุคลากรรายเดือน</h3>
+          <div class="bars">
+            <div class="bar" style="height: 60%"></div>
+            <div class="bar" style="height: 40%"></div>
+            <div class="bar sage-bg" style="height: 85%"></div>
+            <div class="bar" style="height: 55%"></div>
+            <div class="bar gold-bg" style="height: 95%"></div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pb-10">
-        <div class="bg-white p-10 rounded-[40px] shadow-[0_10px_40px_rgba(0,0,0,0.02)] border border-[#F0EFEA]">
-          <h4 class="font-bold text-gray-800 mb-6">📌 รายการที่ต้องอนุมัติ</h4>
-          <div class="flex justify-between py-3 border-b border-gray-50 font-semibold">
-            <span>คำขอย้ายแผนก</span> <span class="bg-gray-100 px-3 py-1 rounded-lg text-xs">3 รายการ</span>
+      <!-- FOOTER -->
+      <section class="footer-grid">
+        <div class="card list-card">
+          <h3>📌 รายการที่ต้องอนุมัติ</h3>
+          <div class="list-row">
+            <span>คำขอย้ายแผนก</span>
+            <span class="badge">3 รายการ</span>
           </div>
-          <div class="flex justify-between py-3 font-semibold">
-            <span>ใบลาพักร้อน</span> <span class="bg-gray-100 px-3 py-1 rounded-lg text-xs">1 รายการ</span>
+          <div class="list-row">
+            <span>ใบลาพักร้อน</span>
+            <span class="badge">1 รายการ</span>
           </div>
         </div>
 
-        <div class="bg-[#4D5B4A] p-10 rounded-[40px] shadow-lg text-white">
-          <h4 class="font-bold mb-4">🔔 แจ้งเตือนระบบ</h4>
-          <p class="opacity-80 text-sm mb-6">ใบประกอบวิชาชีพใกล้หมดอายุใน 30 วัน</p>
-          <button class="w-full bg-white/10 hover:bg-white/20 py-3 rounded-2xl font-bold transition-all">ดูทั้งหมด</button>
+        <div class="alert-card">
+          <h3>🔔 แจ้งเตือนระบบ</h3>
+          <p>ใบประกอบวิชาชีพใกล้หมดอายุใน 30 วัน</p>
+          <button>ดูรายละเอียดทั้งหมด</button>
         </div>
-      </div>
+      </section>
 
     </div>
   </div>
@@ -101,62 +108,254 @@ defineProps(['employees'])
 </script>
 
 <style scoped>
-/* 🎨 1. ล็อคความสูงให้พอดีหน้าจอ และห้ามเลื่อน (No Scroll) */
-.min-h-screen {
-  height: 100vh; /* ล็อคความสูงเท่าขนาดหน้าจอพอดี */
-  overflow: hidden; /* 🌟 ปิดแถบเลื่อน */
+
+/* ===== Wrapper ===== */
+.dashboard-wrapper {
+  flex: 1;
+  width: 100%;
+  min-height: 100%;
+  padding: 28px 36px;   /* 🔥 ค่าบาลานซ์พอดี */
+  background: linear-gradient(135deg,#F5F4F1,#ECEBE6);
+  box-sizing: border-box;
+}
+
+.dashboard-content {
   display: flex;
   flex-direction: column;
+  gap: 28px;
 }
 
-.max-w-7xl {
-  height: 100%;
+/* ===== Header ===== */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-header h1 {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.dashboard-header p {
+  font-size: 14px;
+  color: #777;
+  margin-top: 4px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1px solid #E5E5E5;
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: Sarabun;
+}
+
+.profile {
+  width: 40px;
+  height: 40px;
+  background: #4A5644;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== Cards ===== */
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+}
+
+/* ===== Stats ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 20px;
+}
+
+.stat .card-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.stat .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #BBB;
+  font-weight: bold;
+}
+
+.value {
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.value span {
+  font-size: 14px;
+  color: #999;
+  margin-left: 5px;
+}
+
+/* ===== Charts ===== */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 20px;
+}
+
+.chart h3 {
+  font-size: 15px;
+  margin-bottom: 18px;
+}
+
+.chart-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.donut {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #4A5644 0% 50%,
+    #C5A073 50% 60%,
+    #EFEFEF 60% 100%
+  );
+  position: relative;
+}
+
+.donut::after {
+  content: "";
+  position: absolute;
+  width: 75px;
+  height: 75px;
+  background: white;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.legend {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.sage { background: #4A5644; }
+.gold { background: #C5A073; }
+.gray { background: #EFEFEF; }
+
+.bars {
+  height: 130px;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.bar {
+  width: 26px;
+  background: #EAEAEA;
+  border-radius: 12px;
+  transition: 0.3s;
+}
+
+.bar:hover {
+  transform: scaleY(1.05);
+}
+
+.sage-bg { background: #4A5644; }
+.gold-bg { background: #C5A073; }
+
+/* ===== Footer ===== */
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.list-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #F2F2F2;
+  font-weight: 600;
+}
+
+.badge {
+  background: #F0F0F0;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  color: #777;
+}
+
+.alert-card {
+  background: #4A5644;
+  color: white;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 20px 40px rgba(74,86,68,0.25);
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* 🌟 กระจายข้อมูลให้เต็มหน้าจอพอดี */
-  padding-bottom: 20px;
+  justify-content: center;
 }
 
-/* 🌟 2. ปรับระยะห่าง Header ให้เล็กลง */
-header {
-  margin-bottom: 20px !important;
+.alert-card button {
+  margin-top: 12px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  padding: 10px;
+  border-radius: 14px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-/* 📊 3. ปรับขนาดการ์ดสถิติให้กระชับขึ้น */
-.grid-cols-3 {
-  gap: 15px !important;
-  margin-bottom: 15px !important;
+.alert-card button:hover {
+  background: rgba(255,255,255,0.25);
 }
 
-.bg-white.p-8 {
-  padding: 20px 25px !important; /* ลด padding เพื่อประหยัดพื้นที่ */
-  border-radius: 30px !important;
-}
-
-.text-4xl {
-  font-size: 2rem !important; /* ปรับขนาดตัวเลขให้เล็กลงเล็กน้อย */
-}
-
-/* 🍩 4. ปรับส่วนกราฟและรายการอนุมัติ */
-.grid-cols-2 {
-  gap: 15px !important;
-  margin-bottom: 15px !important;
-}
-
-.p-10 {
-  padding: 20px 25px !important; /* ลด padding ของการ์ดใหญ่ */
-  border-radius: 30px !important;
-}
-
-/* 5. ปรับความสูงกราฟแท่งให้เล็กลงเพื่อให้พอดีหน้าเดียว */
-.h-40 {
-  height: 120px !important;
-}
-
-/* ✨ แอนิเมชันตอนโหลด */
-.fade-in { animation: fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 </style>
