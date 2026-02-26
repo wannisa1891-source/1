@@ -39,7 +39,7 @@ onMounted(() => { if (isLoggedIn.value) fetchEmployees() })
     <Sidebar 
       :activeMenu="activeMenu" 
       @change-menu="(menu) => activeMenu = menu" 
-      @logout="isLoggedIn = false"
+       @logout="isLoggedIn = false"
       @toggle-collapse="(val) => isSidebarCollapsed = val" 
     />
 
@@ -63,30 +63,47 @@ onMounted(() => { if (isLoggedIn.value) fetchEmployees() })
 </template>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap');
-body { 
-  margin: 0; 
-  font-family: 'Sarabun', sans-serif; 
-  background: #333333; /* ✅ ถมสีเทาเข้มตั้งแต่ข้างนอกสุดตามเรพ */
-  overflow: hidden; /* ❌ ฆ่าแถบเลื่อนตัวนอกสุดทิ้ง */
+body {
+  margin: 0;
+  background: #333333;
 }
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap');
 
-.system-container { display: flex; height: 100vh; background: #333333; }
-
-.main-content-view { 
-  /* 💡 ใช้ transition เพื่อให้ขยับตาม Sidebar นิ่มๆ */
-  margin-left: 280px; 
-  flex: 1; 
-  display: flex; 
-  flex-direction: column; 
-  height: 100vh; 
-  box-sizing: border-box; 
-  transition: all 0.35s ease;
+/* รีเซ็ตพื้นฐาน */
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 'Sarabun', sans-serif;
   background: #333333;
 }
 
-/* 💡 เมื่อ Sidebar ย่อ ตัวเนื้อหาจะขยับมาชิดขอบเหลือแค่ 85px */
-.main-content-view.expanded { margin-left: 85px; }
+/* Layout หลัก */
+.system-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
 
-.placeholder-page { background: white; padding: 40px; margin: 20px; border-radius: 30px; text-align: center; }
+/* 🔥 เอา margin-left ทิ้งทั้งหมด */
+.main-content-view {
+  flex: 1;                 /* สำคัญมาก */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  transition: all 0.35s ease;
+  background: #333333;
+  overflow: auto;          /* ให้ scroll ในนี้แทน */
+}
+
+/* หน้า placeholder */
+.placeholder-page {
+  background: white;
+  padding: 40px;
+  margin: 20px;
+  border-radius: 30px;
+  text-align: center;
+}
 </style>
