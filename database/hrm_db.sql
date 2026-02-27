@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3307
--- Generation Time: Feb 23, 2026 at 08:30 AM
+-- Generation Time: Feb 27, 2026 at 03:24 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -63,6 +63,13 @@ CREATE TABLE `tbl_departments` (
   `capacity` int(11) DEFAULT 0 COMMENT 'อัตรากำลัง'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `tbl_departments`
+--
+
+INSERT INTO `tbl_departments` (`dept_id`, `dept_name`, `sub_dept`, `head_emp_id`, `capacity`) VALUES
+('D001', 'ฝ่ายการพยาบาล', 'วอร์ดอายุรกรรม', NULL, 10);
+
 -- --------------------------------------------------------
 
 --
@@ -100,6 +107,14 @@ CREATE TABLE `tbl_employees` (
   `base_salary` decimal(10,2) NOT NULL COMMENT 'เงินเดือนพื้นฐาน',
   `end_date` date DEFAULT NULL COMMENT 'วันที่สิ้นสุดงาน'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_employees`
+--
+
+INSERT INTO `tbl_employees` (`emp_id`, `prefix`, `first_name_th`, `last_name_th`, `first_name_en`, `last_name_en`, `citizen_id`, `birth_date`, `address_no`, `moo`, `village`, `soi`, `road`, `province_id`, `district_id`, `sub_district_id`, `zipcode`, `phone`, `email`, `emp_type`, `dept_id`, `pos_id`, `start_date`, `profile_img`, `status`, `position_no`, `position_level`, `base_salary`, `end_date`) VALUES
+('122222', 'นพ.', '1111', '', NULL, NULL, '1111', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', 'D001', 'P001', '2026-02-25', NULL, 'Active', NULL, NULL, 0.00, NULL),
+('EMP001', 'นางสาว', 'วรรณวิสา', 'ทดสอบระบบ', NULL, NULL, '1234567890123', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-234-5678', NULL, 'ข้าราชการ', 'D001', 'P001', '2026-01-01', NULL, 'Active', NULL, NULL, 25000.00, NULL);
 
 -- --------------------------------------------------------
 
@@ -174,6 +189,13 @@ CREATE TABLE `tbl_positions` (
   `pos_name` varchar(100) NOT NULL COMMENT 'ชื่อตำแหน่ง',
   `pos_type` varchar(50) DEFAULT NULL COMMENT 'ประเภทตำแหน่ง'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_positions`
+--
+
+INSERT INTO `tbl_positions` (`pos_id`, `pos_name`, `pos_type`) VALUES
+('P001', 'พยาบาลวิชาชีพ', 'สายงานหลัก');
 
 -- --------------------------------------------------------
 
