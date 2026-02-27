@@ -23,7 +23,7 @@ const handleLoginSuccess = () => {
 }
 const fetchEmployees = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/api/employees')
+    const response = await axios.get('http://localhost:30ื00/api/employees')
     
     // 📌 เพิ่มบรรทัดนี้ เพื่อดูว่า API ส่งข้อมูลอะไรมาให้
     console.log('✅ ข้อมูลพนักงานที่ดึงได้:', response.data)
