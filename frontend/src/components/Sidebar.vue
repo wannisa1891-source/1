@@ -12,7 +12,7 @@
           <div class="logo-icon">➕</div>
           <div class="logo-text" v-if="!isCollapsed">
             <h2>HRM</h2>
-            <small>HOSPITAL SYSTEM</small>
+            <small> HOSPITAL SYSTEM</small>
           </div>
         </div>
       </div>

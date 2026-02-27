@@ -25,10 +25,12 @@ const handleLoginSuccess = () => {
 
 const fetchEmployees = async () => {
   try {
+    // 🌟 ดึงข้อมูลจาก API
     const response = await axios.get('http://localhost:3000/api/employees')
-    employees.value = response.data.employees || response.data
+    // 🌟 ตรวจสอบโครงสร้างข้อมูลให้ถูกต้องเพื่อให้ตัวเลขขึ้น 2 คน
+    employees.value = response.data.employees || response.data || []
   } catch (error) {
-    console.error(error)
+    console.error('Error fetching employees:', error)
   }
 }
 
@@ -44,7 +46,6 @@ onMounted(() => {
   />
 
   <div v-else class="system-container">
-
     <Sidebar 
       :activeMenu="activeMenu" 
       :collapsed="isSidebarCollapsed"
@@ -68,7 +69,7 @@ onMounted(() => {
         :employees="employees" 
       />
 
-      <OrgStructure v-else-if="activeMenu === 'org-struct'" />
+      <OrgStructure v-else-if="activeMenu === 'org-struct'" :employees="employees" />
       <Transfer v-else-if="activeMenu === 'transfer'" />
       <License v-else-if="activeMenu === 'license'" />
       <Schedule v-else-if="activeMenu === 'schedule'" />
@@ -79,57 +80,52 @@ onMounted(() => {
         <h2>กำลังพัฒนาหน้า: {{ activeMenu }}</h2>
       </section>
     </main>
-
   </div>
 </template>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap');
 
-/* ===== Reset ===== */
+/* ===== Reset & Base ===== */
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html, body, #app {
   width: 100%;
   height: 100%;
-  margin: 0;
-  padding: 0;
+  background-color: #f0f4f8; /* 🌟 สีพื้นหลังนวลๆ โทน Claymorphism */
 }
 
 body {
   font-family: 'Sarabun', sans-serif;
-  background: #F5F4F1;   
   overflow-x: hidden; 
 }
 
 /* ===== Layout หลัก ===== */
 .system-container {
-  /* 🌟 ลบ display: flex ออก เพื่อไม่ให้ตีกับระบบ Sidebar ที่ลอยอยู่ */
+  display: flex;
   width: 100%; 
   min-height: 100vh;
-  background: #F5F4F1; 
 }
 
 /* ===== Main Content ===== */
 .main-content-view {
+  flex: 1; /* 🌟 ใช้ flex เพื่อให้ Dashboard ยืดเต็มพื้นที่อัตโนมัติ */
   margin-left: 280px; 
-  /* 🌟 เปลี่ยนจาก 100vw เป็น 100% เพื่อป้องกันปัญหาหน้าจอเพี้ยนเวลาเกิดแถบเลื่อน */
-  width: calc(100% - 280px); 
   min-height: 100vh;
-  transition: all 0.35s ease;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   background: transparent; 
   padding: 0;
   display: flex;
   flex-direction: column;
 }
 
-/* เมื่อ Sidebar ย่อ */
+/* เมื่อ Sidebar ย่อ (Collapsed) */
 .main-content-view.expanded {
   margin-left: 85px;
-  /* 🌟 คำนวณใหม่ตอน Sidebar หดตัว */
-  width: calc(100% - 85px); 
 }
 
 /* ===== Placeholder Page ===== */
@@ -137,8 +133,8 @@ body {
   background: white;
   padding: 40px;
   margin: 40px;
-  border-radius: 24px;
+  border-radius: 35px; /* 🌟 ขอบมนพิเศษตามสไตล์ที่ชอบ */
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  box-shadow: 20px 20px 40px #d1d9e6, -20px -20px 40px #ffffff; /* 🌟 เงานูนสไตล์ Clay */
 }
 </style>
