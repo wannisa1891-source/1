@@ -78,7 +78,7 @@
                 <select v-model="newEmp.prefix" class="input-modern">
                   <option value="">[ เลือก 🔽 ]</option>
                   <option value="นพ.">นพ.</option><option value="พญ.">พญ.</option>
-                  <option value="นาย">นาย</option><option value="นางสาว">นางสาว</option>
+                  <option value="นาย">นาย</option><option value="นางสาว">นางสาว</option><option value="นาง">นาง</option>
                 </select>
               </div>
               <div class="input-wrapper"><label>ชื่อ (ไทย):</label><input v-model="newEmp.first_name_th" type="text" class="input-modern"></div>
@@ -94,8 +94,40 @@
             <div class="input-wrapper"><label>รหัสพนักงาน:</label><input v-model="newEmp.emp_id" type="text" class="input-modern" placeholder="EMP00x"></div>
             <div class="input-wrapper"><label>วันที่เริ่มงาน:</label><input v-model="newEmp.start_date" type="date" class="input-modern"></div>
             <div class="input-wrapper"><label>ประเภทการจ้าง:</label><input v-model="newEmp.emp_type" type="text" class="input-modern" placeholder="ข้าราชการ"></div>
-            <div class="input-wrapper"><label>แผนก (ID):</label><input v-model="newEmp.dept_id" type="text" class="input-modern" placeholder="D001"></div>
-            <div class="input-wrapper"><label>ตำแหน่ง (ID):</label><input v-model="newEmp.pos_id" type="text" class="input-modern" placeholder="P001"></div>
+            
+            <div class="input-wrapper">
+              <label>กลุ่มงาน (แผนก):</label>
+              <select v-model="newEmp.dept_id" class="input-modern">
+                <option value="D001">กลุ่มงานการพยาบาล</option>
+                <option value="D002">กลุ่มงานการแพทย์</option>
+                <option value="D003">กลุ่มงานเภสัชกรรมฯ</option>
+                <option value="D004">กลุ่มงานทันตกรรม</option>
+                <option value="D005">กลุ่มงานเทคนิคการแพทย์</option>
+                <option value="D006">กลุ่มงานรังสีวิทยา</option>
+                <option value="D007">กลุ่มงานบริหารทั่วไป</option>
+                <option value="D008">กลุ่มงานเวชศาสตร์ฟื้นฟู</option>
+                <option value="D009">กลุ่มงานยุทธศาสตร์ฯ</option>
+                <option value="D010">กลุ่มงานโภชนาการ</option>
+              </select>
+            </div>
+
+            <div class="input-wrapper">
+              <label>ตำแหน่ง:</label>
+              <select v-model="newEmp.pos_id" class="input-modern">
+                <option value="P001">พยาบาลวิชาชีพ</option>
+                <option value="P002">นายแพทย์ / แพทย์หญิง</option>
+                <option value="P003">เภสัชกร</option>
+                <option value="P004">ทันตแพทย์</option>
+                <option value="P005">นักเทคนิคการแพทย์</option>
+                <option value="P006">นักรังสีการแพทย์</option>
+                <option value="P007">นักกายภาพบำบัด</option>
+                <option value="P008">นักจัดการงานทั่วไป</option>
+                <option value="P009">นักวิชาการคอมพิวเตอร์</option>
+                <option value="P010">พนักงานช่วยเหลือคนไข้</option>
+                <option value="P011">เจ้าพนักงานเวชสถิติ</option>
+              </select>
+            </div>
+
             <div class="input-wrapper"><label>เงินเดือน:</label><input v-model="newEmp.base_salary" type="number" class="input-modern"></div>
           </div>
         </div>
@@ -165,7 +197,6 @@ const saveEmployee = async () => {
 .premium-table { width: 100%; border-collapse: collapse; text-align: left; }
 .premium-table th { background: #f8fafc; color: #64748b; padding: 16px 20px; border-bottom: 2px solid #e2e8f0; }
 
-/* 💡 แก้ตรงนี้: ใส่สีให้ตัวอักษรในตาราง จะได้มองเห็นชัดๆ ไม่กลืนกับพื้นหลัง */
 .premium-table td { padding: 16px 20px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; color: #1e293b; font-weight: 600; }
 
 .avatar-circle { width: 45px; height: 45px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
