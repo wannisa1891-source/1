@@ -258,7 +258,7 @@ const saveEmployee = async () => {
 
 .input-wrapper { display: flex; align-items: center; gap: 10px; }
 .input-wrapper.full-width { grid-column: span 2; }
-.input-wrapper label { width: 160px; text-align: right; color: #475569; font-size: 14px; font-weight: 600; }
+.input-wrapper label { width: 160px; text-align: right; color: #ff001e; font-size: 14px; font-weight: 600; }
 .input-modern { flex: 1; padding: 8px 15px; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; font-family: inherit; color: #334155; transition: 0.3s; }
 .input-modern:focus { border-color: #c5a073; box-shadow: 0 0 0 3px rgba(197, 160, 115, 0.1); }
 
