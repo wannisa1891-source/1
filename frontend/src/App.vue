@@ -17,20 +17,20 @@ const isLoggedIn = ref(false)
 const employees = ref([])
 const activeMenu = ref('dashboard')
 const isSidebarCollapsed = ref(false)
-
 const handleLoginSuccess = () => {
   isLoggedIn.value = true
-  fetchEmployees()
+  fetchEmployees() // 🌟 สั่งให้ดึงข้อมูลทันทีที่ล็อกอินผ่าน
 }
-
 const fetchEmployees = async () => {
   try {
-    // 🌟 ดึงข้อมูลจาก API
     const response = await axios.get('http://localhost:3000/api/employees')
-    // 🌟 ตรวจสอบโครงสร้างข้อมูลให้ถูกต้องเพื่อให้ตัวเลขขึ้น 2 คน
+    
+    // 📌 เพิ่มบรรทัดนี้ เพื่อดูว่า API ส่งข้อมูลอะไรมาให้
+    console.log('✅ ข้อมูลพนักงานที่ดึงได้:', response.data)
+    
     employees.value = response.data.employees || response.data || []
   } catch (error) {
-    console.error('Error fetching employees:', error)
+    console.error('❌ Error fetching employees:', error)
   }
 }
 

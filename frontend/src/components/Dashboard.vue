@@ -1,3 +1,14 @@
+<script setup>
+import { defineProps } from 'vue';
+
+// ประกาศรับข้อมูล employees ที่ App.vue ส่งมาให้
+defineProps({
+  employees: {
+    type: Array,
+    default: () => []
+  }
+});
+</script>
 <template>
   <div class="dashboard-wrapper">
     <div class="bg-decoration"></div>
