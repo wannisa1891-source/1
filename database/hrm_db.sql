@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3307
--- Generation Time: Feb 27, 2026 at 03:24 AM
+-- Generation Time: Feb 27, 2026 at 05:11 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -68,7 +68,16 @@ CREATE TABLE `tbl_departments` (
 --
 
 INSERT INTO `tbl_departments` (`dept_id`, `dept_name`, `sub_dept`, `head_emp_id`, `capacity`) VALUES
-('D001', 'ฝ่ายการพยาบาล', 'วอร์ดอายุรกรรม', NULL, 10);
+('D001', 'ฝ่ายการพยาบาล', 'วอร์ดอายุรกรรม', NULL, 10),
+('D002', 'กลุ่มงานการแพทย์', NULL, NULL, 0),
+('D003', 'กลุ่มงานเภสัชกรรมและคุ้มครองผู้บริโภค', NULL, NULL, 0),
+('D004', 'กลุ่มงานทันตกรรม', NULL, NULL, 0),
+('D005', 'กลุ่มงานเทคนิคการแพทย์', NULL, NULL, 0),
+('D006', 'กลุ่มงานรังสีวิทยา', NULL, NULL, 0),
+('D007', 'กลุ่มงานบริหารทั่วไป', NULL, NULL, 0),
+('D008', 'กลุ่มงานเวชศาสตร์ฟื้นฟู', NULL, NULL, 0),
+('D009', 'กลุ่มงานยุทธศาสตร์และสารสนเทศทางการแพทย์', NULL, NULL, 0),
+('D010', 'กลุ่มงานโภชนาการ', NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -102,6 +111,7 @@ CREATE TABLE `tbl_employees` (
   `start_date` date NOT NULL COMMENT 'วันที่เริ่มงาน',
   `profile_img` varchar(255) DEFAULT NULL COMMENT 'รูปโปรไฟล์',
   `status` varchar(10) DEFAULT 'Active' COMMENT 'สถานะ',
+  `image_url` varchar(255) DEFAULT NULL,
   `position_no` varchar(20) DEFAULT NULL COMMENT 'เลขที่ตำแหน่ง',
   `position_level` varchar(30) DEFAULT NULL COMMENT 'ระดับตำแหน่ง',
   `base_salary` decimal(10,2) NOT NULL COMMENT 'เงินเดือนพื้นฐาน',
@@ -112,9 +122,12 @@ CREATE TABLE `tbl_employees` (
 -- Dumping data for table `tbl_employees`
 --
 
-INSERT INTO `tbl_employees` (`emp_id`, `prefix`, `first_name_th`, `last_name_th`, `first_name_en`, `last_name_en`, `citizen_id`, `birth_date`, `address_no`, `moo`, `village`, `soi`, `road`, `province_id`, `district_id`, `sub_district_id`, `zipcode`, `phone`, `email`, `emp_type`, `dept_id`, `pos_id`, `start_date`, `profile_img`, `status`, `position_no`, `position_level`, `base_salary`, `end_date`) VALUES
-('122222', 'นพ.', '1111', '', NULL, NULL, '1111', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', 'D001', 'P001', '2026-02-25', NULL, 'Active', NULL, NULL, 0.00, NULL),
-('EMP001', 'นางสาว', 'วรรณวิสา', 'ทดสอบระบบ', NULL, NULL, '1234567890123', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-234-5678', NULL, 'ข้าราชการ', 'D001', 'P001', '2026-01-01', NULL, 'Active', NULL, NULL, 25000.00, NULL);
+INSERT INTO `tbl_employees` (`emp_id`, `prefix`, `first_name_th`, `last_name_th`, `first_name_en`, `last_name_en`, `citizen_id`, `birth_date`, `address_no`, `moo`, `village`, `soi`, `road`, `province_id`, `district_id`, `sub_district_id`, `zipcode`, `phone`, `email`, `emp_type`, `dept_id`, `pos_id`, `start_date`, `profile_img`, `status`, `image_url`, `position_no`, `position_level`, `base_salary`, `end_date`) VALUES
+('0007', 'นพ.', '444444', '44555', NULL, NULL, '1234567891235', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', 'D009', 'P009', '2026-02-06', NULL, 'Active', NULL, NULL, NULL, 11.00, NULL),
+('1111111', 'นาง', '00000', '11111', NULL, NULL, '0123456789000', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', 'D010', 'P007', '2026-03-12', NULL, 'Active', NULL, NULL, NULL, 4.00, NULL),
+('122222', 'นพ.', '1111', '', NULL, NULL, '1111', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', 'D001', 'P001', '2026-02-25', NULL, 'Active', NULL, NULL, NULL, 0.00, NULL),
+('EMP001', 'นางสาว', 'วรรณวิสา', 'ทดสอบระบบ', NULL, NULL, '1234567890123', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-234-5678', NULL, 'ข้าราชการ', 'D001', 'P001', '2026-01-01', NULL, 'Active', NULL, NULL, NULL, 25000.00, NULL),
+('EMP003', 'นาย', '666', '667', NULL, NULL, '1234567891288', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', 'D001', 'P001', '2026-02-11', NULL, 'Active', NULL, NULL, NULL, 1000.00, NULL);
 
 -- --------------------------------------------------------
 
@@ -195,7 +208,17 @@ CREATE TABLE `tbl_positions` (
 --
 
 INSERT INTO `tbl_positions` (`pos_id`, `pos_name`, `pos_type`) VALUES
-('P001', 'พยาบาลวิชาชีพ', 'สายงานหลัก');
+('P001', 'พยาบาลวิชาชีพ', 'สายงานหลัก'),
+('P002', 'นายแพทย์ / แพทย์หญิง', NULL),
+('P003', 'เภสัชกร', NULL),
+('P004', 'ทันตแพทย์', NULL),
+('P005', 'นักเทคนิคการแพทย์', NULL),
+('P006', 'นักรังสีการแพทย์', NULL),
+('P007', 'นักกายภาพบำบัด', NULL),
+('P008', 'นักจัดการงานทั่วไป', NULL),
+('P009', 'นักวิชาการคอมพิวเตอร์', NULL),
+('P010', 'พนักงานช่วยเหลือคนไข้', NULL),
+('P011', 'เจ้าพนักงานเวชสถิติ', NULL);
 
 -- --------------------------------------------------------
 
