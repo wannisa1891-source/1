@@ -313,9 +313,14 @@ const newLeave = ref({
   end_date: '',
   reason: ''
 })
+// หา formatDate ของเดิมแล้วเปลี่ยนเป็นอันนี้
 const formatDate = (dateStr) => {
   if (!dateStr) return '-';
-  return dateStr.substring(0, 10); // ตัดเอาแค่ ปี-เดือน-วัน (10 ตัวแรก)
+  const d = new Date(dateStr);
+  // แสดงผลแบบ 04/03/26 (กะทัดรัดกว่าเดิมเยอะ)
+  return d.toLocaleDateString('th-TH', { 
+    day: '2-digit', month: '2-digit', year: '2-digit' 
+  });
 }
 /* ================= METHODS ================= */
 const fetchLeaves = async () => {
@@ -389,20 +394,21 @@ const filteredLeaves = computed(() => {
   })
 })
 
-// นับจำนวนคนลาป่วย (L01) ที่มีผลในวันนี้
+// นับจำนวนคนลาป่วย (L01) ที่ "อนุมัติแล้ว" และมีผลในวันนี้
 const sickTodayCount = computed(() => {
-  // 1. ดึงวันที่วันนี้ออกมาแค่ 10 หลักแรก (ปี-เดือน-วัน)
+  // 1. ดึงวันที่วันนี้ (รูปแบบ YYYY-MM-DD)
   const today = new Date().toISOString().split('T')[0]; 
   
   return leaves.value.filter(l => {
-    // 2. ตัดวันที่จากฐานข้อมูลให้เหลือ 10 หลักเหมือนกัน (ป้องกันเรื่องเวลาแถมมา)
+    // 2. ตัดวันที่จากข้อมูลใน Database ให้เหลือแค่ 10 หลัก (YYYY-MM-DD)
     const startDate = l.start_date ? l.start_date.substring(0, 10) : '';
     const endDate = l.end_date ? l.end_date.substring(0, 10) : '';
     
-    // 3. เช็คเงื่อนไข: ต้องเป็นลาป่วย (L01) และวันนี้ต้องอยู่ระหว่างวันที่เริ่มถึงวันที่จบ
+    // 3. เพิ่มเงื่อนไข l.status === 'Approved' เข้าไปด้วย
     return l.leave_type_id === 'L01' && 
            today >= startDate && 
-           today <= endDate;
+           today <= endDate &&
+           l.status === 'Approved'; // <--- ต้องได้รับการอนุมัติแล้วเท่านั้นถึงจะนับ
   }).length
 })
 
