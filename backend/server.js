@@ -114,6 +114,26 @@ app.post('/api/leaves', (req, res) => {
     });
 });
 
+// เปลี่ยนจาก UPDATE leaves เป็น UPDATE tbl_leaves
+app.put('/api/leaves/:id', (req, res) => {
+    const leaveId = req.params.id;
+    const { status } = req.body;
+
+    // แก้ไขตรงนี้ครับ เติม tbl_ เข้าไปข้างหน้า leaves
+    const sql = "UPDATE tbl_leaves SET status = ? WHERE leave_id = ?";
+    
+    db.query(sql, [status, leaveId], (err, result) => {
+        if (err) {
+            console.error('❌ SQL Error:', err.sqlMessage); // ดู Error จริงใน Terminal
+            return res.status(500).json({ message: "เกิดข้อผิดพลาดในการอัปเดตฐานข้อมูล" });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "ไม่พบรหัสใบลาที่ระบุ" });
+        }
+        res.json({ message: "อัปเดตสถานะเรียบร้อยแล้ว", status: status });
+    });
+});
+
 // ============================================
 // เปิด Server
 // ============================================

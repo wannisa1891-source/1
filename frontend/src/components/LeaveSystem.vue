@@ -240,6 +240,13 @@
             <label>เหตุผล:</label>
             <p>{{ selectedLeave.reason || 'ไม่ได้ระบุเหตุผล' }}</p>
           </div>
+          <div class="modal-footer-admin" v-if="selectedLeave && selectedLeave.status === 'Pending'">
+  <hr style="border:0; border-top:1px solid #e2e8f0; margin:20px 0;">
+  <div style="display: flex; gap: 10px; justify-content: flex-end;">
+    <button @click="updateStatus(selectedLeave.leave_id, 'Rejected')" class="btn-reject">ปฏิเสธ</button>
+    <button @click="updateStatus(selectedLeave.leave_id, 'Approved')" class="btn-approve">อนุมัติใบลา</button>
+  </div>
+</div>
         </div>
       </div>
     </div>
@@ -407,6 +414,24 @@ const pendingCount = computed(() => {
 onMounted(() => {
   fetchLeaves() 
 })
+
+const updateStatus = async (leaveId, newStatus) => {
+  if (!confirm(`ยืนยันการ ${newStatus === 'Approved' ? 'อนุมัติ' : 'ปฏิเสธ'} ?`)) return;
+
+  try {
+    // แก้ไข URL ให้ตรงกับที่ Backend รอรับ (ระวังอย่าให้มีเครื่องหมาย : เกินมา)
+    await axios.put(`${API_BASE_URL}/leaves/${leaveId}`, { 
+      status: newStatus 
+    });
+    
+    alert('บันทึกสำเร็จ!');
+    showDetailModal.value = false;
+    fetchLeaves(); // โหลดข้อมูลใหม่มาโชว์ในตาราง
+  } catch (error) {
+    console.error('Update error:', error);
+    alert('ล้มเหลว: ' + (error.response?.data?.message || 'ติดต่อ Server ไม่ได้'));
+  }
+}
 </script>
 
 <style scoped>
