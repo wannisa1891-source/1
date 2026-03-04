@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import axios from 'axios'
 
 import Login from './components/Login.vue'
@@ -17,26 +17,40 @@ const isLoggedIn = ref(false)
 const employees = ref([])
 const activeMenu = ref('dashboard')
 const isSidebarCollapsed = ref(false)
-const handleLoginSuccess = () => {
+
+/* =========================
+   ✅ LOGIN SUCCESS
+========================= */
+const handleLoginSuccess = async () => {
   isLoggedIn.value = true
-  fetchEmployees() // 🌟 สั่งให้ดึงข้อมูลทันทีที่ล็อกอินผ่าน
+  activeMenu.value = 'dashboard'   // รีเซ็ตหน้าไป Dashboard ทุกครั้งที่ login
+  await fetchEmployees()
 }
+
+/* =========================
+   ✅ LOGOUT
+========================= */
+const handleLogout = () => {
+  isLoggedIn.value = false
+  employees.value = []
+  activeMenu.value = 'dashboard'
+}
+
+/* =========================
+   ✅ FETCH EMPLOYEE DATA
+========================= */
 const fetchEmployees = async () => {
   try {
     const response = await axios.get('http://localhost:3000/api/employees')
-    
-    // 📌 เพิ่มบรรทัดนี้ เพื่อดูว่า API ส่งข้อมูลอะไรมาให้
+
     console.log('✅ ข้อมูลพนักงานที่ดึงได้:', response.data)
-    
+
     employees.value = response.data.employees || response.data || []
   } catch (error) {
     console.error('❌ Error fetching employees:', error)
+    employees.value = []
   }
 }
-
-onMounted(() => {
-  if (isLoggedIn.value) fetchEmployees()
-})
 </script>
 
 <template>
