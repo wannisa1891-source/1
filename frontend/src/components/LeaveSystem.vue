@@ -17,12 +17,12 @@
 
       <section class="summary-grid mt-30">
         <div class="summary-card glass blue">
-          <div class="card-icon">🤒</div>
-          <div class="card-info">
-            <span class="card-label">ลาป่วยวันนี้</span>
-            <h2 class="card-value">05 <small>คน</small></h2>
-          </div>
-        </div>
+  <div class="card-icon">🤒</div>
+  <div class="card-info">
+    <span class="card-label">ลาป่วยวันนี้</span>
+    <h2 class="card-value">{{ sickTodayCount }} <small>คน</small></h2>
+  </div>
+</div>
         
         <div class="summary-card glass orange">
           <div class="card-icon">⏳</div>
@@ -84,13 +84,13 @@
             <tbody>
               <tr v-for="leave in filteredLeaves" :key="leave.leave_id">
                 <td>#{{ leave.leave_id }}</td>
-                <td>
+               <td>
                   <div class="user-cell">
-                    <span>{{ leave.emp_id }}</span>
+                    <span>{{ leave.first_name_th }} {{ leave.last_name_th }} ({{ leave.emp_id }})</span>
                   </div>
                 </td>
-                <td>{{ leave.dept_id || 'ไม่ระบุ' }}</td>
-                <td>{{ leave.start_date }} ถึง {{ leave.end_date }}</td>
+                <td>{{ leave.dept_name || leave.dept_id || 'ไม่ระบุ' }}</td>
+                <td>{{ formatDate(leave.start_date) }} ถึง {{ formatDate(leave.end_date) }}</td>
                 <td>{{ leave.reason || '-' }}</td>
                 <td>
                   <span :class="['status-badge', leave.status === 'Pending' ? 'waiting' : 'approved']">
@@ -130,13 +130,13 @@
           <div class="form-step-section">
             <div class="step-indicator">01</div>
             <div class="step-content">
-              <h3>ข้อมูลผู้ลา <span class="sub-text">(จำลองข้อมูล Login)</span></h3>
+              <h3>ข้อมูลผู้ลา <span class="sub-text"></span></h3>
               
               <div class="input-grid">
                 <div class="input-field">
-                  <label>รหัสพนักงาน (emp_id)</label>
-                  <input type="text" v-model="newLeave.emp_id" class="input-control" disabled>
-                </div>
+  <label>รหัสพนักงาน</label>
+  <input type="text" v-model="newLeave.emp_id" class="input-control" placeholder="พิมพ์รหัสพนักงาน เช่น 0007">
+</div>
                 
                 <div class="input-field">
                   <label>ประเภทการจ้าง</label>
@@ -293,16 +293,19 @@ const selectedStatus = ref('all')
 
 // อัปเดต newLeave ให้มีประเภทการจ้าง แผนก และตำแหน่งเป็นค่าเริ่มต้น
 const newLeave = ref({
-  emp_id: 'EMP001', 
-  emp_type: 'ข้าราชการ', 
-  dept_id: 'D001',     
-  position_id: 'P001',  
+  emp_id: '', // <--- เปลี่ยนเป็นค่าว่าง
+  emp_type: '', 
+  dept_id: '', // <--- เปลี่ยนเป็นค่าว่าง    
+  position_id: '', // <--- เปลี่ยนเป็นค่าว่าง 
   leave_type_id: 'L01',
   start_date: '',
   end_date: '',
   reason: ''
 })
-
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-';
+  return dateStr.substring(0, 10); // ตัดเอาแค่ ปี-เดือน-วัน (10 ตัวแรก)
+}
 /* ================= METHODS ================= */
 const fetchLeaves = async () => {
   isLoading.value = true
@@ -319,37 +322,34 @@ const response = await axios.get(`${API_BASE_URL}/leaves`)
 }
 
 const submitLeave = async () => {
-  if(!newLeave.value.start_date || !newLeave.value.end_date) {
-    alert('กรุณาเลือกวันที่ลา')
+  if(!newLeave.value.start_date || !newLeave.value.end_date || !newLeave.value.emp_id) {
+    alert('กรุณากรอกรหัสพนักงานและเลือกวันที่ลา')
     return
   }
 
   isSubmitting.value = true
   try {
-    const response = await axios.post(`${API_BASE_URL}/leaves`, newLeave.value)
+    // ส่งเฉพาะข้อมูลที่จำเป็นจริงๆ
+    // *** ไม่ต้องส่ง leave_id แล้ว เพราะเราแก้ SQL ให้ Auto Increment แล้ว ***
+    const dataToSend = {
+      emp_id: newLeave.value.emp_id,
+      leave_type_id: newLeave.value.leave_type_id,
+      start_date: newLeave.value.start_date,
+      end_date: newLeave.value.end_date,
+      reason: newLeave.value.reason,
+      status: 'Pending'
+    }
+
+    const response = await axios.post(`${API_BASE_URL}/leaves`, dataToSend)
     
-    if(response.data.success) {
-      alert('ส่งใบลาเรียบร้อยแล้ว')
+    if(response.data) {
+      alert('ส่งใบลาเรียบร้อยแล้ว!')
       showForm.value = false
-      fetchLeaves() 
-      
-      // รีเซ็ตฟอร์มกลับเป็นค่าเริ่มต้น
-      newLeave.value = {
-        emp_id: 'EMP001', 
-        emp_type: 'ข้าราชการ', 
-        dept_id: 'D001', 
-        position_id: 'P001', 
-        leave_type_id: 'L01', 
-        start_date: '', 
-        end_date: '', 
-        reason: ''
-      }
-    } else {
-      alert('เกิดข้อผิดพลาด: ' + (response.data.message || 'ไม่ทราบสาเหตุ'))
+      fetchLeaves() // โหลดข้อมูลใหม่มาโชว์ในตาราง
     }
   } catch (error) {
-    console.error('Error submitting leave:', error)
-    alert('เซิร์ฟเวอร์มีปัญหา ไม่สามารถบันทึกข้อมูลได้')
+    console.error('Error detail:', error.response?.data); // ดูสาเหตุที่แท้จริงใน Console
+    alert('ยังบันทึกไม่ได้: ' + (error.response?.data?.message || 'รหัสพนักงานไม่ถูกต้องหรือระบบขัดข้อง'));
   } finally {
     isSubmitting.value = false
   }
@@ -376,6 +376,23 @@ const filteredLeaves = computed(() => {
 
     return matchSearch && matchStatus && matchDept
   })
+})
+
+// นับจำนวนคนลาป่วย (L01) ที่มีผลในวันนี้
+const sickTodayCount = computed(() => {
+  // 1. ดึงวันที่วันนี้ออกมาแค่ 10 หลักแรก (ปี-เดือน-วัน)
+  const today = new Date().toISOString().split('T')[0]; 
+  
+  return leaves.value.filter(l => {
+    // 2. ตัดวันที่จากฐานข้อมูลให้เหลือ 10 หลักเหมือนกัน (ป้องกันเรื่องเวลาแถมมา)
+    const startDate = l.start_date ? l.start_date.substring(0, 10) : '';
+    const endDate = l.end_date ? l.end_date.substring(0, 10) : '';
+    
+    // 3. เช็คเงื่อนไข: ต้องเป็นลาป่วย (L01) และวันนี้ต้องอยู่ระหว่างวันที่เริ่มถึงวันที่จบ
+    return l.leave_type_id === 'L01' && 
+           today >= startDate && 
+           today <= endDate;
+  }).length
 })
 
 const pendingCount = computed(() => {
@@ -506,4 +523,12 @@ onMounted(() => {
 .btn-close-dark { background: #eee; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;}
 .detail-row { margin-bottom: 10px; font-size: 15px; }
 .detail-row .label { font-weight: 600; display: inline-block; width: 100px; color: #64748b;}
+
+/* =========================================
+   ปรับแต่งช่องเลือกวันที่ (Date Picker)
+========================================= */
+input[type="date"] { position: relative; cursor: pointer; /* เปลี่ยนเมาส์เป็นรูปนิ้วตอนชี้ */}
+/* ขยายไอคอนปฏิทินให้ใหญ่ขึ้นและกดง่าย */
+input[type="date"]::-webkit-calendar-picker-indicator { background: transparent; bottom: 0; color: transparent; cursor: pointer; height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto; }
+
 </style>

@@ -69,8 +69,23 @@ app.post('/api/employees', (req, res) => {
 // ============================================
 
 // API 1: ดึงข้อมูลการลาทั้งหมด (ใช้แสดงในตารางหน้าแรก)
+// API 1: ดึงข้อมูลการลาทั้งหมด (เชื่อมข้อมูลชื่อและแผนกให้ด้วย)
 app.get('/api/leaves', (req, res) => {
-    db.query("SELECT * FROM tbl_leaves ORDER BY start_date DESC", (err, results) => {
+    // ใช้คำสั่ง JOIN เพื่อดึงชื่อพนักงาน และ ชื่อแผนก ออกมาด้วย
+    const sql = `
+        SELECT 
+            l.*, 
+            e.first_name_th, 
+            e.last_name_th, 
+            e.dept_id, 
+            d.dept_name 
+        FROM tbl_leaves l
+        LEFT JOIN tbl_employees e ON l.emp_id = e.emp_id
+        LEFT JOIN tbl_departments d ON e.dept_id = d.dept_id
+        ORDER BY l.start_date DESC
+    `;
+    
+    db.query(sql, (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(results); 
     });
