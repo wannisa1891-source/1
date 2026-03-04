@@ -271,8 +271,8 @@ const saveEmployee = async () => {
   border-radius: 10px; 
   outline: none; 
   font-family: inherit; 
-  background: #ffffff;   /* เพิ่มบรรทัดนี้ */
-  color: #1e293b;        /* เปลี่ยนจาก #00000000 */
+   background: #f8fafc;
+color: #334155;
   transition: 0.3s; 
 }
 .input-modern:focus { border-color: #c5a073; box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1); }
