@@ -90,7 +90,11 @@
                   </div>
                 </td>
                 <td>{{ leave.dept_name || leave.dept_id || 'ไม่ระบุ' }}</td>
-                <td>{{ formatDate(leave.start_date) }} ถึง {{ formatDate(leave.end_date) }}</td>
+                <td class="date-cell">
+  {{ formatDate(leave.start_date) }} 
+  <span style="color: #94a3b8; margin: 0 4px;">ถึง</span> 
+  {{ formatDate(leave.end_date) }}
+</td>
                 <td>{{ leave.reason || '-' }}</td>
                 <td>
                   <span :class="['status-badge', leave.status === 'Pending' ? 'waiting' : 'approved']">
@@ -530,5 +534,17 @@ onMounted(() => {
 input[type="date"] { position: relative; cursor: pointer; /* เปลี่ยนเมาส์เป็นรูปนิ้วตอนชี้ */}
 /* ขยายไอคอนปฏิทินให้ใหญ่ขึ้นและกดง่าย */
 input[type="date"]::-webkit-calendar-picker-indicator { background: transparent; bottom: 0; color: transparent; cursor: pointer; height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto; }
+/* บังคับวันที่ให้อยู่บรรทัดเดียว ไม่ดีดลงข้างล่าง */
+.date-cell {
+  white-space: nowrap; /* ลบสิทธิ์ในการขึ้นบรรทัดใหม่ */
+  font-family: 'monospace', sans-serif; /* (ทางเลือก) ช่วยให้ตัวเลขตรงกันดูง่ายขึ้น */
+  color: #334155;
+  font-weight: 500;
+}
 
+/* เพิ่มระยะห่างให้คอลัมน์วันที่นิดนึง */
+.modern-table th:nth-child(4), 
+.modern-table td:nth-child(4) {
+  min-width: 200px; /* เพิ่มพื้นที่ให้วันที่แสดงตัวได้เต็มที่ */
+}
 </style>
