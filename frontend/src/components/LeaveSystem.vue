@@ -396,19 +396,19 @@ const filteredLeaves = computed(() => {
 
 // นับจำนวนคนลาป่วย (L01) ที่ "อนุมัติแล้ว" และมีผลในวันนี้
 const sickTodayCount = computed(() => {
-  // 1. ดึงวันที่วันนี้ (รูปแบบ YYYY-MM-DD)
+  // 1. ดึงวันที่ปัจจุบัน (รูปแบบ 2026-03-04)
   const today = new Date().toISOString().split('T')[0]; 
   
   return leaves.value.filter(l => {
-    // 2. ตัดวันที่จากข้อมูลใน Database ให้เหลือแค่ 10 หลัก (YYYY-MM-DD)
+    // 2. จัดรูปแบบวันที่จาก Database ให้เหลือแค่ 10 หลักเหมือนกัน
     const startDate = l.start_date ? l.start_date.substring(0, 10) : '';
     const endDate = l.end_date ? l.end_date.substring(0, 10) : '';
     
-    // 3. เพิ่มเงื่อนไข l.status === 'Approved' เข้าไปด้วย
+    // 3. เงื่อนไข: เป็นลาป่วย (L01) + อยู่ในช่วงวันที่ + ต้อง 'Approved' เท่านั้น
     return l.leave_type_id === 'L01' && 
            today >= startDate && 
            today <= endDate &&
-           l.status === 'Approved'; // <--- ต้องได้รับการอนุมัติแล้วเท่านั้นถึงจะนับ
+           l.status === 'Approved'; // <--- เพิ่มเงื่อนไขนี้เข้าไปครับ
   }).length
 })
 
