@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3307
--- Generation Time: Feb 27, 2026 at 05:11 AM
+-- Generation Time: Mar 04, 2026 at 08:46 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -136,7 +136,7 @@ INSERT INTO `tbl_employees` (`emp_id`, `prefix`, `first_name_th`, `last_name_th`
 --
 
 CREATE TABLE `tbl_leaves` (
-  `leave_id` varchar(10) NOT NULL COMMENT 'รหัสการลา',
+  `leave_id` int(11) NOT NULL,
   `emp_id` varchar(10) NOT NULL COMMENT 'รหัสพนักงาน',
   `leave_type_id` varchar(10) NOT NULL COMMENT 'รหัสประเภทการลา',
   `start_date` date NOT NULL COMMENT 'วันที่เริ่มลา',
@@ -147,6 +147,16 @@ CREATE TABLE `tbl_leaves` (
   `approver_id` varchar(10) DEFAULT NULL COMMENT 'อนุมัติโดย',
   `approved_date` datetime DEFAULT NULL COMMENT 'วันที่อนุมัติ'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_leaves`
+--
+
+INSERT INTO `tbl_leaves` (`leave_id`, `emp_id`, `leave_type_id`, `start_date`, `end_date`, `total_days`, `reason`, `status`, `approver_id`, `approved_date`) VALUES
+(2, 'EMP003', 'L01', '2026-03-10', '2026-03-11', NULL, 'ป่วย', 'Approved', NULL, NULL),
+(3, '0007', 'L01', '2026-03-17', '2026-03-24', NULL, 'ป่วย', 'Approved', NULL, NULL),
+(4, '1111111', 'L01', '2026-03-24', '2026-03-31', NULL, 'ป่วย', 'Pending', NULL, NULL),
+(9, 'EMP003', 'L01', '2026-03-04', '2026-03-05', NULL, 'อบรม', 'Approved', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -159,6 +169,15 @@ CREATE TABLE `tbl_leave_types` (
   `leave_type_name` varchar(100) NOT NULL COMMENT 'ชื่อประเภทการลา',
   `max_days` int(11) DEFAULT NULL COMMENT 'จำนวนวันสูงสุด'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_leave_types`
+--
+
+INSERT INTO `tbl_leave_types` (`leave_type_id`, `leave_type_name`, `max_days`) VALUES
+('L01', 'ลาป่วย', 30),
+('L02', 'ลากิจ', 10),
+('L03', 'ลาพักร้อน', 10);
 
 -- --------------------------------------------------------
 
@@ -353,6 +372,12 @@ ALTER TABLE `tbl_users`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `tbl_leaves`
+--
+ALTER TABLE `tbl_leaves`
+  MODIFY `leave_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `tbl_licenses`
