@@ -218,7 +218,12 @@ const saveEmployee = async () => {
 
 <style scoped>
 /* ส่วน Style ยังคงเดิมครับ */
-.emp-modern-wrapper { padding: 35px 20px 20px 20px; animation: fadeIn 0.4s ease-in-out; background: #333333; min-height: 100vh; }
+.emp-modern-wrapper { 
+  padding: 35px 20px 20px 20px; 
+  animation: fadeIn 0.4s ease-in-out; 
+  background: #ffffff !important; /* 🌟 บังคับพื้นหลังให้เป็นสีขาว 100% */
+  min-height: 100vh; 
+}
 .premium-glass-card { background: #ffffff; border-radius: 20px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); padding: 30px; border: 1px solid #f1f5f9; }
 .bg-light-gray { background: #f8fafc; }
 .card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
@@ -247,7 +252,7 @@ const saveEmployee = async () => {
 .page-btn { background: white; border: 1px solid #e2e8f0; padding: 8px 14px; border-radius: 8px; cursor: pointer; color: #475569; font-weight: 600; }
 .page-btn.active { background: #c5a073; color: white; border-color: #c5a073; }
 
-.form-section-box { background: #ffffff; border-radius: 15px; padding: 25px; margin-bottom: 20px; border: 1px solid #e2e8f0; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+.form-section-box { background: #ffffff; border-radius: 15px; padding: 25px; margin-bottom: 20px; border: 1px solid #e2e8f0; box-shadow: 0 2px 10px rgba(255, 0, 0, 0.02); }
 .section-title { margin-top: 0; font-size: 18px; color: #334155; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 20px; }
 
 .form-flex-layout { display: flex; gap: 30px; }
@@ -258,9 +263,19 @@ const saveEmployee = async () => {
 
 .input-wrapper { display: flex; align-items: center; gap: 10px; }
 .input-wrapper.full-width { grid-column: span 2; }
-.input-wrapper label { width: 160px; text-align: right; color: #ff001e; font-size: 14px; font-weight: 600; }
-.input-modern { flex: 1; padding: 8px 15px; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; font-family: inherit; color: #334155; transition: 0.3s; }
-.input-modern:focus { border-color: #c5a073; box-shadow: 0 0 0 3px rgba(197, 160, 115, 0.1); }
+.input-wrapper label { width: 160px; text-align: right; color: #1b0000; font-size: 14px; font-weight: 600; }
+.input-modern { 
+  flex: 1; 
+  padding: 8px 15px; 
+  border: 1px solid #cbd5e1; 
+  border-radius: 10px; 
+  outline: none; 
+  font-family: inherit; 
+   background: #f8fafc;
+color: #334155;
+  transition: 0.3s; 
+}
+.input-modern:focus { border-color: #c5a073; box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1); }
 
 .form-action-buttons { display: flex; justify-content: center; gap: 20px; margin-top: 35px; padding-bottom: 20px; }
 .btn-cancel-modern { background: #ffffff; color: #475569; border: 2px solid #cbd5e1; padding: 12px 40px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
