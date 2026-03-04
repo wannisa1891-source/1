@@ -23,6 +23,10 @@ db.connect((err) => {
     console.log('✅ เชื่อมต่อฐานข้อมูล MySQL สำเร็จแล้ว! พร้อมลุย');
 });
 
+// ============================================
+// API ข้อมูลพนักงาน (ของเดิมของคุณ)
+// ============================================
+
 // API ดึงข้อมูลพนักงาน
 app.get('/api/employees', (req, res) => {
     db.query("SELECT * FROM tbl_employees", (err, results) => {
@@ -31,14 +35,13 @@ app.get('/api/employees', (req, res) => {
     });
 });
 
-// API เพิ่มพนักงาน (แก้ไขให้บันทึกผ่านแน่นอน)
+// API เพิ่มพนักงาน
 app.post('/api/employees', (req, res) => {
     const { 
         emp_id, prefix, first_name_th, last_name_th, 
         emp_type, dept_id, pos_id, start_date, base_salary 
     } = req.body;
     
-    // *** สำคัญมาก: ใส่ค่าสมมติให้ฟิลด์ที่ Database บังคับห้ามว่าง ***
     const citizen_id = req.body.citizen_id || '0000000000000'; 
     const phone = req.body.phone || '000-000-0000';
 
@@ -61,6 +64,44 @@ app.post('/api/employees', (req, res) => {
     });
 });
 
+// ============================================
+// 🌟 API ใหม่ที่เพิ่มเข้ามา สำหรับ "จัดการการลา" 🌟
+// ============================================
+
+// API 1: ดึงข้อมูลการลาทั้งหมด (ใช้แสดงในตารางหน้าแรก)
+app.get('/api/leaves', (req, res) => {
+    db.query("SELECT * FROM tbl_leaves ORDER BY start_date DESC", (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(results); 
+    });
+});
+
+// API 2: เพิ่มข้อมูลใบลาใหม่ลง Database
+app.post('/api/leaves', (req, res) => {
+    const { emp_id, leave_type_id, start_date, end_date, reason } = req.body;
+    
+    // สร้างรหัสใบลาแบบสุ่ม (เช่น L0012)
+    const leave_id = 'L' + Math.floor(1000 + Math.random() * 9000);
+
+    const sql = `INSERT INTO tbl_leaves 
+        (leave_id, emp_id, leave_type_id, start_date, end_date, reason, status) 
+        VALUES (?, ?, ?, ?, ?, ?, 'Pending')`;
+
+    // ค่าพวกแผนก (dept_id) ตำแหน่ง (pos_id) ไม่จำเป็นต้องบันทึกลง tbl_leaves เพราะสามารถ Join กับ tbl_employees ทีหลังได้
+    const values = [leave_id, emp_id, leave_type_id, start_date, end_date, reason];
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('❌ บันทึกการลาไม่สำเร็จ:', err.sqlMessage);
+            return res.status(500).json({ success: false, message: err.sqlMessage });
+        }
+        res.json({ success: true, message: '✅ ส่งใบลาสำเร็จ!' });
+    });
+});
+
+// ============================================
+// เปิด Server
+// ============================================
 app.listen(3000, () => {
     console.log('🚀 เซิร์ฟเวอร์รันที่ http://localhost:3000');
 });
