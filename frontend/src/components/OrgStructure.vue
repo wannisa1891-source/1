@@ -49,7 +49,7 @@
 
         <section class="detail-section">
           <div class="detail-card">
-            <h3 class="card-inner-title">รายละเอียดพนักงาน</h3>
+            <h3 class="card-inner-title">รายละเอียดพนักงาน oooooo</h3>
             
             <div class="filter-row">
               <div class="input-group">
