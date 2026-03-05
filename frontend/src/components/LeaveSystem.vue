@@ -16,31 +16,30 @@
       </header>
 
       <section class="summary-grid mt-30">
-        <div class="summary-card glass blue">
-  <div class="card-icon">🤒</div>
-  <div class="card-info">
-    <span class="card-label">ลาป่วยวันนี้</span>
-    <h2 class="card-value">{{ sickTodayCount }} <small>คน</small></h2>
+  <div class="summary-card glass blue" @click="filterByCard('sick')" style="cursor: pointer;">
+    <div class="card-icon">🤒</div>
+    <div class="card-info">
+      <span class="card-label">ลาป่วยวันนี้</span>
+      <h2 class="card-value">{{ sickTodayCount }} <small>คน</small></h2>
+    </div>
   </div>
-</div>
-        
-        <div class="summary-card glass orange">
-          <div class="card-icon">⏳</div>
-          <div class="card-info">
-            <span class="card-label">รอพิจารณา</span>
-            <h2 class="card-value">{{ pendingCount }} <small>รายการ</small></h2>
-          </div>
-        </div>
+  
+  <div class="summary-card glass orange" @click="filterByCard('pending')" style="cursor: pointer;">
+    <div class="card-icon">⏳</div>
+    <div class="card-info">
+      <span class="card-label">รอพิจารณา</span>
+      <h2 class="card-value">{{ pendingCount }} <small>รายการ</small></h2>
+    </div>
+  </div>
 
-        <div class="summary-card glass green">
-          <div class="card-icon">✅</div>
-          <div class="card-info">
-            <span class="card-label">รายการทั้งหมด</span>
-            <h2 class="card-value">{{ leaves.length }} <small>รายการ</small></h2>
-          </div>
-        </div>
-      </section>
-
+  <div class="summary-card glass green" @click="filterByCard('all')" style="cursor: pointer;">
+    <div class="card-icon">✅</div>
+    <div class="card-info">
+      <span class="card-label">รายการทั้งหมด</span>
+      <h2 class="card-value">{{ leaves.length }} <small>รายการ</small></h2>
+    </div>
+  </div>
+</section>
       <section class="table-container-modern mt-30">
         <div class="table-controls">
           <div class="search-box-modern">
@@ -289,6 +288,27 @@ const positions = ref([
   { id: 'P011', name: 'เจ้าพนักงานเวชสถิติ' }
 ])
 
+// LeaveSystem.vue (ส่วน script setup)
+
+/* ================= METHODS ================= */
+
+const filterByCard = (type) => {
+  if (type === 'sick') {
+    selectedStatus.value = 'Approved';
+    selectedLeaveType.value = 'L01'; // <--- เพิ่มตรงนี้
+    searchText.value = '';
+  } else if (type === 'pending') {
+    selectedStatus.value = 'Pending';
+    selectedLeaveType.value = 'all'; // ล้างค่าลาป่วยออก
+    searchText.value = '';
+  } else if (type === 'all') {
+    selectedStatus.value = 'all';
+    selectedDept.value = 'all';
+    selectedLeaveType.value = 'all'; // ล้างค่าลาป่วยออก
+    searchText.value = '';
+  }
+}
+
 /* ================= STATE (ตัวแปรเก็บข้อมูลเดิม) ================= */
 const leaves = ref([]) 
 const isLoading = ref(false)
@@ -301,6 +321,7 @@ const selectedLeave = ref(null)
 const searchText = ref('')
 const selectedDept = ref('all')
 const selectedStatus = ref('all')
+const selectedLeaveType = ref('all') // <--- เพิ่มบรรทัดนี้ครับ
 
 // อัปเดต newLeave ให้มีประเภทการจ้าง แผนก และตำแหน่งเป็นค่าเริ่มต้น
 const newLeave = ref({
@@ -380,17 +401,29 @@ const goBack = () => {
   window.history.back() 
 }
 
-/* ================= COMPUTED ================= */
 const filteredLeaves = computed(() => {
+  const today = new Date().toISOString().split('T')[0]; // วันที่ปัจจุบัน (เช่น 2026-03-05)
+
   return leaves.value.filter(leave => {
+    // 1. กรองคำค้นหา
     const matchSearch = 
       (leave.emp_id || '').toLowerCase().includes(searchText.value.toLowerCase()) ||
       (leave.reason || '').toLowerCase().includes(searchText.value.toLowerCase())
 
+    // 2. กรองสถานะและแผนก
     const matchStatus = selectedStatus.value === 'all' || leave.status === selectedStatus.value
     const matchDept = selectedDept.value === 'all' || leave.dept_id === selectedDept.value
 
-    return matchSearch && matchStatus && matchDept
+    // 3. กรองพิเศษ (ถ้ากดการ์ดลาป่วยมา)
+    let matchSickToday = true;
+    if (selectedLeaveType.value === 'L01') {
+      const startDate = leave.start_date ? leave.start_date.substring(0, 10) : '';
+      const endDate = leave.end_date ? leave.end_date.substring(0, 10) : '';
+      // ต้องเป็นลาป่วย และ วันนี้ต้องอยู่ในช่วงวันที่ลา
+      matchSickToday = leave.leave_type_id === 'L01' && today >= startDate && today <= endDate;
+    }
+
+    return matchSearch && matchStatus && matchDept && matchSickToday;
   })
 })
 
