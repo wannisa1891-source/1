@@ -215,43 +215,66 @@
       </div>
     </div>
 
-    <div v-if="showDetailModal" class="modal-overlay" @click.self="showDetailModal = false">
+<div v-if="showDetailModal" class="modal-overlay" @click.self="showDetailModal = false">
       <div class="modal-card fade-in">
         <div class="modal-header">
-          <h3>รายละเอียดการลา #{{ selectedLeave?.leave_id }}</h3>
+          <div class="header-title-group">
+            <small style="color: #64748b; font-weight: 700; font-size: 11px; text-transform: uppercase; display: block;">Detail Information</small>
+            <h3 style="margin: 0; font-size: 20px; color: #1e293b;">รายละเอียดการลา #{{ selectedLeave?.leave_id }}</h3>
+          </div>
           <button @click="showDetailModal = false" class="btn-close-dark">✕</button>
         </div>
-        <div class="modal-body" v-if="selectedLeave">
-          <div class="detail-row">
-            <span class="label">รหัสพนักงาน:</span>
-            <span class="value">{{ selectedLeave.emp_id }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">วันที่ลา:</span>
-            <span class="value">{{ selectedLeave.start_date }} ถึง {{ selectedLeave.end_date }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">สถานะ:</span>
-            <span :class="['status-badge', selectedLeave.status === 'Pending' ? 'waiting' : 'approved']">{{ selectedLeave.status }}</span>
-          </div>
-          <hr style="border:0; border-top:1px solid #e2e8f0; margin:15px 0;">
-          <div class="detail-reason">
-            <label>เหตุผล:</label>
-            <p>{{ selectedLeave.reason || 'ไม่ได้ระบุเหตุผล' }}</p>
-          </div>
-          <div class="modal-footer-admin" v-if="selectedLeave && selectedLeave.status === 'Pending'">
-  <hr style="border:0; border-top:1px solid #e2e8f0; margin:20px 0;">
-  <div style="display: flex; gap: 10px; justify-content: flex-end;">
-    <button @click="updateStatus(selectedLeave.leave_id, 'Rejected')" class="btn-reject">ปฏิเสธ</button>
-    <button @click="updateStatus(selectedLeave.leave_id, 'Approved')" class="btn-approve">อนุมัติใบลา</button>
-  </div>
-</div>
-        </div>
-      </div>
-    </div>
 
-  </div>
-</template>
+        <div class="modal-body" v-if="selectedLeave">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 15px; border: 1px solid #f1f5f9;">
+            <div>
+              <span style="display: block; font-size: 11px; color: #94a3b8; font-weight: 700;">รหัสพนักงาน</span>
+              <span style="font-size: 18px; font-weight: 700; color: #1e293b;">{{ selectedLeave.emp_id }}</span>
+            </div>
+            <div style="text-align: right;">
+              <span style="display: block; font-size: 11px; color: #94a3b8; font-weight: 700; margin-bottom: 4px;">สถานะ</span>
+              <span :class="['status-badge', selectedLeave.status === 'Pending' ? 'waiting' : 'approved']" style="padding: 6px 15px; font-size: 12px;">
+                {{ selectedLeave.status }}
+              </span>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 20px; padding: 0 5px;">
+             <label style="font-size: 13px; font-weight: 700; color: #64748b; display: block; margin-bottom: 8px;">ช่วงเวลาที่ขอลา</label>
+             <div style="display: flex; align-items: center; gap: 15px; background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 12px;">
+                <div style="flex: 1; text-align: center;">
+                  <small style="display: block; font-size: 10px; color: #94a3b8;">เริ่มต้น</small>
+                  <span style="font-weight: 600; color: #334155;">{{ formatDate(selectedLeave.start_date) }}</span>
+                </div>
+                <div style="color: #cbd5e1;">→</div>
+                <div style="flex: 1; text-align: center;">
+                  <small style="display: block; font-size: 10px; color: #94a3b8;">สิ้นสุด</small>
+                  <span style="font-weight: 600; color: #334155;">{{ formatDate(selectedLeave.end_date) }}</span>
+                </div>
+             </div>
+          </div>
+
+          <div style="margin-bottom: 25px; padding: 0 5px;">
+            <label style="font-size: 13px; font-weight: 700; color: #64748b; display: block; margin-bottom: 8px;">เหตุผลการลา</label>
+            <div style="background: #fff; border: 1.5px dashed #e2e8f0; padding: 15px; border-radius: 12px; font-size: 14px; line-height: 1.6; color: #475569;">
+              {{ selectedLeave.reason || 'ไม่ได้ระบุเหตุผลการลา' }}
+            </div>
+          </div>
+
+          <div v-if="selectedLeave.status === 'Pending'" style="margin-top: 10px;">
+            <hr style="border: 0; border-top: 1px solid #f1f5f9; margin-bottom: 20px;">
+            <div style="display: flex; gap: 12px;">
+              <button @click="updateStatus(selectedLeave.leave_id, 'Rejected')" 
+                      style="flex: 1; padding: 14px; border-radius: 12px; border: 1px solid #fecaca; background: #fff1f2; color: #e11d48; font-weight: 700; cursor: pointer; transition: 0.2s;">
+                ปฏิเสธ
+              </button>
+              <button @click="updateStatus(selectedLeave.leave_id, 'Approved')" 
+                      style="flex: 2; padding: 14px; border-radius: 12px; border: none; background: #1e293b; color: white; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(30,41,59,0.2); transition: 0.2s;">
+                อนุมัติใบลา
+              </button>
+            </div>
+          </div>
+        </div> </div> </div> </div> </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
@@ -402,24 +425,28 @@ const goBack = () => {
 }
 
 const filteredLeaves = computed(() => {
-  const today = new Date().toISOString().split('T')[0]; // วันที่ปัจจุบัน (เช่น 2026-03-05)
+  const today = new Date().toISOString().split('T')[0];
 
   return leaves.value.filter(leave => {
-    // 1. กรองคำค้นหา
+    // 1. รวมชื่อและนามสกุลเป็นก้อนเดียวเพื่อให้เสิร์ชง่ายๆ
+    const fullName = `${leave.first_name_th} ${leave.last_name_th}`.toLowerCase();
+    const search = searchText.value.toLowerCase();
+
+    // 2. กรองคำค้นหา (เช็คทั้ง รหัสพนักงาน, ชื่อ-นามสกุล, และเหตุผล)
     const matchSearch = 
-      (leave.emp_id || '').toLowerCase().includes(searchText.value.toLowerCase()) ||
-      (leave.reason || '').toLowerCase().includes(searchText.value.toLowerCase())
+      (leave.emp_id || '').toLowerCase().includes(search) ||
+      fullName.includes(search) ||
+      (leave.reason || '').toLowerCase().includes(search);
 
-    // 2. กรองสถานะและแผนก
-    const matchStatus = selectedStatus.value === 'all' || leave.status === selectedStatus.value
-    const matchDept = selectedDept.value === 'all' || leave.dept_id === selectedDept.value
+    // 3. กรองสถานะและแผนก
+    const matchStatus = selectedStatus.value === 'all' || leave.status === selectedStatus.value;
+    const matchDept = selectedDept.value === 'all' || leave.dept_id === selectedDept.value;
 
-    // 3. กรองพิเศษ (ถ้ากดการ์ดลาป่วยมา)
+    // 4. กรองพิเศษ (ถ้ากดการ์ดลาป่วยมา)
     let matchSickToday = true;
     if (selectedLeaveType.value === 'L01') {
       const startDate = leave.start_date ? leave.start_date.substring(0, 10) : '';
       const endDate = leave.end_date ? leave.end_date.substring(0, 10) : '';
-      // ต้องเป็นลาป่วย และ วันนี้ต้องอยู่ในช่วงวันที่ลา
       matchSickToday = leave.leave_type_id === 'L01' && today >= startDate && today <= endDate;
     }
 
