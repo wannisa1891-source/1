@@ -1,37 +1,40 @@
 <template>
- <div class="login-page">
+  <div class="split-container">
 
-  <div class="login-card">
+    <!-- ฝั่งซ้าย (Slide Banner) -->
+    <div
+      class="left-panel"
+      :style="{
+        backgroundImage: `url(${slides[currentSlide].image})`
+      }"
+    >
+      <div class="overlay"></div>
 
-    <div class="login-title">
-      🏥 Welcome 
+      <div class="left-content">
+        <h1>{{ slides[currentSlide].title }}</h1>
+        <p>{{ slides[currentSlide].desc }}</p>
+      </div>
     </div>
 
-    <div class="input-group">
-      <span class="icon">📧</span>
-      <input placeholder="username">
+    <!-- ฝั่งขวา -->
+    <div class="right-panel">
+      <div class="bear-card">
+        <div class="bear-ears"></div>
+
+        <div class="login-box-design">
+          <img src="https://cdn-icons-png.flaticon.com/512/3063/3063176.png" class="login-logo">
+          <h2 class="system-title">HOSPITAL HRM</h2>
+
+          <input v-model="username" placeholder="Username" class="bear-input">
+          <input v-model="password" type="password" placeholder="Password" class="bear-input">
+
+          <button @click="handleLogin" class="btn-login-sage">
+            เข้าสู่ระบบ
+          </button>
+        </div>
+      </div>
     </div>
-
-    <div class="input-group">
-      <span class="icon">🔒</span>
-      <input type="password" placeholder="Password">
-    </div>
-
-    <div class="options">
-      <label>
-        <input type="checkbox"> Remember me
-      </label>
-
-      <a>Forgot password?</a>
-    </div>
-
-    <button class="login-btn">
-      Login
-    </button>
-
   </div>
-
-</div>
 </template>
 
 <script setup>
@@ -73,157 +76,127 @@ const handleLogin = () => {
 
 <style scoped>
 
-/* ===== Page Background ===== */
-
-.login-page{
-  height:100vh;
-  width:100%;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  background-size:cover;
-  background-position:center;
-
-  animation: slideBg 15s infinite;
+/* ===== Layout ===== */
+.split-container {
+  display: flex;
+  height: 100vh;
 }
 
-@keyframes slideBg{
-
-  0%{
-    background-image:url("/src/assets/1.jpg");
-  }
-
-  33%{
-    background-image:url("/src/assets/2.jpg");
-  }
-
-  66%{
-    background-image:url("/src/assets/3.jpg");
-  }
-
-  100%{
-    background-image:url("/src/assets/4.jpg");
-  }
-
+/* ===== Left Slide ===== */
+.left-panel {
+  flex: 1;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-image 1s ease-in-out;
 }
 
-/* overlay */
-
-.login-page::before{
-  content:"";
-  position:absolute;
-  inset:0;
-
-  background:linear-gradient(
-    135deg,
-    rgba(0,30,60,0.8),
-    rgba(0,90,150,0.6)
-  );
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
 }
 
-/* ===== Login Card ===== */
-
-.login-card{
-  width:420px;
-  padding:45px;
-
-  border-radius:20px;
-
-  background:rgba(255,255,255,0.95);
-
-  backdrop-filter: blur(10px);
-
-  box-shadow:
-  0 20px 50px rgba(0,0,0,0.25);
-
-  position:relative;
-  z-index:2;
+.left-content {
+  position: relative;
+  color: white;
+  text-align: left;
+  max-width: 400px;
+  z-index: 2;
 }
 
-/* title */
-
-.login-title{
-  font-size:28px;
-  font-weight:700;
-
-  color:#1e293b;
-  margin-bottom:30px;
+.left-content h1 {
+  font-size: 32px;
+  margin-bottom: 15px;
 }
 
-/* ===== Inputs ===== */
-
-.input-group{
-  display:flex;
-  align-items:center;
-
-  background:#f1f5f9;
-
-  border-radius:12px;
-
-  padding:12px 14px;
-  margin-bottom:18px;
-
-  transition:0.2s;
+/* ===== Right Panel ===== */
+.right-panel {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f2f2f2;
 }
 
-.input-group:focus-within{
-  background:#e0f2fe;
-  border:1px solid #38bdf8;
+.bear-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.icon{
-  margin-right:10px;
-  font-size:18px;
+.bear-ears::before,
+.bear-ears::after {
+  content: "";
+  position: absolute;
+  top: -40px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #EFE9D9;
+  z-index: 1;
 }
 
-.input-group input{
-  border:none;
-  background:transparent;
-
-  outline:none;
-  width:100%;
-
-  font-size:14px;
+.bear-ears::before {
+  left: 15px;
+  background: radial-gradient(circle, #8D5B3E 42%, #EFE9D9 43%);
 }
 
-/* options */
-
-.options{
-  display:flex;
-  justify-content:space-between;
-  font-size:13px;
-
-  margin-bottom:20px;
+.bear-ears::after {
+  right: 15px;
+  background: radial-gradient(circle, #8D5B3E 42%, #EFE9D9 43%);
 }
 
-/* login button */
-
-.login-btn{
-  width:100%;
-  padding:14px;
-
-  border:none;
-  border-radius:12px;
-
-  background:linear-gradient(
-  135deg,
-  #0ea5e9,
-  #2563eb
-  );
-
-  color:white;
-  font-weight:600;
-
-  cursor:pointer;
-
-  transition:0.2s;
+.login-box-design {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  padding: 60px 45px;
+  border-radius: 80px 80px 115px 115px;
+  background: #EFE9D9;
+  text-align: center;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.06);
 }
 
-.login-btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 10px 25px rgba(37,99,235,0.4);
+.login-logo {
+  width: 95px;
+  margin-bottom: 15px;
+}
+
+.system-title {
+  font-weight: 800;
+  margin-bottom: 35px;
+}
+
+.bear-input {
+  width: 100%;
+  padding: 18px 25px;
+  margin-bottom: 15px;
+  border-radius: 20px;
+  border: none;
+  background-color: #BCC3D1;
+  font-size: 16px;
+}
+
+.btn-login-sage {
+  width: 100%;
+  padding: 18px;
+  background: #4A5644;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn-login-sage:hover {
+  background: #3A4634;
 }
 
 </style>
