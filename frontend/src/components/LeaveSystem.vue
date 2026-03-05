@@ -73,9 +73,9 @@
             <thead>
               <tr>
                 <th>ID</th>
-                <th>พนักงาน (Emp_ID)</th>
+                <th>พนักงาน</th>
                 <th>แผนก</th>
-                <th>เริ่ม - สิ้นสุดลา</th>
+                <th>เริ่มวันลา - สิ้นสุดลา</th>
                 <th>เหตุผล</th>
                 <th>สถานะ</th>
                 <th>จัดการ</th>
@@ -444,7 +444,7 @@ const updateStatus = async (leaveId, newStatus) => {
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
 
 /* =========================================
-   Layout & Table
+   Layout & General
 ========================================= */
 .leave-page-container { font-family: 'Sarabun', sans-serif; padding: 30px; background: #f4f7f9; min-height: 100vh; }
 .page-header { display: flex; justify-content: space-between; align-items: center; }
@@ -452,105 +452,91 @@ const updateStatus = async (leaveId, newStatus) => {
 .page-title { font-size: 28px; font-weight: 700; color: #1e293b; margin: 5px 0 0 0; }
 .btn-back-minimal { background: white; border: 1px solid #e2e8f0; padding: 10px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.3s; }
 .btn-back-minimal:hover { background: #1e293b; color: white; }
-.summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+/* Summary Cards */
+.summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 30px; }
 .summary-card { padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 20px; background: white; border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
 .card-icon { font-size: 32px; background: rgba(0,0,0,0.03); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 18px; }
 .card-label { font-size: 13px; color: #64748b; font-weight: 600; }
 .card-value { font-size: 28px; font-weight: 700; margin: 5px 0; color: #1e293b; }
-.table-container-modern { background: white; border-radius: 24px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
+
+/* =========================================
+   Table System (แก้จุดที่เบี้ยว)
+========================================= */
+.table-container-modern { background: white; border-radius: 24px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); margin-top: 30px; }
 .table-controls { display: flex; justify-content: space-between; margin-bottom: 25px; }
 .search-box-modern { background: #f8fafc; padding: 10px 15px; border-radius: 15px; display: flex; align-items: center; gap: 10px; width: 350px; }
 .search-box-modern input { border: none; background: transparent; outline: none; width: 100%; font-size: 14px; }
 .filter-actions { display: flex; gap: 10px; }
 .select-modern { background: #f8fafc; border: 1px solid #e2e8f0; padding: 0 15px; border-radius: 12px; font-family: inherit; font-size: 13px; }
 .btn-add-primary { background: #1e293b; color: white; border: none; padding: 10px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; }
-.modern-table { width: 100%; border-collapse: collapse; }
-.modern-table th { text-align: left; padding: 15px; border-bottom: 2px solid #f1f5f9; color: #64748b; font-size: 13px; }
-.modern-table td { padding: 15px; border-bottom: 1px solid #f8fafc; font-size: 14px; }
-.status-badge { padding: 5px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; }
+
+/* ล็อคความกว้างตาราง */
+.modern-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+
+/* จัดการส่วนเนื้อหาตาราง (TD) */
+.modern-table td { 
+  padding: 15px; 
+  border-bottom: 1px solid #f8fafc; 
+  font-size: 14px; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  white-space: nowrap; 
+}
+
+/* ล็อคความกว้างแต่ละคอลัมน์ให้ตรงกันเป๊ะทั้งหัวและเนื้อหา */
+.modern-table th:nth-child(1), .modern-table td:nth-child(1) { width: 60px; text-align: center; } 
+.modern-table th:nth-child(2), .modern-table td:nth-child(2) { width: 220px; } 
+.modern-table th:nth-child(3), .modern-table td:nth-child(3) { width: 160px; } 
+.modern-table th:nth-child(4), .modern-table td:nth-child(4) { width: 180px; } 
+.modern-table th:nth-child(5), .modern-table td:nth-child(5) { width: 150px; } 
+.modern-table th:nth-child(6), .modern-table td:nth-child(6) { width: 110px; text-align: center; } 
+.modern-table th:nth-child(7), .modern-table td:nth-child(7) { width: 100px; text-align: center; }
+
+.modern-table th { padding: 15px; text-align: left; color: #64748b; font-size: 13px; font-weight: 700; background: #f8fafc; border-bottom: 2px solid #f1f5f9; }
+
+.status-badge { padding: 5px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; display: inline-block; }
 .status-badge.waiting { background: #fef3c7; color: #d97706; }
 .status-badge.approved { background: #d1fae5; color: #059669; }
-.btn-view { background: transparent; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-.mt-30 { margin-top: 30px; }
+
+.btn-view { background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; padding: 8px 16px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+.btn-view:hover { background: #1e293b; color: white; border-color: #1e293b; }
 
 /* =========================================
-   ฟอร์มสร้างใบลา 
+   ฟอร์มสร้างใบลา (รักษาไว้ครบถ้วน)
 ========================================= */
-.form-content-wrapper { 
-  display: flex; justify-content: center; padding: 20px 0; 
-}
-.form-card-premium { 
-  width: 100%; max-width: 800px; background: #ffffff; 
-  border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.06); 
-  overflow: hidden; 
-}
-.form-header { 
-  background: #f8fafc; padding: 30px 40px; 
-  display: flex; justify-content: space-between; align-items: flex-start; 
-  border-bottom: 1px solid #e2e8f0; 
-}
+.form-content-wrapper { display: flex; justify-content: center; padding: 20px 0; }
+.form-card-premium { width: 100%; max-width: 800px; background: #ffffff; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.06); overflow: hidden; }
+.form-header { background: #f8fafc; padding: 30px 40px; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #e2e8f0; }
 .form-title-group h2 { margin: 0; font-size: 22px; color: #0f172a; font-weight: 700; }
 .form-title-group p { margin: 5px 0 0 0; color: #64748b; font-size: 14px; }
-.btn-close { 
-  background: white; border: 1px solid #cbd5e1; color: #475569; 
-  width: 36px; height: 36px; border-radius: 50%; 
-  cursor: pointer; display: flex; align-items: center; justify-content: center; 
-  font-size: 16px; transition: 0.2s; 
-}
+.btn-close { background: white; border: 1px solid #cbd5e1; color: #475569; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: 0.2s; }
 .btn-close:hover { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
+
 .form-steps-body { padding: 40px; }
 .form-step-section { display: flex; gap: 20px; margin-bottom: 40px; }
-.step-indicator { 
-  width: 44px; height: 44px; background: #eff6ff; color: #3b82f6; 
-  border-radius: 12px; display: flex; align-items: center; justify-content: center; 
-  font-weight: 700; font-size: 16px; flex-shrink: 0; 
-}
+.step-indicator { width: 44px; height: 44px; background: #eff6ff; color: #3b82f6; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; flex-shrink: 0; }
 .step-content { flex: 1; }
 .step-content h3 { margin: 0 0 20px 0; font-size: 18px; color: #1e293b; display: flex; align-items: center; gap: 10px; }
-.sub-text { font-size: 13px; color: #94a3b8; font-weight: 400; }
+
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .input-grid .full { grid-column: span 2; }
 .input-field label { display: block; font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 8px; }
-.input-control { 
-  width: 100%; padding: 14px; border-radius: 12px; 
-  border: 1px solid #cbd5e1; background-color: #ffffff; color: #1e293b; 
-  font-family: inherit; font-size: 15px; box-sizing: border-box; 
-  transition: all 0.3s ease; 
-}
+.input-control { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #cbd5e1; background-color: #ffffff; color: #1e293b; font-family: inherit; font-size: 15px; box-sizing: border-box; transition: all 0.3s ease; }
 .input-control:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 4px rgba(59,130,246,0.1); }
-.input-control:disabled { background-color: #f1f5f9; color: #94a3b8; cursor: not-allowed; border-color: #e2e8f0; }
+
 .type-selector { display: flex; gap: 15px; }
 .type-chip { flex: 1; cursor: pointer; }
 .type-chip input { display: none; }
-.chip-label { 
-  display: block; text-align: center; padding: 14px; 
-  background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; 
-  font-weight: 600; color: #64748b; transition: all 0.2s; 
-}
-.type-chip input:checked + .chip-label { 
-  background: #0f172a; color: white; border-color: #0f172a; 
-  box-shadow: 0 4px 10px rgba(15,23,42,0.15); 
-}
-.form-footer-actions { 
-  display: flex; justify-content: space-between; 
-  border-top: 1px solid #e2e8f0; padding-top: 30px; margin-top: 10px; 
-}
-.btn-cancel { 
-  background: white; border: 1px solid #cbd5e1; color: #475569; 
-  padding: 12px 30px; border-radius: 12px; font-weight: 600; font-size: 15px; 
-  cursor: pointer; transition: 0.2s; 
-}
-.btn-cancel:hover { background: #f8fafc; color: #0f172a; }
-.btn-submit { 
-  background: #10b981; color: white; border: none; 
-  padding: 12px 40px; border-radius: 12px; font-weight: 700; font-size: 15px; 
-  cursor: pointer; box-shadow: 0 4px 15px rgba(16,185,129,0.25); transition: 0.3s; 
-}
-.btn-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16,185,129,0.35); background: #059669; }
-.btn-submit:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; }
+.chip-label { display: block; text-align: center; padding: 14px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; font-weight: 600; color: #64748b; transition: all 0.2s; }
+.type-chip input:checked + .chip-label { background: #0f172a; color: white; border-color: #0f172a; box-shadow: 0 4px 10px rgba(15,23,42,0.15); }
+
+.form-footer-actions { display: flex; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 30px; margin-top: 10px; }
+.btn-cancel { background: white; border: 1px solid #cbd5e1; color: #475569; padding: 12px 30px; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; }
+.btn-submit { background: #10b981; color: white; border: none; padding: 12px 40px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.3s; }
 
 /* =========================================
-   Modal
+   Modal & Date Picker
 ========================================= */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
 .modal-card { background: white; width: 90%; max-width: 450px; padding: 25px; border-radius: 20px; }
@@ -559,23 +545,7 @@ const updateStatus = async (leaveId, newStatus) => {
 .detail-row { margin-bottom: 10px; font-size: 15px; }
 .detail-row .label { font-weight: 600; display: inline-block; width: 100px; color: #64748b;}
 
-/* =========================================
-   ปรับแต่งช่องเลือกวันที่ (Date Picker)
-========================================= */
-input[type="date"] { position: relative; cursor: pointer; /* เปลี่ยนเมาส์เป็นรูปนิ้วตอนชี้ */}
-/* ขยายไอคอนปฏิทินให้ใหญ่ขึ้นและกดง่าย */
+input[type="date"] { position: relative; cursor: pointer; }
 input[type="date"]::-webkit-calendar-picker-indicator { background: transparent; bottom: 0; color: transparent; cursor: pointer; height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto; }
-/* บังคับวันที่ให้อยู่บรรทัดเดียว ไม่ดีดลงข้างล่าง */
-.date-cell {
-  white-space: nowrap; /* ลบสิทธิ์ในการขึ้นบรรทัดใหม่ */
-  font-family: 'monospace', sans-serif; /* (ทางเลือก) ช่วยให้ตัวเลขตรงกันดูง่ายขึ้น */
-  color: #334155;
-  font-weight: 500;
-}
-
-/* เพิ่มระยะห่างให้คอลัมน์วันที่นิดนึง */
-.modern-table th:nth-child(4), 
-.modern-table td:nth-child(4) {
-  min-width: 200px; /* เพิ่มพื้นที่ให้วันที่แสดงตัวได้เต็มที่ */
-}
+.date-cell { white-space: nowrap; font-family: 'monospace', sans-serif; color: #334155; font-weight: 500; }
 </style>
