@@ -1,46 +1,52 @@
 <template>
-  <div class="split-container">
+  <div
+    class="login-wrapper"
+    :style="{
+      backgroundImage: `url(${slides[currentSlide].image})`
+    }"
+  >
 
-    <!-- ฝั่งซ้าย (Slide Banner) -->
-    <div
-      class="left-panel"
-      :style="{
-        backgroundImage: `url(${slides[currentSlide].image})`
-      }"
-    >
-      <div class="overlay"></div>
+    <div class="overlay"></div>
 
-      <div class="left-content">
-        <h1>{{ slides[currentSlide].title }}</h1>
-        <p>{{ slides[currentSlide].desc }}</p>
-      </div>
+    <!-- Glass Login Panel -->
+    <div class="login-panel">
+
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/3063/3063176.png"
+        class="login-logo"
+      />
+
+      <h2 class="system-title">HOSPITAL HRM</h2>
+
+      <input
+        v-model="username"
+        placeholder="Username"
+        class="login-input"
+      />
+
+      <input
+        v-model="password"
+        type="password"
+        placeholder="Password"
+        class="login-input"
+      />
+
+      <button
+        @click="handleLogin"
+        class="login-button"
+      >
+        เข้าสู่ระบบ
+      </button>
+
     </div>
 
-    <!-- ฝั่งขวา -->
-    <div class="right-panel">
-      <div class="bear-card">
-        <div class="bear-ears"></div>
-
-        <div class="login-box-design">
-          <img src="https://cdn-icons-png.flaticon.com/512/3063/3063176.png" class="login-logo">
-          <h2 class="system-title">HOSPITAL HRM</h2>
-
-          <input v-model="username" placeholder="Username" class="bear-input">
-          <input v-model="password" type="password" placeholder="Password" class="bear-input">
-
-          <button @click="handleLogin" class="btn-login-sage">
-            เข้าสู่ระบบ
-          </button>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 
-const emit = defineEmits(['login-success'])  // 👈 เพิ่มบรรทัดนี้
+const emit = defineEmits(['login-success'])
 
 import img1 from '../assets/1.jpg'
 import img2 from '../assets/2.jpg'
@@ -54,12 +60,12 @@ const password = ref('')
 const currentSlide = ref(0)
 
 const slides = [
-  { image: img1, title: 'Welcome to HRM', desc: 'Manage your hospital staff efficiently' },
-  { image: img2, title: 'Smart Staff Management', desc: 'Organize schedules easily' },
-  { image: img3, title: 'Modern Healthcare System', desc: 'Professional HR tools' },
-  { image: img4, title: 'Modern Healthcare System', desc: 'Professional HR tools' },
-  { image: img5, title: 'Modern Healthcare System', desc: 'Professional HR tools' },
-  { image: img6, title: 'Modern Healthcare System', desc: 'Professional HR tools' }
+  { image: img1 },
+  { image: img2 },
+  { image: img3 },
+  { image: img4 },
+  { image: img5 },
+  { image: img6 }
 ]
 
 onMounted(() => {
@@ -70,133 +76,101 @@ onMounted(() => {
 })
 
 const handleLogin = () => {
-  emit('login-success')   // 🔥 กดแล้วไป Dashboard ทันที
+  emit('login-success')
 }
 </script>
 
 <style scoped>
 
-/* ===== Layout ===== */
-.split-container {
-  display: flex;
-  height: 100vh;
+/* ===== Full Screen Background ===== */
+
+.login-wrapper{
+  height:100vh;
+  width:100%;
+  background-size:cover;
+  background-position:center;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  transition:background-image 1s ease;
 }
 
-/* ===== Left Slide ===== */
-.left-panel {
-  flex: 1;
-  position: relative;
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background-image 1s ease-in-out;
+/* ===== Dark Overlay ===== */
+
+.overlay{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.45);
 }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
+/* ===== Glass Login Panel ===== */
+
+.login-panel{
+  position:relative;
+  z-index:2;
+
+  width:360px;
+
+  padding:45px;
+
+  border-radius:30px;
+
+  background:rgba(255,255,255,0.15);
+
+  backdrop-filter:blur(15px);
+
+  box-shadow:0 25px 50px rgba(0,0,0,0.25);
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 
-.left-content {
-  position: relative;
-  color: white;
-  text-align: left;
-  max-width: 400px;
-  z-index: 2;
+/* ===== Logo ===== */
+
+.login-logo{
+  width:80px;
+  margin-bottom:10px;
 }
 
-.left-content h1 {
-  font-size: 32px;
-  margin-bottom: 15px;
+.system-title{
+  color:white;
+  margin-bottom:30px;
+  font-weight:700;
 }
 
-/* ===== Right Panel ===== */
-.right-panel {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f2f2f2;
+/* ===== Inputs ===== */
+
+.login-input{
+  width:100%;
+  padding:14px;
+  margin-bottom:15px;
+
+  border:none;
+  border-radius:12px;
+
+  font-size:15px;
 }
 
-.bear-card {
-  position: relative;
-  width: 100%;
-  max-width: 420px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* ===== Button ===== */
+
+.login-button{
+  width:100%;
+  padding:14px;
+
+  border:none;
+  border-radius:12px;
+
+  background:#002D55;
+
+  color:white;
+  font-weight:700;
+
+  cursor:pointer;
 }
 
-.bear-ears::before,
-.bear-ears::after {
-  content: "";
-  position: absolute;
-  top: -40px;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: #EFE9D9;
-  z-index: 1;
+.login-button:hover{
+  background:#1c619d;
 }
 
-.bear-ears::before {
-  left: 15px;
-  background: radial-gradient(circle, #8D5B3E 42%, #EFE9D9 43%);
-}
-
-.bear-ears::after {
-  right: 15px;
-  background: radial-gradient(circle, #8D5B3E 42%, #EFE9D9 43%);
-}
-
-.login-box-design {
-  position: relative;
-  z-index: 10;
-  width: 100%;
-  padding: 60px 45px;
-  border-radius: 80px 80px 115px 115px;
-  background: #EFE9D9;
-  text-align: center;
-  box-shadow: 0 25px 50px rgba(0,0,0,0.06);
-}
-
-.login-logo {
-  width: 95px;
-  margin-bottom: 15px;
-}
-
-.system-title {
-  font-weight: 800;
-  margin-bottom: 35px;
-}
-
-.bear-input {
-  width: 100%;
-  padding: 18px 25px;
-  margin-bottom: 15px;
-  border-radius: 20px;
-  border: none;
-  background-color: #BCC3D1;
-  font-size: 16px;
-}
-
-.btn-login-sage {
-  width: 100%;
-  padding: 18px;
-  background: #4A5644;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.btn-login-sage:hover {
-  background: #3A4634;
-}
-
-</style>
+</style>  
