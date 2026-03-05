@@ -1,59 +1,37 @@
 <template>
-  <div class="split-container":style="{
-    backgroundImage: `url(${slides[currentSlide].image})`
-  }"
-  >
-
-    <!-- ฝั่งซ้าย (Slide Banner) -->
-    <div
-      class="left-panel"
-      :style="{
-        backgroundImage: `url(${slides[currentSlide].image})`
-      }"
-    >
-      <div class="overlay"></div>
-
-      <div class="left-content">
-        <h1>{{ slides[currentSlide].title }}</h1>
-        <p>{{ slides[currentSlide].desc }}</p>
-      </div>
-    </div>
-
-    <!-- ฝั่งขวา -->
-    <div class="right-panel">
+ <div class="login-page">
 
   <div class="login-card">
 
-    <h2 class="welcome-title">Welcome Back!</h2>
-    <p class="welcome-sub">
-      Log in to start managing your hospital staff
-    </p>
-
-    <label>Email</label>
-    <div class="input-group">
-      <span class="icon">🩺</span>
-      <input v-model="username" placeholder="Enter your email">
+    <div class="login-title">
+      🏥 Welcome 
     </div>
 
-    <label>Password</label>
     <div class="input-group">
-      <span class="icon">🔐</span>
-      <input v-model="password" type="password" placeholder="Enter password">
+      <span class="icon">📧</span>
+      <input placeholder="username">
     </div>
 
-    <div class="login-options">
-      <label class="remember">
+    <div class="input-group">
+      <span class="icon">🔒</span>
+      <input type="password" placeholder="Password">
+    </div>
+
+    <div class="options">
+      <label>
         <input type="checkbox"> Remember me
       </label>
-      <span class="forgot">Forgot Password?</span>
+
+      <a>Forgot password?</a>
     </div>
 
-    <button @click="handleLogin" class="login-btn">
+    <button class="login-btn">
       Login
     </button>
+
   </div>
+
 </div>
-  </div>
 </template>
 
 <script setup>
@@ -95,154 +73,157 @@ const handleLogin = () => {
 
 <style scoped>
 
-/* ===== Layout ===== */
-.split-container{
+/* ===== Page Background ===== */
+
+.login-page{
   height:100vh;
   width:100%;
 
   display:flex;
   align-items:center;
-  justify-content:flex-end;
+  justify-content:center;
 
   background-size:cover;
   background-position:center;
-  background-repeat:no-repeat;
+
+  animation: slideBg 15s infinite;
 }
 
-/* ===== Left Slide ===== */
+@keyframes slideBg{
 
+  0%{
+    background-image:url("/src/assets/1.jpg");
+  }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
+  33%{
+    background-image:url("/src/assets/2.jpg");
+  }
+
+  66%{
+    background-image:url("/src/assets/3.jpg");
+  }
+
+  100%{
+    background-image:url("/src/assets/4.jpg");
+  }
+
 }
 
-.left-content {
-  position: relative;
-  color: white;
-  text-align: left;
-  max-width: 400px;
-  z-index: 2;
+/* overlay */
+
+.login-page::before{
+  content:"";
+  position:absolute;
+  inset:0;
+
+  background:linear-gradient(
+    135deg,
+    rgba(0,30,60,0.8),
+    rgba(0,90,150,0.6)
+  );
 }
 
-.left-content h1 {
-  font-size: 32px;
-  margin-bottom: 15px;
-}
-
-/* ===== Right Panel ===== */
-.right-panel{
-  width:500px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:transparent;   /* สำคัญ */
-}
-
-/* Card */
+/* ===== Login Card ===== */
 
 .login-card{
   width:420px;
   padding:45px;
 
-  margin-right:120px;
+  border-radius:20px;
 
-  background:rgba(255,255,255,0.92);
-  backdrop-filter:blur(10px);
+  background:rgba(255,255,255,0.95);
 
-  border-radius:18px;
+  backdrop-filter: blur(10px);
 
   box-shadow:
-  0 30px 80px rgba(0,0,0,0.35);
+  0 20px 50px rgba(0,0,0,0.25);
+
+  position:relative;
+  z-index:2;
 }
 
-/* Title */
+/* title */
 
-.welcome-title{
+.login-title{
   font-size:28px;
-  font-weight:800;
-  margin-bottom:6px;
-}
+  font-weight:700;
 
-.welcome-sub{
-  color:#7a8894;
-  font-size:14px;
+  color:#1e293b;
   margin-bottom:30px;
 }
 
-/* Label */
-
-label{
-  font-size:13px;
-  font-weight:600;
-  margin-bottom:6px;
-  display:block;
-  color:#444;
-}
-
-/* Inputs */
+/* ===== Inputs ===== */
 
 .input-group{
   display:flex;
   align-items:center;
 
-  border:1px solid #e3e6ea;
-  border-radius:8px;
+  background:#f1f5f9;
+
+  border-radius:12px;
 
   padding:12px 14px;
   margin-bottom:18px;
 
-  background:white;
+  transition:0.2s;
+}
+
+.input-group:focus-within{
+  background:#e0f2fe;
+  border:1px solid #38bdf8;
+}
+
+.icon{
+  margin-right:10px;
+  font-size:18px;
 }
 
 .input-group input{
   border:none;
+  background:transparent;
+
   outline:none;
   width:100%;
+
   font-size:14px;
-  margin-left:8px;
 }
 
-.icon{
-  font-size:16px;
-}
+/* options */
 
-/* Options */
-
-.login-options{
+.options{
   display:flex;
   justify-content:space-between;
-  align-items:center;
-
   font-size:13px;
+
   margin-bottom:20px;
 }
 
-.forgot{
-  color:#5b7cff;
-  cursor:pointer;
-}
-
-/* Button */
+/* login button */
 
 .login-btn{
   width:100%;
   padding:14px;
 
-  background:black;
-  color:white;
-
   border:none;
-  border-radius:8px;
+  border-radius:12px;
 
-  font-size:15px;
-  font-weight:700;
+  background:linear-gradient(
+  135deg,
+  #0ea5e9,
+  #2563eb
+  );
+
+  color:white;
+  font-weight:600;
 
   cursor:pointer;
+
+  transition:0.2s;
 }
 
 .login-btn:hover{
-  opacity:0.9;
+  transform:translateY(-2px);
+  box-shadow:0 10px 25px rgba(37,99,235,0.4);
 }
+
 </style>
