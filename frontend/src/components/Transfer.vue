@@ -1,6 +1,5 @@
 <template>
   <div class="transfer-app-container">
-    
     <header class="app-header shadow-sm">
       <div class="header-content">
         <div class="brand-info">
@@ -23,7 +22,6 @@
 
     <main class="main-content">
       <transition name="page-fade" mode="out-in">
-        
         <div v-if="!showForm" key="dashboard" class="dashboard-view">
           <div class="filter-card card shadow-sm">
             <div class="search-box">
@@ -128,9 +126,21 @@
                     </div>
                     <div v-for="row in comparisonRows" :key="row.id" class="comp-row-grid">
                       <div class="label">{{ row.label }}</div>
-                      <div class="old-val">{{ row.oldVal }}</div>
+                      <div class="old-val">
+  <input 
+    v-model="row.oldVal" 
+    type="text" 
+    placeholder="กรอกข้อมูลเดิม..." 
+    @input="handleInputValidation(row, 'old', $event)"
+  >
+</div>
                       <div class="new-val">
-                        <input v-model="row.newVal" type="text" placeholder="กรอกข้อมูลใหม่...">
+                        <input 
+                          v-model="row.newVal" 
+                          type="text" 
+                          placeholder="กรอกข้อมูลใหม่..."
+                          @input="handleInputValidation(row, 'new', $event)"
+                        >
                       </div>
                     </div>
                   </div>
@@ -194,11 +204,11 @@ const formData = reactive({
 const isFormValid = computed(() => formData.orderNo && formData.selectedStaffId)
 
 const comparisonRows = ref([
-  { id: 'dept', label: 'สังกัด/หน่วยงาน', oldVal: '-', newVal: '' },
-  { id: 'pos', label: 'ตำแหน่งงาน', oldVal: '-', newVal: '' },
-  { id: 'lv', label: 'ระดับ/ชั้น', oldVal: '-', newVal: '' },
-  { id: 'posNo', label: 'เลขที่ตำแหน่ง', oldVal: '-', newVal: '' },
-  { id: 'salary', label: 'เงินเดือน (บาท)', oldVal: '-', newVal: '' },
+  { id: 'dept', label: 'สังกัด/หน่วยงาน', oldVal: '', newVal: '' }, // ลบ - ออก
+  { id: 'pos', label: 'ตำแหน่งงาน', oldVal: '', newVal: '' },      // ลบ - ออก
+  { id: 'lv', label: 'ระดับ/ชั้น', oldVal: '', newVal: '' },       // ลบ - ออก
+  { id: 'posNo', label: 'เลขที่ตำแหน่ง', oldVal: '', newVal: '' },  // ลบ - ออก
+  { id: 'salary', label: 'เงินเดือน (บาท)', oldVal: '', newVal: '' }, // ลบ - ออก
 ])
 
 const historyList = ref([
@@ -212,16 +222,31 @@ const filteredHistory = computed(() => {
 const searchResults = ref([])
 const handleSearchStaff = () => {
   if (formData.staffSearch.length < 2) return searchResults.value = []
-  const mock = [{ id: '55001', name: 'กิตติพงษ์ ใจเย็น', pos: 'นักวิชาการ', dept: 'ไอที', lv: 'ปฏิบัติการ', posNo: 'บค.01', salary: '22,500' }]
+  const mock = [
+    { id: '55001', name: 'กิตติพงษ์ ใจเย็น', dept: 'ฝ่ายไอที', pos: 'โปรแกรมเมอร์', lv: 'ปฏิบัติการ', posNo: 'IT-001', salary: '25,000' }
+  ]
   searchResults.value = mock.filter(s => s.name.includes(formData.staffSearch) || s.id.includes(formData.staffSearch))
 }
 
 const selectStaff = (staff) => {
-  formData.selectedStaffId = staff.id
-  formData.staffSearch = staff.name
-  searchResults.value = []
-  comparisonRows.value.forEach(row => row.oldVal = staff[row.id] || staff.salary)
-}
+  formData.selectedStaffId = staff.id;
+  formData.staffSearch = staff.name;
+  searchResults.value = [];
+  comparisonRows.value.forEach(row => {
+    row.oldVal = staff[row.id] || '-';
+    row.newVal = '';
+  });
+};
+
+// แก้ไขฟังก์ชันให้รองรับทั้งฝั่ง old และ new
+const handleInputValidation = (row, type, event) => {
+  let val = event.target.value;
+  if (row.id === 'salary') {
+    val = val.replace(/[^0-9]/g, '').slice(0, 10);
+  }
+  if (type === 'old') row.oldVal = val;
+  else row.newVal = val;
+};
 
 const triggerUpload = () => fileInput.value.click()
 const handleFileUpload = (e) => fileName.value = e.target.files[0]?.name || ''
@@ -233,7 +258,10 @@ const resetForm = () => {
   showForm.value = false
   Object.assign(formData, { orderNo: '', selectedStaffId: null, staffSearch: '' })
   fileName.value = ''
-  comparisonRows.value.forEach(r => r.oldVal = '-')
+  comparisonRows.value.forEach(r => {
+    r.oldVal = '' // เปลี่ยนจาก '-' เป็น ''
+    r.newVal = ''
+  })
 }
 </script>
 
@@ -249,44 +277,11 @@ const resetForm = () => {
   min-height: 100vh;
 }
 
-/* 📍 แก้ไขจุดที่มีปัญหา: จัดการช่องไฟไม่ให้ทับซ้อน */
-.filter-card {
-  padding: 1.5rem;
-  display: flex;
-  gap: 2rem;
-  align-items: center;
-  flex-wrap: wrap; /* ป้องกันการเบียดกันในจอเล็ก */
-}
-
-.search-box {
-  flex: 1; /* ให้ขยายเท่าที่มีพื้นที่ */
-  min-width: 300px;
-  max-width: 600px; /* จำกัดความกว้างสูงสุดไม่ให้ไปเบียดฝั่งขวา */
-  position: relative;
-}
-
-.search-box input {
-  width: 100%;
-  padding: 0.75rem 1rem 0.75rem 2.5rem;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-}
-
-.filter-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  white-space: nowrap; /* ป้องกันตัวหนังสือตัดบรรทัด */
-}
-
-.filter-group select {
-  width: 180px;
-  padding: 0.7rem;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-}
-
-/* 📍 CSS อื่นๆ ที่ยกมาจากเวอร์ชันดั้งเดิมทั้งหมด */
+.filter-card { padding: 1.5rem; display: flex; gap: 2rem; align-items: center; flex-wrap: wrap; }
+.search-box { flex: 1; min-width: 300px; max-width: 600px; position: relative; }
+.search-box input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border: 1px solid var(--border); border-radius: 10px; }
+.filter-group { display: flex; align-items: center; gap: 12px; white-space: nowrap; }
+.filter-group select { width: 180px; padding: 0.7rem; border: 1px solid var(--border); border-radius: 10px; }
 .app-header { background: white; padding: 1rem 2rem; border-bottom: 1px solid var(--border); }
 .header-content { max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
 .main-content { max-width: 1300px; margin: 2rem auto; padding: 0 1rem; }
@@ -295,13 +290,24 @@ const resetForm = () => {
 .search-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--border); z-index: 1000; border-radius: 10px; margin-top: 5px; list-style: none; padding: 0; max-height: 200px; overflow-y: auto; }
 .search-dropdown li { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
 .search-dropdown li:hover { background: #eff6ff; }
+.id-tag { background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+
+/* Comparison Table Styles */
 .comparison-container { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
 .comp-header-grid, .comp-row-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; border-bottom: 1px solid var(--border); }
 .comp-header-grid { background: #f8fafc; font-weight: bold; padding: 10px; text-align: center; }
 .comp-row-grid .label { background: #f8fafc; padding: 12px; font-weight: 600; }
-.comp-row-grid .old-val { padding: 12px; text-align: center; color: #64748b; }
-.comp-row-grid .new-val { padding: 8px; }
-.comp-row-grid input { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 5px; text-align: center; }
+.comp-row-grid .old-val, .comp-row-grid .new-val { padding: 8px; }
+.comp-row-grid input { 
+  width: 100%; 
+  border: 1px solid var(--border); 
+  border-radius: 6px; 
+  padding: 5px; 
+  text-align: center; 
+  background: white;
+}
+.comp-row-grid .old-val input { background-color: #fcfcfc; }
+
 .form-grid { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; }
 .btn-primary { background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 10px; cursor: pointer; font-weight: 600; }
 .btn-submit { width: 100%; background: var(--primary); color: white; padding: 1.25rem; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
