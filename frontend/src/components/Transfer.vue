@@ -81,7 +81,7 @@
           <div class="form-grid">
             <div class="form-main-content">
               <section class="card mb-4">
-                <div class="card-title">1. รายละเอียดข้อมูลคำสั่ง00111</div>
+                <div class="card-title">1. รายละเอียดข้อมูลคำสั่ง</div>
                 <div class="card-body">
                   <div class="form-row-2">
                     <div class="form-group">
