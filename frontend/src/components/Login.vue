@@ -1,5 +1,8 @@
 <template>
-  <div class="split-container">
+  <div class="split-container":style="{
+    backgroundImage: `url(${slides[currentSlide].image})`
+  }"
+  >
 
     <!-- ฝั่งซ้าย (Slide Banner) -->
     <div
@@ -18,22 +21,38 @@
 
     <!-- ฝั่งขวา -->
     <div class="right-panel">
-      <div class="bear-card">
-        <div class="bear-ears"></div>
 
-        <div class="login-box-design">
-          <img src="https://cdn-icons-png.flaticon.com/512/3063/3063176.png" class="login-logo">
-          <h2 class="system-title">HOSPITAL HRM</h2>
+  <div class="login-card">
 
-          <input v-model="username" placeholder="Username" class="bear-input">
-          <input v-model="password" type="password" placeholder="Password" class="bear-input">
+    <h2 class="welcome-title">Welcome Back!</h2>
+    <p class="welcome-sub">
+      Log in to start managing your hospital staff
+    </p>
 
-          <button @click="handleLogin" class="btn-login-sage">
-            เข้าสู่ระบบ
-          </button>
-        </div>
-      </div>
+    <label>Email</label>
+    <div class="input-group">
+      <span class="icon">🩺</span>
+      <input v-model="username" placeholder="Enter your email">
     </div>
+
+    <label>Password</label>
+    <div class="input-group">
+      <span class="icon">🔐</span>
+      <input v-model="password" type="password" placeholder="Enter password">
+    </div>
+
+    <div class="login-options">
+      <label class="remember">
+        <input type="checkbox"> Remember me
+      </label>
+      <span class="forgot">Forgot Password?</span>
+    </div>
+
+    <button @click="handleLogin" class="login-btn">
+      Login
+    </button>
+  </div>
+</div>
   </div>
 </template>
 
@@ -77,22 +96,21 @@ const handleLogin = () => {
 <style scoped>
 
 /* ===== Layout ===== */
-.split-container {
-  display: flex;
-  height: 100vh;
+.split-container{
+  height:100vh;
+  width:100%;
+
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
 }
 
 /* ===== Left Slide ===== */
-.left-panel {
-  flex: 1;
-  position: relative;
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background-image 1s ease-in-out;
-}
+
 
 .overlay {
   position: absolute;
@@ -114,89 +132,117 @@ const handleLogin = () => {
 }
 
 /* ===== Right Panel ===== */
-.right-panel {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f2f2f2;
+.right-panel{
+  width:500px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:transparent;   /* สำคัญ */
 }
 
-.bear-card {
-  position: relative;
-  width: 100%;
-  max-width: 420px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* Card */
+
+.login-card{
+  width:420px;
+  padding:45px;
+
+  margin-right:120px;
+
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(10px);
+
+  border-radius:18px;
+
+  box-shadow:
+  0 30px 80px rgba(0,0,0,0.35);
 }
 
-.bear-ears::before,
-.bear-ears::after {
-  content: "";
-  position: absolute;
-  top: -40px;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: #EFE9D9;
-  z-index: 1;
+/* Title */
+
+.welcome-title{
+  font-size:28px;
+  font-weight:800;
+  margin-bottom:6px;
 }
 
-.bear-ears::before {
-  left: 15px;
-  background: radial-gradient(circle, #8D5B3E 42%, #EFE9D9 43%);
+.welcome-sub{
+  color:#7a8894;
+  font-size:14px;
+  margin-bottom:30px;
 }
 
-.bear-ears::after {
-  right: 15px;
-  background: radial-gradient(circle, #8D5B3E 42%, #EFE9D9 43%);
+/* Label */
+
+label{
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:6px;
+  display:block;
+  color:#444;
 }
 
-.login-box-design {
-  position: relative;
-  z-index: 10;
-  width: 100%;
-  padding: 60px 45px;
-  border-radius: 80px 80px 115px 115px;
-  background: #EFE9D9;
-  text-align: center;
-  box-shadow: 0 25px 50px rgba(0,0,0,0.06);
+/* Inputs */
+
+.input-group{
+  display:flex;
+  align-items:center;
+
+  border:1px solid #e3e6ea;
+  border-radius:8px;
+
+  padding:12px 14px;
+  margin-bottom:18px;
+
+  background:white;
 }
 
-.login-logo {
-  width: 95px;
-  margin-bottom: 15px;
+.input-group input{
+  border:none;
+  outline:none;
+  width:100%;
+  font-size:14px;
+  margin-left:8px;
 }
 
-.system-title {
-  font-weight: 800;
-  margin-bottom: 35px;
+.icon{
+  font-size:16px;
 }
 
-.bear-input {
-  width: 100%;
-  padding: 18px 25px;
-  margin-bottom: 15px;
-  border-radius: 20px;
-  border: none;
-  background-color: #BCC3D1;
-  font-size: 16px;
+/* Options */
+
+.login-options{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  font-size:13px;
+  margin-bottom:20px;
 }
 
-.btn-login-sage {
-  width: 100%;
-  padding: 18px;
-  background: #4A5644;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  font-weight: 800;
-  cursor: pointer;
+.forgot{
+  color:#5b7cff;
+  cursor:pointer;
 }
 
-.btn-login-sage:hover {
-  background: #3A4634;
+/* Button */
+
+.login-btn{
+  width:100%;
+  padding:14px;
+
+  background:black;
+  color:white;
+
+  border:none;
+  border-radius:8px;
+
+  font-size:15px;
+  font-weight:700;
+
+  cursor:pointer;
 }
 
+.login-btn:hover{
+  opacity:0.9;
+}
 </style>
