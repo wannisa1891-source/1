@@ -3,7 +3,11 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3307
+<<<<<<< HEAD
 -- Generation Time: Mar 04, 2026 at 08:46 AM
+=======
+-- Generation Time: Mar 04, 2026 at 08:00 AM
+>>>>>>> acef6e5062996376880ede4860052740c02734fb
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -149,14 +153,23 @@ CREATE TABLE `tbl_leaves` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+<<<<<<< HEAD
+=======
+
+>>>>>>> acef6e5062996376880ede4860052740c02734fb
 -- Dumping data for table `tbl_leaves`
 --
 
 INSERT INTO `tbl_leaves` (`leave_id`, `emp_id`, `leave_type_id`, `start_date`, `end_date`, `total_days`, `reason`, `status`, `approver_id`, `approved_date`) VALUES
+<<<<<<< HEAD
 (2, 'EMP003', 'L01', '2026-03-10', '2026-03-11', NULL, 'ป่วย', 'Approved', NULL, NULL),
 (3, '0007', 'L01', '2026-03-17', '2026-03-24', NULL, 'ป่วย', 'Approved', NULL, NULL),
 (4, '1111111', 'L01', '2026-03-24', '2026-03-31', NULL, 'ป่วย', 'Pending', NULL, NULL),
 (9, 'EMP003', 'L01', '2026-03-04', '2026-03-05', NULL, 'อบรม', 'Approved', NULL, NULL);
+=======
+(2, 'EMP003', 'L01', '2026-03-10', '2026-03-11', NULL, 'ป่วย', 'Pending', NULL, NULL),
+(3, '0007', 'L01', '2026-03-17', '2026-03-24', NULL, 'ป่วย', 'Approved', NULL, NULL);
+>>>>>>> acef6e5062996376880ede4860052740c02734fb
 
 -- --------------------------------------------------------
 
@@ -377,7 +390,11 @@ ALTER TABLE `tbl_users`
 -- AUTO_INCREMENT for table `tbl_leaves`
 --
 ALTER TABLE `tbl_leaves`
+<<<<<<< HEAD
   MODIFY `leave_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+=======
+  MODIFY `leave_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+>>>>>>> acef6e5062996376880ede4860052740c02734fb
 
 --
 -- AUTO_INCREMENT for table `tbl_licenses`
