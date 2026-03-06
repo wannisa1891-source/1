@@ -1,106 +1,130 @@
 <template>
   <div class="hrm-app-container">
     <header class="hrm-header">
-      <h1 class="main-title">จัดการข้อมูลแผนก</h1>
+      <div class="header-left">
+        <span class="breadcrumb">Human Resources / Organization</span>
+        <h1 class="main-title">จัดการโครงสร้างอัตรากำลัง</h1>
+      </div>
       <div class="search-box">
-        <input type="text" v-model="searchQuery" placeholder="ค้นหาแผนก...">
-        <span class="search-btn">🔍</span>
+        <span class="search-icon">🔍</span>
+        <input type="text" v-model="searchQuery" placeholder="ค้นหาแผนกหรือตำแหน่ง...">
       </div>
     </header>
 
     <div class="hrm-main-layout">
       <aside class="hrm-sidebar">
-        <div class="sidebar-content">
-          <h2 class="sidebar-header">ข้อมูลแผนก</h2>
-          <p class="hospital-name">โรงพยาบาลชะอำ (รวม {{ totalCapacity }} อัตรา)</p>
+        <div class="sidebar-inner">
+          <div class="hospital-info">
+            <div class="hospital-logo">🏥</div>
+            <div>
+              <h2 class="sidebar-header">โรงพยาบาลชะอำ</h2>
+              <p class="total-badge">รวม {{ totalCapacity }} อัตรา</p>
+            </div>
+          </div>
           
           <nav class="dept-nav">
-            <div v-for="dept in filteredDepts" :key="dept.dept_id" class="dept-item">
+            <div v-for="dept in filteredDepts" :key="dept.dept_id" class="dept-group">
               <div 
                 :class="['dept-label', { 'active': selectedDeptId === dept.dept_id }]"
                 @click="selectDept(dept)"
               >
-                <span class="arrow">{{ dept.sub_dept ? (dept.isOpen ? '▼' : '▶') : '•' }}</span>
-                {{ dept.dept_name }}
+                <span class="arrow-icon">{{ dept.isOpen ? '▾' : '▸' }}</span>
+                <span class="dept-text">{{ dept.dept_name }}</span>
               </div>
               
-              <ul v-if="dept.isOpen && dept.sub_dept" class="sub-dept-list">
-                <li class="sub-item active-sub">• {{ dept.sub_dept }}</li>
-              </ul>
+              <transition name="slide">
+                <ul v-if="dept.isOpen && dept.sub_dept" class="sub-dept-list">
+                  <li class="sub-item">• {{ dept.sub_dept }}</li>
+                </ul>
+              </transition>
             </div>
           </nav>
         </div>
       </aside>
 
       <main class="hrm-content">
-        <section class="summary-section">
-          <h3 class="section-title">สรุปภาพรวม</h3>
-          <div class="summary-grid">
-            <div class="summary-card card-blue">
-              <p>แผนกที่ขาดคน</p>
-              <h3>{{ globalSummary.understaffedCount }} แห่ง</h3>
+        <div class="summary-row">
+          <div class="summary-card neon-blue">
+            <div class="card-content">
+              <p class="label">แผนกที่ขาดคน</p>
+              <h3 class="value">{{ globalSummary.understaffedCount }} <small>แห่ง</small></h3>
             </div>
-            <div class="summary-card card-gold">
-              <p>ตำแหน่งว่างรวม</p>
-              <h3>{{ globalSummary.totalVacant }} อัตรา</h3>
-            </div>
+            <div class="card-icon-bg">⚠️</div>
           </div>
-        </section>
+          <div class="summary-card neon-gold">
+            <div class="card-content">
+              <p class="label">ตำแหน่งว่างรวม</p>
+              <h3 class="value">{{ globalSummary.totalVacant }} <small>อัตรา</small></h3>
+            </div>
+            <div class="card-icon-bg">📋</div>
+          </div>
+        </div>
 
-        <section class="detail-section">
-          <div class="detail-card">
-            <h3 class="card-inner-title">รายละเอียดพนักงาน</h3>
-            
-            <div class="filter-row">
-              <div class="input-group">
-                <label>แผนก:</label>
-                <select v-model="selectedDeptId" class="custom-select">
-                  <option v-for="d in departmentList" :key="d.dept_id" :value="d.dept_id">{{ d.dept_name }}</option>
-                </select>
-              </div>
-              <div class="input-group">
-                <label>สังกัดหลัก:</label>
-                <input type="text" :value="activeDeptName + (activeSubDept ? ' ('+activeSubDept+')' : '')" disabled class="custom-input-disabled">
+<section class="detail-section">
+          <div class="detail-card main-card">
+            <div class="card-header-row-modern">
+              <h3 class="card-inner-title">
+                <span class="icon-bg">📋</span> รายชื่อผู้ครองตำแหน่ง: {{ activeDeptName }}
+              </h3>
+              <div class="status-pill" :class="{ 'warning': vacantCount > 0 }">
+                <span class="dot"></span>
+                {{ vacantCount > 0 ? 'ยังมีตำแหน่งว่าง' : 'อัตรากำลังเต็ม' }}
               </div>
             </div>
 
-            <div class="stats-row">
-              <div class="stat-box">
-                <p>กรอบอัตรากำลัง</p>
-                <div class="val">{{ activeCapacity }} คน</div>
+            <div class="stats-grid-modern">
+              <div class="stat-box-new blue">
+                <span class="stat-label">กรอบอัตรา</span>
+                <div class="stat-value-unit">
+                  <span class="stat-value">{{ activeCapacity }}</span>
+                  <span class="stat-unit">อัตรา</span>
+                </div>
               </div>
-              <div class="stat-box">
-                <p>คนครองตำแหน่ง</p>
-                <div class="val">{{ currentStaff.length }} คน</div>
+              
+              <div class="stat-box-new green">
+                <span class="stat-label">ครองตำแหน่ง</span>
+                <div class="stat-value-unit">
+                  <span class="stat-value">{{ currentStaff.length }}</span>
+                  <span class="stat-unit">คน</span>
+                </div>
               </div>
-              <div class="stat-box">
-                <p>คงเหลือ (ว่าง)</p>
-                <div class="val text-red">{{ vacantCount }} อัตรา</div>
+
+              <div class="stat-box-new red">
+                <span class="stat-label">ว่าง</span>
+                <div class="stat-value-unit">
+                  <span class="stat-value highlight">{{ vacantCount }}</span>
+                  <span class="stat-unit">อัตรา</span>
+                </div>
               </div>
             </div>
 
-            <div class="table-container">
-              <table class="hrm-table">
+            <div class="table-wrapper">
+              <table class="modern-table">
                 <thead>
                   <tr>
-                    <th>เลขที่</th>
-                    <th>ชื่อตำแหน่ง</th>
-                    <th>ผู้ครองตำแหน่ง</th>
-                    <th class="text-center">จัดการ</th>
+                    <th width="15%">เลขที่ตำแหน่ง</th>
+                    <th width="35%">ชื่อตำแหน่ง</th>
+                    <th width="35%">ผู้ครองตำแหน่ง</th>
+                    <th width="15%" class="text-center">Action</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr v-for="emp in currentStaff" :key="emp.emp_id">
-                    <td>{{ emp.position_no || '-' }}</td>
-                    <td>{{ getPositionName(emp.pos_id) }}</td>
-                    <td class="font-bold">{{ emp.prefix }}{{ emp.first_name_th }} {{ emp.last_name_th }}</td>
-                    <td class="text-center"><button class="btn-edit">จัดการ</button></td>
+<tbody>
+                  <tr v-for="emp in currentStaff" :key="emp.emp_id" class="staff-row">
+                    <td class="pos-no">{{ emp.position_no || '-' }}</td>
+                    <td class="pos-name">{{ getPositionName(emp.pos_id) }}</td>
+                    <td class="emp-name">
+                      <div class="user-avatar-mini">👤</div>
+                      {{ emp.prefix }}{{ emp.first_name_th }} {{ emp.last_name_th }}
+                    </td>
+                    <td class="text-center">
+                      <button class="btn-manage">จัดการ</button>
+                    </td>
                   </tr>
-                  <tr v-for="n in vacantCount" :key="'v'+n" class="empty-row">
-                    <td>-</td>
-                    <td>-</td>
-                    <td class="text-orange">-- ตำแหน่งว่าง --</td>
-                    <td class="text-center"><button class="btn-add">รับเข้า</button></td>
+
+                  <tr v-if="currentStaff.length === 0">
+                    <td colspan="4" class="text-center text-muted" style="padding: 40px;">
+                      🚫 ไม่พบข้อมูลผู้ครองตำแหน่งในแผนกนี้
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -175,55 +199,293 @@ const globalSummary = computed(() => {
 </script>
 
 <style scoped>
-/* 🎨 ตกแต่งตามรูปต้นฉบับ 100% */
-.hrm-app-container { font-family: 'Sarabun', sans-serif; background: #fdfdfd; min-height: 100vh; padding: 20px; }
+/* 1. คุมโทนพื้นหลังให้นิ่งที่สุด */
+.hrm-app-container {
+  font-family: 'Sarabun', sans-serif;
+  background: #f0f2f5; 
+  min-height: 100vh;
+  padding: 20px;
+  color: #333;
+}
 
-/* Header */
-.hrm-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.main-title { font-size: 28px; font-weight: 800; color: #000; margin: 0; }
-.search-box { display: flex; align-items: center; border: 1px solid #ccc; border-radius: 8px; padding: 5px 15px; background: white; }
-.search-box input { border: none; outline: none; padding: 8px; width: 200px; }
+/* --- ส่วนที่เพิ่มใหม่: HEADER & SEARCH ให้ดูแพง --- */
+.hrm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; 
+  padding: 10px 5px 25px 5px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 30px;
+}
 
-/* Layout */
-.hrm-main-layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
-/* Sidebar: โทนสีน้ำตาล/ทอง ตามรูป image_936e84.png */
-.hrm-sidebar { background: #c2a882; border-radius: 15px; padding: 20px; color: #fff; min-height: 80vh; }
-.sidebar-header { font-size: 22px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 15px; }
-.hospital-name { font-size: 14px; margin: 10px 0 20px; text-align: center; }
+.breadcrumb {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 
-.dept-label { padding: 12px; cursor: pointer; border-radius: 8px; margin-bottom: 5px; font-weight: 600; color: #000; display: flex; align-items: center; }
-.dept-label.active { background: rgba(255,255,255,0.2); }
-.sub-dept-list { list-style: none; padding-left: 25px; margin-bottom: 10px; }
-.sub-item { padding: 5px 0; font-size: 14px; color: #000; }
+.main-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
 
-/* Content Area */
-.summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
-.summary-card { padding: 25px; border-radius: 15px; color: white; }
-.card-blue { background: #004d99; }
-.card-gold { background: #b39b4d; }
-.summary-card h3 { font-size: 32px; margin: 10px 0 0; }
+.search-box {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 8px 16px;
+  width: 320px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
 
-/* Detail Card */
-.detail-card { background: white; border: 1px solid #eee; border-radius: 15px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-.filter-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
-.input-group label { display: block; font-size: 14px; margin-bottom: 5px; font-weight: bold; }
-.custom-select, .custom-input-disabled { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; }
+.search-box:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
 
-/* Stats */
-.stats-row { display: flex; gap: 15px; margin-bottom: 25px; }
-.stat-box { flex: 1; border: 1px solid #eee; border-radius: 12px; padding: 20px; text-align: center; }
-.stat-box .val { font-size: 24px; font-weight: bold; margin-top: 10px; }
+.search-icon {
+  font-size: 16px;
+  margin-right: 12px;
+  opacity: 0.4;
+}
 
-/* Table */
-.hrm-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-.hrm-table th { background: #003366; color: white; padding: 15px; text-align: left; }
-.hrm-table td { padding: 15px; border-bottom: 1px solid #f0f0f0; }
-.empty-row { background: #fffaf0; }
-.btn-edit { background: #003366; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
-.btn-add { background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+.search-box input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 14px;
+  color: #1e293b;
+  background: transparent;
+}
+/* --- จบส่วน HEADER --- */
 
-/* Utils */
-.text-red { color: #dc3545; }
-.text-orange { color: #fd7e14; font-weight: bold; }
+/* 2. จัด Layout Sidebar กับ Content (คงเดิม) */
+.hrm-main-layout {
+  display: flex; 
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.hrm-sidebar {
+  width: 280px; 
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  flex-shrink: 0;
+}
+
+.hrm-content {
+  flex-grow: 1; 
+}
+
+/* 3. ปรับตัวเลือกแผนก (คงเดิม) */
+.dept-label {
+  padding: 10px 15px;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+  color: #555;
+  font-size: 14px;
+}
+
+.dept-label:hover {
+  background: #f8f9fa;
+}
+
+.dept-label.active {
+  background: #e7f3ff; 
+  color: #007bff; 
+  font-weight: bold;
+}
+
+/* 4. สรุปภาพรวม (คงเดิม) */
+.summary-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  border-left: 5px solid #007bff; 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.card-content .label { color: #666; font-size: 13px; }
+.card-content .value { font-size: 24px; font-weight: bold; margin: 5px 0 0; color: #000; }
+
+/* 5. ตาราง (คงเดิม) */
+.main-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.modern-table th {
+  text-align: left;
+  padding: 12px;
+  background: #f8f9fa;
+  border-bottom: 2px solid #eee;
+  color: #666;
+  font-size: 13px;
+}
+
+.modern-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.staff-row:hover { background: #fafafa; }
+
+/* ปุ่ม Action (คงเดิม) */
+.btn-manage {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.btn-hire {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* --- ส่วนที่แก้ไขใหม่ก่อนหน้า (คงเดิม) --- */
+.card-header-row-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.icon-bg {
+  background: #f1f5f9;
+  padding: 8px 10px;
+  border-radius: 10px;
+  margin-right: 8px;
+}
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #dcfce7;
+}
+
+.status-pill.warning {
+  background: #fff7ed;
+  color: #ea580c;
+  border: 1px solid #ffedd5;
+}
+
+.status-pill .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.stats-grid-modern {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-box-new {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: relative;
+}
+
+.stat-box-new::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  border-radius: 16px 16px 0 0;
+}
+
+.stat-box-new.blue::before { background: #3b82f6; }
+.stat-box-new.green::before { background: #10b981; }
+.stat-box-new.red::before { background: #ef4444; }
+
+.stat-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.stat-value-unit {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1;
+}
+
+.stat-value.highlight {
+  color: #ef4444;
+}
+
+.stat-unit {
+  font-size: 14px;
+  color: #94a3b8;
+  font-weight: 600;
+}
 </style>
