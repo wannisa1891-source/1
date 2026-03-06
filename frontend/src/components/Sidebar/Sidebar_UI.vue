@@ -132,4 +132,6 @@ defineEmits(['change-menu', 'logout', 'toggle-sidebar', 'toggle-menu'])
 .user-block { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; }
 .avatar { width: 48px; height: 48px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 .btn-logout-hybrid { width: 100%; padding: 12px; border-radius: 15px; border: 1px solid #fecaca; background: #fff5f5; color: #ef4444; font-weight: bold; cursor: pointer; }
+.main-content-view{flex:1;padding:20px;margin-left:280px;transition: all 0.35s ease;}
+.main-content-view.expanded{margin-left:85px;}
 </style>
