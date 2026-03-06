@@ -10,7 +10,7 @@ import OrgStructure from './components/OrgStructure/OrgStructure.vue'
 import Transfer from './components/Transfer/Transfer.vue'
 import License from './components/License/LicensePage.vue'
 import Schedule from './components/Schedule/Schedule.vue'
-import LeaveSystem from './components/LeaveSystem/LeaveSystem.vue'
+import LeaveSystem from './components/LeaveSystem/Leave_System.vue'
 import Payroll from './components/Payroll/Payroll.vue'
 
 const isLoggedIn = ref(false)
