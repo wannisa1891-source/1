@@ -321,4 +321,4 @@ const formatDate = (dateStr) => {
 input[type="date"] { position: relative; cursor: pointer; }
 input[type="date"]::-webkit-calendar-picker-indicator { background: transparent; bottom: 0; color: transparent; cursor: pointer; height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto; }
 .date-cell { white-space: nowrap; font-family: 'monospace', sans-serif; color: #334155; font-weight: 500; }
-</style>
+</style>44

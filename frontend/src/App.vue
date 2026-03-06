@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 
 import Login from './components/Login/Login.vue'
-import Sidebar from './components/Sidebar/Sidebar.vue'
+import Sidebar from './components/Sidebar/SideBar.vue'
 import Dashboard from './components/Dashboard/Dashboard.vue'
 import EmployeeList from './components/EmployeeList/EmployeeList.vue'
 import OrgStructure from './components/OrgStructure/OrgStructure.vue'
