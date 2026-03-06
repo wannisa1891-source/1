@@ -24,7 +24,7 @@
           @click="$emit('change-menu', 'dashboard')"
         >
           <span class="icon">
-            <img src="../assets/home.png" class="home-icon-img" alt="Dashboard">
+            <img :src="homeIcon" class="home-icon-img" alt="Dashboard">
           </span>
           <span class="label" v-if="!isCollapsed">Dashboard</span>
         </div>
@@ -36,7 +36,7 @@
             :class="{ 'is-open': openMenus.personnel && !isCollapsed }"
           >
             <span class="icon">
-              <img src="../assets/pim.png" class="pim-icon-img" alt="Personnel">
+              <img :src="pimIcon" class="pim-icon-img" alt="Personnel">
             </span>
             <span class="label" v-if="!isCollapsed">จัดการบุคลากร</span>
             <span class="chevron" v-if="!isCollapsed">❯</span>
@@ -58,7 +58,7 @@
             :class="{ 'is-open': openMenus.leave && !isCollapsed }"
           >
             <span class="icon">
-              <img src="../assets/leave.png" class="leave-icon-img" alt="Leave">
+              <img :src="leaveIcon" class="leave-icon-img" alt="Leave">
             </span>
             <span class="label" v-if="!isCollapsed">การลา</span>
             <span class="chevron" v-if="!isCollapsed">❯</span>
@@ -78,7 +78,7 @@
             :class="{ 'is-open': openMenus.finance && !isCollapsed }"
           >
             <span class="icon">
-              <img src="../assets/finance.png" class="finance-icon-img" alt="Finance">
+              <img :src="financeIcon" class="finance-icon-img" alt="Finance">
             </span>
             <span class="label" v-if="!isCollapsed">การเงิน</span>
             <span class="chevron" v-if="!isCollapsed">❯</span>
@@ -109,14 +109,18 @@
 
 <script setup>
 import { ref } from 'vue'
+import homeIcon from '../../assets/home.png'
+import pimIcon from '../../assets/pim.png'
+import leaveIcon from '../../assets/leave.png'
+import financeIcon from '../../assets/finance.png'
 
-// รับค่า activeMenu จาก App.vue
-defineProps(['activeMenu'])
+// รับค่า activeMenu และ collapsed จาก App.vue
+const props = defineProps(['activeMenu', 'collapsed'])
 
 // ส่งเหตุการณ์กลับไปยัง App.vue
 const emit = defineEmits(['change-menu', 'logout', 'toggle-collapse'])
 
-const isCollapsed = ref(false)
+const isCollapsed = ref(props.collapsed)
 const openMenus = ref({ personnel: true, leave: false, finance: false })
 
 // ฟังก์ชัน Toggle Sidebar และส่งค่าไปบอก App.vue เพื่อขยับเนื้อหา
