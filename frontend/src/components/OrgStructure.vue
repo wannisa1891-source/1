@@ -3,7 +3,7 @@
 
     <!-- Header -->
     <header class="hrm-header">
-      <h1 class="main-title">จัดการข้อมูลแผนก</h1>
+      <h1 class="main-title">ข้อมูลแผนก</h1>
 
       <div class="search-box">
         <input v-model="searchQuery" type="text" placeholder="ค้นหาแผนก...">
