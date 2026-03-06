@@ -176,6 +176,7 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref } from 'vue'
 const props = defineProps([
@@ -220,6 +221,7 @@ const formatDate = (dateStr) => {
   return d.toLocaleDateString('th-TH', { day: '2-digit', month: '2-digit', year: '2-digit' });
 }
 </script>
+
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
 
