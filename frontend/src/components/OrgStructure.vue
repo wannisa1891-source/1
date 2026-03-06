@@ -1,66 +1,53 @@
 <template>
   <div class="hrm-app-container">
 
+    <!-- Header -->
     <header class="hrm-header">
-      <h1 class="main-title">จัดการข้อมูลแผนก</h1>
+      <h1 class="main-title">ข้อมูลแผนก</h1>
 
       <div class="search-box">
-        <input type="text" v-model="searchQuery" placeholder="ค้นหาแผนก...">
-        <span class="search-btn">🔍</span>
+        <input v-model="searchQuery" type="text" placeholder="ค้นหาแผนก...">
+        <span>🔍</span>
       </div>
     </header>
+
 
     <div class="hrm-main-layout">
 
       <!-- Sidebar -->
       <aside class="hrm-sidebar">
 
-        <div class="sidebar-content">
+        <h2 class="sidebar-header">ข้อมูลแผนก</h2>
 
-          <h2 class="sidebar-header">ข้อมูลแผนก</h2>
+        <p class="hospital-name">
+          โรงพยาบาลชะอำ (รวม {{ totalCapacity }} อัตรา)
+        </p>
 
-          <p class="hospital-name">
-            โรงพยาบาลชะอำ (รวม {{ totalCapacity }} อัตรา)
-          </p>
+        <nav>
 
-          <nav class="dept-nav">
+          <div
+            v-for="dept in filteredDepts"
+            :key="dept.dept_id"
+            class="dept-item"
+          >
 
             <div
-              v-for="dept in filteredDepts"
-              :key="dept.dept_id"
-              class="dept-item"
+              class="dept-label"
+              :class="{active:selectedDeptId===dept.dept_id}"
+              @click="selectDept(dept)"
             >
-
-              <div
-                :class="['dept-label',{active:selectedDeptId===dept.dept_id}]"
-                @click="selectDept(dept)"
-              >
-
-                <span class="arrow">
-                  {{ dept.sub_dept ? (dept.isOpen?'▼':'▶') : '•' }}
-                </span>
-
-                {{ dept.dept_name }}
-
-              </div>
-
-              <ul v-if="dept.isOpen && dept.sub_dept" class="sub-dept-list">
-
-                <li class="sub-item active-sub">
-                  • {{ dept.sub_dept }}
-                </li>
-
-              </ul>
-
+              <span class="arrow">•</span>
+              {{ dept.dept_name }}
             </div>
 
-          </nav>
+          </div>
 
-        </div>
+        </nav>
 
       </aside>
 
-      <!-- Main -->
+
+      <!-- Content -->
       <main class="hrm-content">
 
         <!-- Summary -->
@@ -84,18 +71,19 @@
 
         </section>
 
+
         <!-- Detail -->
-        <section class="detail-section">
+        <section>
 
           <div class="detail-card">
 
-            <h3 class="card-inner-title">รายละเอียดพนักงาน</h3>
+            <h3>รายละเอียดพนักงาน</h3>
+
 
             <div class="filter-row">
 
               <div class="input-group">
-
-                <label>แผนก:</label>
+                <label>แผนก</label>
 
                 <select v-model="selectedDeptId" class="custom-select">
 
@@ -111,12 +99,11 @@
 
               </div>
 
-              <div class="input-group">
 
-                <label>สังกัดหลัก:</label>
+              <div class="input-group">
+                <label>สังกัดหลัก</label>
 
                 <input
-                  type="text"
                   :value="activeDeptName"
                   disabled
                   class="custom-input-disabled"
@@ -126,6 +113,8 @@
 
             </div>
 
+
+            <!-- Stats -->
             <div class="stats-row">
 
               <div class="stat-box">
@@ -139,27 +128,25 @@
               </div>
 
               <div class="stat-box">
-                <p>คงเหลือ (ว่าง)</p>
+                <p>คงเหลือ</p>
                 <div class="val text-red">{{ vacantCount }} อัตรา</div>
               </div>
 
             </div>
 
-            <!-- Table -->
 
+            <!-- Table -->
             <div class="table-container">
 
               <table class="hrm-table">
 
                 <thead>
-
                   <tr>
                     <th>เลขที่</th>
-                    <th>ชื่อตำแหน่ง</th>
+                    <th>ตำแหน่ง</th>
                     <th>ผู้ครองตำแหน่ง</th>
                     <th class="text-center">จัดการ</th>
                   </tr>
-
                 </thead>
 
                 <tbody>
@@ -178,12 +165,11 @@
                     </td>
 
                     <td class="text-center">
-                      <button class="btn-edit">
-                        จัดการ
-                      </button>
+                      <button class="btn-edit">จัดการ</button>
                     </td>
 
                   </tr>
+
 
                   <tr
                     v-for="n in vacantCount"
@@ -199,9 +185,7 @@
                     </td>
 
                     <td class="text-center">
-                      <button class="btn-add">
-                        รับเข้า
-                      </button>
+                      <button class="btn-add">รับเข้า</button>
                     </td>
 
                   </tr>
@@ -223,6 +207,7 @@
   </div>
 </template>
 
+
 <script setup>
 
 import {ref,computed,onMounted,watch} from "vue"
@@ -234,25 +219,21 @@ const employees = ref([])
 const selectedDeptId = ref(null)
 const searchQuery = ref("")
 
+
 onMounted(async()=>{
 
   const dept = await axios.get("http://localhost:3000/api/departments")
 
-  departmentList.value = dept.data.map(d=>({
-    ...d,
-    isOpen:false
-  }))
+  departmentList.value = dept.data
 
   if(departmentList.value.length){
-
     selectedDeptId.value = departmentList.value[0].dept_id
-    departmentList.value[0].isOpen=true
-
   }
 
   loadEmployees()
 
 })
+
 
 async function loadEmployees(){
 
@@ -268,15 +249,11 @@ async function loadEmployees(){
 
 watch(selectedDeptId,loadEmployees)
 
+
 function selectDept(dept){
-
-  departmentList.value.forEach(d=>d.isOpen=false)
-
-  dept.isOpen=true
-
-  selectedDeptId.value=dept.dept_id
-
+  selectedDeptId.value = dept.dept_id
 }
+
 
 const filteredDepts = computed(()=>{
 
@@ -286,9 +263,15 @@ const filteredDepts = computed(()=>{
 
 })
 
-const activeDept = computed(()=>
-  departmentList.value.find(d=>d.dept_id===selectedDeptId.value)
-)
+
+const activeDept = computed(()=>{
+
+  return departmentList.value.find(
+    d=>d.dept_id===selectedDeptId.value
+  )
+
+})
+
 
 const activeDeptName = computed(()=>activeDept.value?.dept_name || "")
 
@@ -296,17 +279,26 @@ const activeCapacity = computed(()=>activeDept.value?.capacity || 0)
 
 const currentStaff = computed(()=>employees.value)
 
+
 const vacantCount = computed(()=>{
-  return Math.max(0,activeCapacity.value-currentStaff.value.length)
+
+  return Math.max(
+    0,
+    activeCapacity.value-currentStaff.value.length
+  )
+
 })
+
 
 const totalCapacity = computed(()=>{
 
   return departmentList.value.reduce(
-    (a,b)=>a+(b.capacity||0),0
+    (a,b)=>a+(b.capacity||0),
+    0
   )
 
 })
+
 
 const globalSummary = computed(()=>{
 
@@ -335,10 +327,10 @@ const globalSummary = computed(()=>{
   }
 
 })
-
 </script>
 
-<style scoped>
+
+<style>
 
 body{
 margin:0;
@@ -378,7 +370,6 @@ border:none;
 outline:none;
 padding:8px;
 width:220px;
-font-family:'Sarabun';
 }
 
 .hrm-main-layout{
@@ -416,18 +407,11 @@ border-radius:8px;
 margin-bottom:5px;
 font-weight:600;
 color:black;
-display:flex;
-align-items:center;
-transition:0.2s;
-}
-
-.dept-label:hover{
-background:rgba(255,255,255,0.2);
+background:white;
 }
 
 .dept-label.active{
-background:white;
-color:#333;
+background:#fff;
 }
 
 .summary-grid{
@@ -462,6 +446,25 @@ background:white;
 border-radius:15px;
 padding:25px;
 box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+
+.filter-row{
+display:flex;
+gap:20px;
+margin-bottom:20px;
+}
+
+.input-group{
+display:flex;
+flex-direction:column;
+gap:5px;
+}
+
+.custom-select,
+.custom-input-disabled{
+padding:8px;
+border-radius:6px;
+border:1px solid #ddd;
 }
 
 .stats-row{
@@ -535,6 +538,14 @@ color:#dc3545;
 
 .text-orange{
 color:#fd7e14;
+font-weight:bold;
+}
+
+.text-center{
+text-align:center;
+}
+
+.font-bold{
 font-weight:bold;
 }
 
