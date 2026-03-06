@@ -127,13 +127,13 @@
                     <div v-for="row in comparisonRows" :key="row.id" class="comp-row-grid">
                       <div class="label">{{ row.label }}</div>
                       <div class="old-val">
-  <input 
-    v-model="row.oldVal" 
-    type="text" 
-    placeholder="กรอกข้อมูลเดิม..." 
-    @input="handleInputValidation(row, 'old', $event)"
-  >
-</div>
+                        <input 
+                          v-model="row.oldVal" 
+                          type="text" 
+                          placeholder="กรอกข้อมูลเดิม..." 
+                          @input="handleInputValidation(row, 'old', $event)"
+                        >
+                      </div>
                       <div class="new-val">
                         <input 
                           v-model="row.newVal" 
@@ -149,32 +149,37 @@
             </div>
 
             <aside class="form-sidebar">
-              <div class="card sticky-sidebar shadow-sm">
-                <div class="card-title border-bottom">3. เอกสารและยืนยัน</div>
-                <div class="card-body">
-                  <div class="upload-area" @click="triggerUpload">
-                    <div v-if="!fileName" class="upload-placeholder">
-                      <span class="icon">☁️</span>
-                      <p>อัปโหลดไฟล์คำสั่ง (PDF)</p>
-                    </div>
-                    <div v-else class="file-name-active">
-                      <span>📄</span> {{ fileName }}
-                    </div>
-                    <input type="file" ref="fileInput" hidden @change="handleFileUpload" accept=".pdf">
-                  </div>
-                  <div class="form-group mt-4">
-                    <label>หมายเหตุเพิ่มเติม</label>
-                    <textarea v-model="formData.note" rows="3" placeholder="ระบุหมายเหตุ (ถ้ามี)"></textarea>
-                  </div>
-                </div>
-                <div class="card-footer p-3">
-                  <button @click="handleSave" class="btn-submit" :disabled="isLoading || !isFormValid">
-                    {{ isLoading ? 'กำลังประมวลผล...' : 'บันทึกคำสั่ง' }}
-                  </button>
-                  <p v-if="!isFormValid" class="validation-tip">กรุณากรอกเลขที่คำสั่งและเลือกบุคลากร</p>
-                </div>
-              </div>
-            </aside>
+  <div class="card sticky-sidebar shadow-sm">
+    <div class="card-title border-bottom">3. เอกสารและยืนยัน</div>
+    
+    <div class="card-body">
+      <div class="upload-area" @click="triggerUpload">
+        <div v-if="!fileName" class="upload-placeholder">
+          <span class="icon">📁</span>
+          <p>คลิกเพื่อเลือกไฟล์ (รูปภาพ, PDF, หรือไฟล์อื่นๆ)</p>
+        </div>
+        
+        <div v-else class="file-name-active">
+          <span>📄</span> {{ fileName }}
+          <button @click.stop="removeFile" class="btn-remove">✕</button>
+        </div>
+        
+        <input type="file" ref="fileInput" hidden @change="handleFileUpload" accept="*">
+      </div>
+      
+      <div class="form-group mt-4">
+        <label>หมายเหตุเพิ่มเติม</label>
+        <textarea v-model="formData.note" rows="3" placeholder="ระบุหมายเหตุ (ถ้ามี)"></textarea>
+      </div>
+    </div>
+    
+    <div class="card-footer p-3">
+      <button @click="handleSave" class="btn-submit" :disabled="isLoading || !isFormValid">
+        {{ isLoading ? 'กำลังประมวลผล...' : 'บันทึกคำสั่ง' }}
+      </button>
+    </div>
+  </div>
+</aside>
           </div>
         </div>
       </transition>
@@ -189,8 +194,27 @@ const showForm = ref(false)
 const isLoading = ref(false)
 const searchQuery = ref('')
 const filterStatus = ref('all')
-const fileName = ref('')
+
+// --- ส่วนจัดการไฟล์ ---
 const fileInput = ref(null)
+const fileName = ref('')
+const fileData = ref(null)
+
+const triggerUpload = () => fileInput.value.click()
+
+const handleFileUpload = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    fileName.value = file.name
+    fileData.value = file // เก็บไฟล์ไว้ใน ref เพื่อส่งไป FormData
+  }
+}
+
+const removeFile = () => {
+  fileName.value = ''
+  fileData.value = null
+}
+// ----------------------
 
 const formData = reactive({
   orderNo: '',
@@ -201,14 +225,30 @@ const formData = reactive({
   note: ''
 })
 
+// รีเซ็ตค่าทั้งหมดกลับเป็นค่าว่าง
+const resetForm = () => {
+  showForm.value = false
+  formData.orderNo = ''
+  formData.title = ''
+  formData.staffSearch = ''
+  formData.selectedStaffId = null
+  formData.note = ''
+  removeFile() // เคลียร์ไฟล์
+  // รีเซ็ตค่าในตารางเปรียบเทียบ
+  comparisonRows.value.forEach(row => {
+    row.oldVal = ''
+    row.newVal = ''
+  })
+}
+
 const isFormValid = computed(() => formData.orderNo && formData.selectedStaffId)
 
 const comparisonRows = ref([
-  { id: 'dept', label: 'สังกัด/หน่วยงาน', oldVal: '', newVal: '' }, // ลบ - ออก
-  { id: 'pos', label: 'ตำแหน่งงาน', oldVal: '', newVal: '' },      // ลบ - ออก
-  { id: 'lv', label: 'ระดับ/ชั้น', oldVal: '', newVal: '' },       // ลบ - ออก
-  { id: 'posNo', label: 'เลขที่ตำแหน่ง', oldVal: '', newVal: '' },  // ลบ - ออก
-  { id: 'salary', label: 'เงินเดือน (บาท)', oldVal: '', newVal: '' }, // ลบ - ออก
+  { id: 'dept', label: 'สังกัด/หน่วยงาน', oldVal: '', newVal: '', oldDeptId: null, newDeptId: null },
+  { id: 'pos', label: 'ตำแหน่งงาน', oldVal: '', newVal: '' },
+  { id: 'lv', label: 'ระดับ/ชั้น', oldVal: '', newVal: '' },
+  { id: 'posNo', label: 'เลขที่ตำแหน่ง', oldVal: '', newVal: '' },
+  { id: 'salary', label: 'เงินเดือน (บาท)', oldVal: '', newVal: '' },
 ])
 
 const historyList = ref([
@@ -216,67 +256,103 @@ const historyList = ref([
 ])
 
 const filteredHistory = computed(() => {
-  return historyList.value.filter(item => (item.staffName.includes(searchQuery.value) || item.orderNo.includes(searchQuery.value)) && (filterStatus.value === 'all' || item.statusType === filterStatus.value))
+  return historyList.value.filter(item => 
+    (item.staffName.includes(searchQuery.value) || item.orderNo.includes(searchQuery.value)) && 
+    (filterStatus.value === 'all' || item.statusType === filterStatus.value)
+  )
 })
 
 const searchResults = ref([])
-const handleSearchStaff = () => {
-  if (formData.staffSearch.length < 2) return searchResults.value = []
-  const mock = [
-    { id: '55001', name: 'กิตติพงษ์ ใจเย็น', dept: 'ฝ่ายไอที', pos: 'โปรแกรมเมอร์', lv: 'ปฏิบัติการ', posNo: 'IT-001', salary: '25,000' }
-  ]
-  searchResults.value = mock.filter(s => s.name.includes(formData.staffSearch) || s.id.includes(formData.staffSearch))
-}
+const handleSearchStaff = async () => {
+  if (formData.staffSearch.length < 2) {
+    searchResults.value = [];
+    return;
+  }
+  try {
+    const response = await fetch(`http://localhost:3000/api/staff-search?q=${formData.staffSearch}`);
+    searchResults.value = await response.json();
+  } catch (error) {
+    console.error("Search error:", error);
+  }
+};
 
 const selectStaff = (staff) => {
   formData.selectedStaffId = staff.id;
   formData.staffSearch = staff.name;
   searchResults.value = [];
+  
   comparisonRows.value.forEach(row => {
-    row.oldVal = staff[row.id] || '-';
-    row.newVal = '';
+    if (row.id === 'dept') {
+      row.oldVal = staff.dept;
+      row.oldDeptId = staff.dept_id;
+      row.newVal = staff.dept;
+      row.newDeptId = staff.dept_id;
+    } else if (row.id === 'pos') {
+      row.oldVal = staff.pos;
+      row.newVal = staff.pos;
+    } else {
+      row.oldVal = staff[row.id] || '';
+      row.newVal = staff[row.id] || '';
+    }
   });
 };
 
-// แก้ไขฟังก์ชันให้รองรับทั้งฝั่ง old และ new
-const handleInputValidation = (row, type, event) => {
-  let val = event.target.value;
-  if (row.id === 'salary') {
-    val = val.replace(/[^0-9]/g, '').slice(0, 10);
-  }
-  if (type === 'old') row.oldVal = val;
-  else row.newVal = val;
-};
+const handleSave = async () => {
+  if (!isFormValid.value) return;
+  isLoading.value = true;
+  
+  const getRow = (id) => comparisonRows.value.find(r => r.id === id) || {};
 
-const triggerUpload = () => fileInput.value.click()
-const handleFileUpload = (e) => fileName.value = e.target.files[0]?.name || ''
-const handleSave = () => {
-  isLoading.value = true
-  setTimeout(() => { alert('บันทึกสำเร็จ'); resetForm(); isLoading.value = false; }, 1000)
-}
-const resetForm = () => {
-  showForm.value = false
-  Object.assign(formData, { orderNo: '', selectedStaffId: null, staffSearch: '' })
-  fileName.value = ''
-  comparisonRows.value.forEach(r => {
-    r.oldVal = '' // เปลี่ยนจาก '-' เป็น ''
-    r.newVal = ''
-  })
-}
+  const formDataObj = new FormData();
+  
+  const payload = {
+    orderNo: formData.orderNo,
+    orderDate: formData.orderDate,
+    empId: formData.selectedStaffId,
+    title: formData.title,
+    oldDeptId: getRow('dept').oldDeptId,
+    newDeptId: getRow('dept').newDeptId,
+    oldPos: getRow('pos').oldVal,
+    newPos: getRow('pos').newVal,
+    oldSalary: parseFloat(getRow('salary').oldVal) || 0,
+    newSalary: parseFloat(getRow('salary').newVal) || 0,
+    note: formData.note
+  };
+  
+  formDataObj.append('data', JSON.stringify(payload));
+  if (fileData.value) {
+    formDataObj.append('order_file', fileData.value);
+  }
+
+  try {
+    const response = await fetch('http://localhost:3000/api/transfers', {
+      method: 'POST',
+      body: formDataObj
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      alert('บันทึกสำเร็จ');
+      resetForm();
+    } else {
+      alert('บันทึกไม่สำเร็จ: ' + result.message);
+    }
+  } catch (error) {
+    console.error("Save error:", error);
+    alert('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+  } finally {
+    isLoading.value = false;
+  }
+};
 </script>
 
 <style scoped>
+/* สไตล์เดิมของมึงใช้ได้อยู่แล้ว ไม่ต้องแก้ */
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
-
 .transfer-app-container {
-  --primary: #1e3a8a;
-  --bg: #f1f5f9;
-  --border: #e2e8f0;
-  font-family: 'Sarabun', sans-serif;
-  background: var(--bg);
-  min-height: 100vh;
+  --primary: #1e3a8a; --bg: #f1f5f9; --border: #e2e8f0;
+  font-family: 'Sarabun', sans-serif; background: var(--bg); min-height: 100vh;
 }
-
 .filter-card { padding: 1.5rem; display: flex; gap: 2rem; align-items: center; flex-wrap: wrap; }
 .search-box { flex: 1; min-width: 300px; max-width: 600px; position: relative; }
 .search-box input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border: 1px solid var(--border); border-radius: 10px; }
@@ -285,38 +361,39 @@ const resetForm = () => {
 .app-header { background: white; padding: 1rem 2rem; border-bottom: 1px solid var(--border); }
 .header-content { max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
 .main-content { max-width: 1300px; margin: 2rem auto; padding: 0 1rem; }
-.card { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+.card { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 1.5rem; }
+.card-title { padding: 1rem 1.5rem; background: #f8fafc; font-weight: bold; border-bottom: 1px solid var(--border); }
+.card-body { padding: 1.5rem; }
+.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.req { color: red; }
 .overflow-visible { overflow: visible !important; }
+.autocomplete-wrapper { position: relative; }
+.search-input-inner { position: relative; }
+.search-input-inner input { width: 100%; padding: 0.75rem 2.5rem; border: 1px solid var(--border); border-radius: 8px; }
+.search-input-inner .icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); }
 .search-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--border); z-index: 1000; border-radius: 10px; margin-top: 5px; list-style: none; padding: 0; max-height: 200px; overflow-y: auto; }
 .search-dropdown li { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
 .search-dropdown li:hover { background: #eff6ff; }
 .id-tag { background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
-
-/* Comparison Table Styles */
 .comparison-container { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
 .comp-header-grid, .comp-row-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; border-bottom: 1px solid var(--border); }
 .comp-header-grid { background: #f8fafc; font-weight: bold; padding: 10px; text-align: center; }
 .comp-row-grid .label { background: #f8fafc; padding: 12px; font-weight: 600; }
 .comp-row-grid .old-val, .comp-row-grid .new-val { padding: 8px; }
-.comp-row-grid input { 
-  width: 100%; 
-  border: 1px solid var(--border); 
-  border-radius: 6px; 
-  padding: 5px; 
-  text-align: center; 
-  background: white;
-}
-.comp-row-grid .old-val input { background-color: #fcfcfc; }
-
+.comp-row-grid input { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 5px; text-align: center; }
 .form-grid { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; }
 .btn-primary { background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 10px; cursor: pointer; font-weight: 600; }
+.btn-ghost { background: transparent; border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; }
 .btn-submit { width: 100%; background: var(--primary); color: white; padding: 1.25rem; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
 .btn-submit:disabled { background: #cbd5e1; }
+.upload-area { border: 2px dashed var(--border); border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer; }
+.file-name-active { display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--primary); }
+.btn-remove { background: #fee2e2; color: #ef4444; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; }
 .modern-table { width: 100%; border-collapse: collapse; }
-.modern-table th { background: #f8fafc; padding: 1rem; text-align: left; color: #64748b; font-size: 0.85rem; }
+.modern-table th { background: #f8fafc; padding: 1rem; text-align: left; }
 .modern-table td { padding: 1rem; border-bottom: 1px solid var(--border); }
-.badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+.badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; }
 .success { background: #dcfce7; color: #166534; }
-.search-box .icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+.validation-tip { color: #ef4444; font-size: 0.8rem; margin-top: 8px; text-align: center; }
 @media (max-width: 1024px) { .form-grid { grid-template-columns: 1fr; } }
 </style>
