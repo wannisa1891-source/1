@@ -6,6 +6,8 @@
 
 <select>
 <option>All Departments</option>
+<option>1</option>
+<option>2</option>
 </select>
 
 <button>Status</button>
