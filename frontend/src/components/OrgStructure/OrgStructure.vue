@@ -3,7 +3,7 @@
     <header class="hrm-header">
       <div class="header-left">
         <span class="breadcrumb">Human Resources / Organization</span>
-        <h1 class="main-title">จัดการโครงสร้างอัตรากำลัง00000000</h1>
+        <h1 class="main-title">จัดการโครงสร้างอัตรากำลัง</h1>
       </div>
       <div class="search-box">
         <span class="search-icon">🔍</span>
