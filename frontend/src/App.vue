@@ -2,16 +2,16 @@
 import { ref } from 'vue'
 import axios from 'axios'
 
-import Login from './components/Login.vue'
-import Sidebar from './components/Sidebar.vue'
-import Dashboard from './components/Dashboard.vue'
-import EmployeeList from './components/EmployeeList.vue' 
-import OrgStructure from './components/OrgStructure.vue' 
-import Transfer from './components/Transfer.vue'
-import License from './components/License.vue'
-import Schedule from './components/Schedule.vue'
-import LeaveSystem from './components/LeaveSystem.vue'
-import Payroll from './components/Payroll.vue'
+import Login from './components/Login/Login.vue'
+import Sidebar from './components/Sidebar/Sidebar.vue'
+import Dashboard from './components/Dashboard/Dashboard.vue'
+import EmployeeList from './components/EmployeeList/EmployeeList.vue'
+import OrgStructure from './components/OrgStructure/OrgStructure.vue'
+import Transfer from './components/Transfer/Transfer.vue'
+import License from './components/License/LicensePage.vue'
+import Schedule from './components/Schedule/Schedule.vue'
+import LeaveSystem from './components/LeaveSystem/Leave_System.vue'
+import Payroll from './components/Payroll/Payroll.vue'
 
 const isLoggedIn = ref(false)
 const employees = ref([])
