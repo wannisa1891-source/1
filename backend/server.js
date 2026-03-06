@@ -198,3 +198,103 @@ app.post('/api/transfers', upload.single('order_file'), (req, res) => {
 app.listen(3000, () => {
     console.log('🚀 เซิร์ฟเวอร์รันที่ http://localhost:3000');
 });
+// ============================================
+// API Departments
+// ============================================
+
+// ดึงข้อมูลแผนก
+app.get('/api/departments', (req, res) => {
+
+    const sql = `
+        SELECT dept_id, dept_name, sub_dept, capacity
+        FROM tbl_departments
+        ORDER BY dept_id
+    `;
+
+    db.query(sql, (err, results) => {
+
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: err.message });
+        }
+
+        // เพิ่ม isOpen ให้ Vue ใช้งาน
+        const data = results.map(d => ({
+            ...d,
+            isOpen: false
+        }));
+
+        res.json(data);
+    });
+
+});
+
+
+// ============================================
+// API Positions
+// ============================================
+
+app.get('/api/positions', (req, res) => {
+
+    const sql = `
+        SELECT pos_id, pos_name
+        FROM tbl_positions
+    `;
+
+    db.query(sql, (err, results) => {
+
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        res.json(results);
+
+    });
+
+});
+
+
+// ============================================
+// API Employees by Department
+// ============================================
+
+app.get('/api/employees/dept/:deptId', (req, res) => {
+
+    const deptId = req.params.deptId;
+
+    const sql = `
+        SELECT 
+            e.emp_id,
+            e.prefix,
+            e.first_name_th,
+            e.last_name_th,
+            e.position_no,
+            e.dept_id,
+            e.pos_id,
+            p.pos_name
+        FROM tbl_employees e
+        LEFT JOIN tbl_positions p ON e.pos_id = p.pos_id
+        WHERE e.dept_id = ?
+        AND e.status = 'Active'
+    `;
+
+    db.query(sql, [deptId], (err, results) => {
+
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        res.json(results);
+
+    });
+
+});
+
+
+// ============================================
+// START SERVER
+// ============================================
+
+app.listen(3000, () => {
+    console.log('🚀 Server running at http://localhost:3000');
+});
