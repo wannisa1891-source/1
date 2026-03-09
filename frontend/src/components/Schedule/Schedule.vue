@@ -14,7 +14,7 @@ const selectedDate = ref(null)
 
 const schedules = ref([])
 
-const currentView = ref("Month") // ✅ แก้กลับ
+const currentView = ref("Month")
 const selectedDept = ref("")
 
 const editingShift = ref(null)
@@ -47,7 +47,7 @@ function prevMonth() {
 }
 
 function changeView(view) {
-  currentView.value = view // ✅ เอา toLowerCase ออก
+  currentView.value = view
 }
 
 function filterDept(dept) {
@@ -99,7 +99,10 @@ function handleSaved(newShift) {
       s => s.id === editingShift.value.id
     )
 
-    schedules.value[index] = newShift
+    if (index !== -1) {
+      newShift.id = editingShift.value.id
+      schedules.value[index] = newShift
+    }
 
   } else {
 
@@ -147,3 +150,55 @@ onMounted(() => {
   loadSchedules()
 })
 </script>
+
+
+<template>
+
+<div class="schedule-page">
+
+  <!-- Controls -->
+  <ScheduleControls
+    :currentMonth="currentDate"
+    :currentView="currentView"
+    :departments="departments"
+    @next="nextMonth"
+    @prev="prevMonth"
+    @view-change="changeView"
+    @dept-change="filterDept"
+    @print="printSchedule"
+    @export="exportSchedule"
+  />
+
+  <!-- Calendar -->
+  <ScheduleCalendar
+    v-if="currentView === 'Month'"
+    :month="month"
+    :year="year"
+    :schedules="filteredSchedules"
+    @add="openModal"
+    @edit="editShift"
+  />
+
+  <!-- Summary -->
+  <ScheduleSummary
+    :schedules="filteredSchedules"
+  />
+
+  <!-- Status -->
+  <ScheduleStatus
+    :schedules="filteredSchedules"
+  />
+
+  <!-- Modal -->
+  <ScheduleModal
+    v-if="showModal"
+    :date="selectedDate"
+    :editingShift="editingShift"
+    @close="closeModal"
+    @save="handleSaved"
+    @delete="deleteShift"
+  />
+
+</div>
+
+</template>
