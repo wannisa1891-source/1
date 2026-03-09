@@ -2,12 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3307
-<<<<<<< HEAD
--- Generation Time: Mar 04, 2026 at 08:46 AM
-=======
--- Generation Time: Mar 04, 2026 at 08:00 AM
->>>>>>> acef6e5062996376880ede4860052740c02734fb
+-- Host: 127.0.0.1
+-- Generation Time: Mar 06, 2026 at 06:08 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -130,6 +126,7 @@ INSERT INTO `tbl_employees` (`emp_id`, `prefix`, `first_name_th`, `last_name_th`
 ('0007', 'นพ.', '444444', '44555', NULL, NULL, '1234567891235', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', 'D009', 'P009', '2026-02-06', NULL, 'Active', NULL, NULL, NULL, 11.00, NULL),
 ('1111111', 'นาง', '00000', '11111', NULL, NULL, '0123456789000', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', 'D010', 'P007', '2026-03-12', NULL, 'Active', NULL, NULL, NULL, 4.00, NULL),
 ('122222', 'นพ.', '1111', '', NULL, NULL, '1111', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', 'D001', 'P001', '2026-02-25', NULL, 'Active', NULL, NULL, NULL, 0.00, NULL),
+('2222222222', 'พญ.', 'วิววิว', 'สุดสวย', NULL, NULL, '2222222222222', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', 'D006', 'P002', '2026-02-25', NULL, 'Active', NULL, NULL, NULL, 99999999.99, NULL),
 ('EMP001', 'นางสาว', 'วรรณวิสา', 'ทดสอบระบบ', NULL, NULL, '1234567890123', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-234-5678', NULL, 'ข้าราชการ', 'D001', 'P001', '2026-01-01', NULL, 'Active', NULL, NULL, NULL, 25000.00, NULL),
 ('EMP003', 'นาย', '666', '667', NULL, NULL, '1234567891288', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', 'D001', 'P001', '2026-02-11', NULL, 'Active', NULL, NULL, NULL, 1000.00, NULL);
 
@@ -153,23 +150,15 @@ CREATE TABLE `tbl_leaves` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
-<<<<<<< HEAD
-=======
-
->>>>>>> acef6e5062996376880ede4860052740c02734fb
 -- Dumping data for table `tbl_leaves`
 --
 
 INSERT INTO `tbl_leaves` (`leave_id`, `emp_id`, `leave_type_id`, `start_date`, `end_date`, `total_days`, `reason`, `status`, `approver_id`, `approved_date`) VALUES
-<<<<<<< HEAD
 (2, 'EMP003', 'L01', '2026-03-10', '2026-03-11', NULL, 'ป่วย', 'Approved', NULL, NULL),
 (3, '0007', 'L01', '2026-03-17', '2026-03-24', NULL, 'ป่วย', 'Approved', NULL, NULL),
 (4, '1111111', 'L01', '2026-03-24', '2026-03-31', NULL, 'ป่วย', 'Pending', NULL, NULL),
-(9, 'EMP003', 'L01', '2026-03-04', '2026-03-05', NULL, 'อบรม', 'Approved', NULL, NULL);
-=======
-(2, 'EMP003', 'L01', '2026-03-10', '2026-03-11', NULL, 'ป่วย', 'Pending', NULL, NULL),
-(3, '0007', 'L01', '2026-03-17', '2026-03-24', NULL, 'ป่วย', 'Approved', NULL, NULL);
->>>>>>> acef6e5062996376880ede4860052740c02734fb
+(9, 'EMP003', 'L01', '2026-03-04', '2026-03-05', NULL, 'อบรม', 'Approved', NULL, NULL),
+(10, '2222222222', 'L02', '2026-03-04', '2026-03-05', NULL, 'xjj', 'Approved', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -266,18 +255,28 @@ CREATE TABLE `tbl_transfers` (
   `transfer_type` varchar(30) NOT NULL COMMENT 'ประเภทคำสั่ง',
   `effective_date` date NOT NULL COMMENT 'วันที่มีผล',
   `emp_id` varchar(10) NOT NULL COMMENT 'ผู้ถูกคำสั่ง',
-  `old_dept_id` varchar(10) DEFAULT NULL COMMENT 'แผนกเดิม',
-  `new_dept_id` varchar(10) DEFAULT NULL COMMENT 'แผนกใหม่',
-  `old_position` varchar(50) DEFAULT NULL COMMENT 'ตำแหน่งเดิม',
-  `new_position` varchar(50) DEFAULT NULL COMMENT 'ตำแหน่งใหม่',
+  `old_dept_id` varchar(10) DEFAULT NULL,
+  `new_dept_id` varchar(10) DEFAULT NULL,
+  `old_position` varchar(100) DEFAULT NULL,
+  `new_position` varchar(100) DEFAULT NULL,
   `order_file` varchar(255) DEFAULT NULL COMMENT 'URL สแกนไฟล์คำสั่ง',
   `old_level` varchar(30) DEFAULT NULL COMMENT 'ระดับเดิม',
   `new_level` varchar(30) DEFAULT NULL COMMENT 'ระดับใหม่',
   `old_position_no` varchar(20) DEFAULT NULL COMMENT 'เลขที่ตำแหน่งเดิม',
   `new_position_no` varchar(20) DEFAULT NULL COMMENT 'เลขที่ตำแหน่งใหม่',
-  `old_salary` decimal(10,2) DEFAULT NULL COMMENT 'เงินเดือนเดิม',
-  `new_salary` decimal(10,2) DEFAULT NULL COMMENT 'เงินเดือนใหม่ที่ได้ปรับ'
+  `old_salary` decimal(10,2) DEFAULT NULL,
+  `new_salary` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_transfers`
+--
+
+INSERT INTO `tbl_transfers` (`transfer_id`, `order_no`, `order_date`, `subject`, `transfer_type`, `effective_date`, `emp_id`, `old_dept_id`, `new_dept_id`, `old_position`, `new_position`, `order_file`, `old_level`, `new_level`, `old_position_no`, `new_position_no`, `old_salary`, `new_salary`) VALUES
+('TRF344548', '123/2569', '2026-03-06', 'ย้าย', 'แต่งตั้งโยกย้าย', '2026-03-06', '0007', NULL, NULL, 'นักวิชาการคอมพิวเตอร์', 'นักวิชาการคอมพิวเตอร์', NULL, NULL, NULL, NULL, NULL, 11.00, 11.00),
+('TRF350075', '123/2569', '2026-03-06', 'ย้าย', 'แต่งตั้งโยกย้าย', '2026-03-06', '0007', NULL, NULL, 'นักวิชาการคอมพิวเตอร์', 'นักวิชาการคอมพิวเตอร์', NULL, NULL, NULL, NULL, NULL, 11.00, 11.00),
+('TRF356843', '123/2569', '2026-03-06', 'ย้าย', 'แต่งตั้งโยกย้าย', '2026-03-06', '0007', NULL, NULL, 'นักวิชาการคอมพิวเตอร์', 'นักวิชาการคอมพิวเตอร์', NULL, NULL, NULL, NULL, NULL, 11.00, 11.00),
+('TRF961927', '44444444', '2026-03-06', '', 'แต่งตั้งโยกย้าย', '2026-03-06', '0007', NULL, NULL, 'นักวิชาการคอมพิวเตอร์', '', NULL, NULL, NULL, NULL, NULL, 11.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -390,11 +389,7 @@ ALTER TABLE `tbl_users`
 -- AUTO_INCREMENT for table `tbl_leaves`
 --
 ALTER TABLE `tbl_leaves`
-<<<<<<< HEAD
-  MODIFY `leave_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-=======
-  MODIFY `leave_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
->>>>>>> acef6e5062996376880ede4860052740c02734fb
+  MODIFY `leave_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `tbl_licenses`
