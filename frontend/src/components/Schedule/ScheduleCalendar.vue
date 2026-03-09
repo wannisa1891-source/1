@@ -61,6 +61,7 @@ import { computed } from "vue"
 const props = defineProps({
   month: Number,
   year: Number,
+  view: String, // ✅ เพิ่มบรรทัดนี้
   schedules: {
     type: Array,
     default: () => []

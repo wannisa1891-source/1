@@ -1,60 +1,3 @@
-<template>
-  <div class="schedule-wrapper">
-
-    <!-- Title -->
-    <div class="header-title">
-      <h2>ปฏิทินตารางเวร</h2>
-    </div>
-
-    <!-- Controls -->
-    <ScheduleControls
-      :currentMonth="currentDate"
-      :currentView="currentView"
-      :departments="departments"
-      @prev="prevMonth"
-      @next="nextMonth"
-      @view-change="changeView"
-      @dept-change="filterDept"
-      @print="printSchedule"
-      @export="exportSchedule"
-    />
-
-    <!-- Calendar -->
-    <ScheduleCalendar
-      :month="month"
-      :year="year"
-      :schedules="filteredSchedules"
-      :view="currentView"
-      @select-day="openModal"
-      @edit-shift="editShift"
-    />
-
-    <!-- Bottom Section -->
-    <div class="dashboard-bottom-grid">
-
-      <ScheduleSummary
-        :schedules="filteredSchedules"
-      />
-
-      <ScheduleStatus
-        :schedules="filteredSchedules"
-      />
-
-    </div>
-
-    <!-- Modal -->
-    <ScheduleModal
-      v-if="showModal"
-      :selectedDate="selectedDate"
-      :editShift="editingShift"
-      @close="closeModal"
-      @saved="handleSaved"
-      @deleted="deleteShift"
-    />
-
-  </div>
-</template>
-
 <script setup>
 import { ref, computed, onMounted } from "vue"
 
@@ -71,7 +14,7 @@ const selectedDate = ref(null)
 
 const schedules = ref([])
 
-const currentView = ref("Month")
+const currentView = ref("Month") // ✅ แก้กลับ
 const selectedDept = ref("")
 
 const editingShift = ref(null)
@@ -104,7 +47,7 @@ function prevMonth() {
 }
 
 function changeView(view) {
-  currentView.value = view
+  currentView.value = view // ✅ เอา toLowerCase ออก
 }
 
 function filterDept(dept) {
@@ -204,22 +147,3 @@ onMounted(() => {
   loadSchedules()
 })
 </script>
-
-<style scoped>
-
-.schedule-wrapper{
-  padding:20px;
-}
-
-.header-title{
-  margin-bottom:20px;
-}
-
-.dashboard-bottom-grid{
-  display:grid;
-  grid-template-columns:1.5fr 1fr;
-  gap:20px;
-  margin-top:20px;
-}
-
-</style>

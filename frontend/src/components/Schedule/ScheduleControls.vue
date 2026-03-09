@@ -63,7 +63,7 @@ export default {
     },
     currentView: {
       type: String,
-      default: "Month"
+      default: "month"
     },
     departments: {
       type: Array,
