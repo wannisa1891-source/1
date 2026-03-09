@@ -26,9 +26,27 @@
           :key="shift.id"
           class="shift-block"
           :class="'shift-' + shift.shift"
+          @click.stop="editShift(shift)"
         >
           {{ shift.shift }} ({{ shift.name }})
         </div>
+
+        <!-- empty state -->
+        <div
+          v-if="day && getShifts(day).length === 0"
+          class="empty-shift"
+        >
+          No shifts
+        </div>
+
+        <!-- add shift button -->
+        <button
+          v-if="day"
+          class="add-shift"
+          @click.stop="selectDay(day)"
+        >
+          +
+        </button>
 
       </div>
 
@@ -49,7 +67,10 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(["select-day"])
+const emit = defineEmits([
+  "select-day",
+  "edit-shift"
+])
 
 const days = ["SUN","MON","TUE","WED","THU","FRI","SAT"]
 
@@ -60,17 +81,14 @@ const calendarDays = computed(() => {
 
   const arr = []
 
-  // เติมช่องว่างต้นเดือน
   for (let i = 0; i < firstDay; i++) {
     arr.push(null)
   }
 
-  // วันจริงของเดือน
   for (let d = 1; d <= totalDays; d++) {
     arr.push(d)
   }
 
-  // เติมให้ครบ 42 ช่อง
   while (arr.length < 42) {
     arr.push(null)
   }
@@ -85,6 +103,12 @@ function selectDay(day){
   const date = new Date(props.year, props.month, day)
 
   emit("select-day", date)
+
+}
+
+function editShift(shift){
+
+  emit("edit-shift", shift)
 
 }
 
@@ -137,6 +161,12 @@ function getShifts(day){
   border-bottom:1px solid #e2e8f0;
   padding:10px;
   cursor:pointer;
+  position:relative;
+  transition:background .15s;
+}
+
+.cal-day:hover{
+  background:#f8fafc;
 }
 
 .cal-day:nth-child(7n){
@@ -161,6 +191,30 @@ function getShifts(day){
   border-radius:4px;
   margin-bottom:4px;
   font-weight:600;
+  cursor:pointer;
+}
+
+/* empty */
+
+.empty-shift{
+  font-size:11px;
+  color:#94a3b8;
+}
+
+/* add button */
+
+.add-shift{
+  position:absolute;
+  right:6px;
+  bottom:6px;
+  width:20px;
+  height:20px;
+  border:none;
+  border-radius:50%;
+  background:#3b82f6;
+  color:white;
+  font-size:14px;
+  cursor:pointer;
 }
 
 /* สีเวร */

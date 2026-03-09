@@ -26,17 +26,16 @@
       :schedules="filteredSchedules"
       :view="currentView"
       @select-day="openModal"
+      @edit-shift="editShift"
     />
 
     <!-- Bottom Section -->
     <div class="dashboard-bottom-grid">
 
-      <!-- Staff Summary -->
       <ScheduleSummary
         :schedules="filteredSchedules"
       />
 
-      <!-- Department Status -->
       <ScheduleStatus
         :schedules="filteredSchedules"
       />
@@ -47,8 +46,10 @@
     <ScheduleModal
       v-if="showModal"
       :selectedDate="selectedDate"
+      :editShift="editingShift"
       @close="closeModal"
       @saved="handleSaved"
+      @deleted="deleteShift"
     />
 
   </div>
@@ -72,6 +73,8 @@ const schedules = ref([])
 
 const currentView = ref("Month")
 const selectedDept = ref("")
+
+const editingShift = ref(null)
 
 const departments = ref([
   { id: "ER", name: "ER" },
@@ -129,16 +132,51 @@ function exportSchedule() {
 
 function openModal(date) {
   selectedDate.value = date
+  editingShift.value = null
   showModal.value = true
+}
+
+function editShift(shift) {
+
+  selectedDate.value = new Date(shift.date)
+  editingShift.value = shift
+  showModal.value = true
+
 }
 
 function closeModal() {
   showModal.value = false
 }
 
-function handleSaved() {
+function handleSaved(newShift) {
+
+  if (editingShift.value) {
+
+    const index = schedules.value.findIndex(
+      s => s.id === editingShift.value.id
+    )
+
+    schedules.value[index] = newShift
+
+  } else {
+
+    newShift.id = Date.now()
+    schedules.value.push(newShift)
+
+  }
+
   closeModal()
-  loadSchedules()
+
+}
+
+function deleteShift(id) {
+
+  schedules.value = schedules.value.filter(
+    s => s.id !== id
+  )
+
+  closeModal()
+
 }
 
 function loadSchedules() {
