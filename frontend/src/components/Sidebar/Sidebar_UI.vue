@@ -38,7 +38,7 @@
               <img :src="icons.pimIcon" class="pim-icon-img" alt="Personnel">
             </span>
             <span class="label" v-if="!isCollapsed">จัดการบุคลากร</span>
-            <span class="chevron" v-if="!isCollapsed">❯</span>
+            <span class="chevron" v-if="!isCollapsed"></span>
           </div>
           <transition name="slide">
             <div class="sub-menu-list" v-show="openMenus.personnel && !isCollapsed">
@@ -60,7 +60,7 @@
               <img :src="icons.leaveIcon" class="leave-icon-img" alt="Leave">
             </span>
             <span class="label" v-if="!isCollapsed">การลา</span>
-            <span class="chevron" v-if="!isCollapsed">❯</span>
+            <span class="chevron" v-if="!isCollapsed"></span>
           </div>
           <transition name="slide">
             <div class="sub-menu-list" v-show="openMenus.leave && !isCollapsed">
@@ -80,7 +80,7 @@
               <img :src="icons.financeIcon" class="finance-icon-img" alt="Finance">
             </span>
             <span class="label" v-if="!isCollapsed">การเงิน</span>
-            <span class="chevron" v-if="!isCollapsed">❯</span>
+            <span class="chevron" v-if="!isCollapsed"></span>
           </div>
           <transition name="slide">
             <div class="sub-menu-list" v-show="openMenus.finance && !isCollapsed">
