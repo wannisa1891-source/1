@@ -1,4 +1,3 @@
-// template และstyle
 <template>
   <div class="emp-modern-wrapper">
     <div v-if="!showForm" class="premium-glass-card fade-in">
@@ -53,7 +52,7 @@
                 </div>
               </td>
               <td>
-                <div class="fw-bold">{{ emp.first_name_th }} {{ emp.last_name_th }}</div>
+                <div class="fw-bold">{{ emp.prefix }}{{ emp.first_name_th }} {{ emp.last_name_th }}</div>
                 <div style="font-size: 11px; color: #94a3b8;">{{ emp.emp_id }}</div>
               </td>
               <td>
@@ -87,16 +86,8 @@
               <img v-else-if="formData.image" :src="getServerImageUrl(formData.image)" class="preview-img" />
               <span v-else>📷 เลือกรูป</span>
             </div>
-            <input 
-              type="file" 
-              ref="fileInput" 
-              style="display: none" 
-              accept="image/*" 
-              @change="onFileChange"
-            >
-            <button type="button" class="btn-upload-small" @click="$refs.fileInput.click()">
-              เปลี่ยนรูปภาพ
-            </button>
+            <input type="file" ref="fileInput" style="display: none" accept="image/*" @change="onFileChange">
+            <button type="button" class="btn-upload-small" @click="$refs.fileInput.click()">เปลี่ยนรูปภาพ</button>
           </div>
 
           <div class="form-grid-2">
@@ -128,6 +119,20 @@
                 <option v-for="type in employmentTypes" :key="type" :value="type">{{ type }}</option>
               </select>
             </div>
+            <div class="input-wrapper">
+  <label>วันที่เริ่มงาน :</label>
+  <input type="date" class="input-modern" v-model="formData.start_date">
+</div>
+
+<div class="input-wrapper">
+  <label>เงินเดือนพื้นฐาน :</label>
+  <input type="number" class="input-modern" v-model="formData.base_salary" placeholder="0.00">
+</div>
+
+<div class="input-wrapper">
+  <label>เบอร์โทรศัพท์ :</label>
+  <input type="text" class="input-modern" v-model="formData.phone">
+</div>
           </div>
         </div>
       </div>

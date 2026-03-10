@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Mar 06, 2026 at 06:08 AM
+-- Host: localhost:3307
+-- Generation Time: Mar 10, 2026 at 04:41 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -68,7 +68,7 @@ CREATE TABLE `tbl_departments` (
 --
 
 INSERT INTO `tbl_departments` (`dept_id`, `dept_name`, `sub_dept`, `head_emp_id`, `capacity`) VALUES
-('D001', 'ฝ่ายการพยาบาล', 'วอร์ดอายุรกรรม', NULL, 10),
+('D001', 'ฝ่ายการพยาบาล', '', NULL, 10),
 ('D002', 'กลุ่มงานการแพทย์', NULL, NULL, 0),
 ('D003', 'กลุ่มงานเภสัชกรรมและคุ้มครองผู้บริโภค', NULL, NULL, 0),
 ('D004', 'กลุ่มงานทันตกรรม', NULL, NULL, 0),
@@ -106,29 +106,29 @@ CREATE TABLE `tbl_employees` (
   `phone` varchar(15) NOT NULL COMMENT 'เบอร์โทร',
   `email` varchar(100) DEFAULT NULL COMMENT 'อีเมล',
   `emp_type` varchar(30) NOT NULL COMMENT 'ประเภทการจ้าง',
+  `image` varchar(255) DEFAULT NULL,
   `dept_id` varchar(10) NOT NULL COMMENT 'รหัสแผนก',
   `pos_id` varchar(10) NOT NULL COMMENT 'รหัสตำแหน่ง',
   `start_date` date NOT NULL COMMENT 'วันที่เริ่มงาน',
-  `profile_img` varchar(255) DEFAULT NULL COMMENT 'รูปโปรไฟล์',
   `status` varchar(10) DEFAULT 'Active' COMMENT 'สถานะ',
-  `image_url` varchar(255) DEFAULT NULL,
   `position_no` varchar(20) DEFAULT NULL COMMENT 'เลขที่ตำแหน่ง',
   `position_level` varchar(30) DEFAULT NULL COMMENT 'ระดับตำแหน่ง',
   `base_salary` decimal(10,2) NOT NULL COMMENT 'เงินเดือนพื้นฐาน',
-  `end_date` date DEFAULT NULL COMMENT 'วันที่สิ้นสุดงาน'
+  `end_date` date DEFAULT NULL COMMENT 'วันที่สิ้นสุดงาน',
+  `profile_img` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_employees`
 --
 
-INSERT INTO `tbl_employees` (`emp_id`, `prefix`, `first_name_th`, `last_name_th`, `first_name_en`, `last_name_en`, `citizen_id`, `birth_date`, `address_no`, `moo`, `village`, `soi`, `road`, `province_id`, `district_id`, `sub_district_id`, `zipcode`, `phone`, `email`, `emp_type`, `dept_id`, `pos_id`, `start_date`, `profile_img`, `status`, `image_url`, `position_no`, `position_level`, `base_salary`, `end_date`) VALUES
-('0007', 'นพ.', '444444', '44555', NULL, NULL, '1234567891235', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', 'D009', 'P009', '2026-02-06', NULL, 'Active', NULL, NULL, NULL, 11.00, NULL),
-('1111111', 'นาง', '00000', '11111', NULL, NULL, '0123456789000', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', 'D010', 'P007', '2026-03-12', NULL, 'Active', NULL, NULL, NULL, 4.00, NULL),
-('122222', 'นพ.', '1111', '', NULL, NULL, '1111', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', 'D001', 'P001', '2026-02-25', NULL, 'Active', NULL, NULL, NULL, 0.00, NULL),
-('2222222222', 'พญ.', 'วิววิว', 'สุดสวย', NULL, NULL, '2222222222222', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', 'D006', 'P002', '2026-02-25', NULL, 'Active', NULL, NULL, NULL, 99999999.99, NULL),
-('EMP001', 'นางสาว', 'วรรณวิสา', 'ทดสอบระบบ', NULL, NULL, '1234567890123', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-234-5678', NULL, 'ข้าราชการ', 'D001', 'P001', '2026-01-01', NULL, 'Active', NULL, NULL, NULL, 25000.00, NULL),
-('EMP003', 'นาย', '666', '667', NULL, NULL, '1234567891288', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', 'D001', 'P001', '2026-02-11', NULL, 'Active', NULL, NULL, NULL, 1000.00, NULL);
+INSERT INTO `tbl_employees` (`emp_id`, `prefix`, `first_name_th`, `last_name_th`, `first_name_en`, `last_name_en`, `citizen_id`, `birth_date`, `address_no`, `moo`, `village`, `soi`, `road`, `province_id`, `district_id`, `sub_district_id`, `zipcode`, `phone`, `email`, `emp_type`, `image`, `dept_id`, `pos_id`, `start_date`, `status`, `position_no`, `position_level`, `base_salary`, `end_date`, `profile_img`) VALUES
+('0007', 'นพ.', '444444', '44555', NULL, NULL, '1234567891235', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', NULL, 'D009', 'P009', '2026-02-06', 'Active', NULL, NULL, 11.00, NULL, NULL),
+('1111111', 'นาง', '00000', '11111', NULL, NULL, '0123456789000', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', NULL, 'D010', 'P007', '2026-03-12', 'Active', NULL, NULL, 4.00, NULL, NULL),
+('122222', 'นพ.', '1111', '', NULL, NULL, '1111', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', NULL, 'D001', 'P001', '2026-02-25', 'Active', NULL, NULL, 0.00, NULL, NULL),
+('412563', 'นาย', '', '', NULL, NULL, '0000000000000', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0123456666', NULL, 'พนักงานชั่วคราว', '1773113727989.jpg', 'D001', 'P001', '2026-03-07', 'Active', NULL, NULL, 10000.00, NULL, NULL),
+('EMP001', 'นางสาว', 'วรรณวิสา', 'ทดสอบระบบ', NULL, NULL, '1234567890123', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-234-5678', NULL, 'ข้าราชการ', NULL, 'D001', 'P001', '2026-01-01', 'Active', NULL, NULL, 25000.00, NULL, NULL),
+('EMP003', 'นาย', '666', '667', NULL, NULL, '1234567891288', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '081-000-0000', NULL, 'ข้าราชการ', NULL, 'D001', 'P001', '2026-02-11', 'Active', NULL, NULL, 1000.00, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -158,7 +158,10 @@ INSERT INTO `tbl_leaves` (`leave_id`, `emp_id`, `leave_type_id`, `start_date`, `
 (3, '0007', 'L01', '2026-03-17', '2026-03-24', NULL, 'ป่วย', 'Approved', NULL, NULL),
 (4, '1111111', 'L01', '2026-03-24', '2026-03-31', NULL, 'ป่วย', 'Pending', NULL, NULL),
 (9, 'EMP003', 'L01', '2026-03-04', '2026-03-05', NULL, 'อบรม', 'Approved', NULL, NULL),
-(10, '2222222222', 'L02', '2026-03-04', '2026-03-05', NULL, 'xjj', 'Approved', NULL, NULL);
+(10, 'EMP003', 'L03', '2026-03-05', '2026-03-09', NULL, 'เที่ยว', 'Approved', NULL, NULL),
+(11, 'EMP003', 'L01', '2026-03-05', '2026-03-06', NULL, 'ป่วย', 'Approved', NULL, NULL),
+(12, '1111111', 'L01', '2026-03-05', '2026-03-06', NULL, 'ป่วย', 'Pending', NULL, NULL),
+(13, 'EMP001', 'L01', '2026-03-05', '2026-03-06', NULL, 'ลา', 'Pending', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -255,28 +258,18 @@ CREATE TABLE `tbl_transfers` (
   `transfer_type` varchar(30) NOT NULL COMMENT 'ประเภทคำสั่ง',
   `effective_date` date NOT NULL COMMENT 'วันที่มีผล',
   `emp_id` varchar(10) NOT NULL COMMENT 'ผู้ถูกคำสั่ง',
-  `old_dept_id` varchar(10) DEFAULT NULL,
-  `new_dept_id` varchar(10) DEFAULT NULL,
-  `old_position` varchar(100) DEFAULT NULL,
-  `new_position` varchar(100) DEFAULT NULL,
+  `old_dept_id` varchar(10) DEFAULT NULL COMMENT 'แผนกเดิม',
+  `new_dept_id` varchar(10) DEFAULT NULL COMMENT 'แผนกใหม่',
+  `old_position` varchar(50) DEFAULT NULL COMMENT 'ตำแหน่งเดิม',
+  `new_position` varchar(50) DEFAULT NULL COMMENT 'ตำแหน่งใหม่',
   `order_file` varchar(255) DEFAULT NULL COMMENT 'URL สแกนไฟล์คำสั่ง',
   `old_level` varchar(30) DEFAULT NULL COMMENT 'ระดับเดิม',
   `new_level` varchar(30) DEFAULT NULL COMMENT 'ระดับใหม่',
   `old_position_no` varchar(20) DEFAULT NULL COMMENT 'เลขที่ตำแหน่งเดิม',
   `new_position_no` varchar(20) DEFAULT NULL COMMENT 'เลขที่ตำแหน่งใหม่',
-  `old_salary` decimal(10,2) DEFAULT NULL,
-  `new_salary` decimal(10,2) DEFAULT NULL
+  `old_salary` decimal(10,2) DEFAULT NULL COMMENT 'เงินเดือนเดิม',
+  `new_salary` decimal(10,2) DEFAULT NULL COMMENT 'เงินเดือนใหม่ที่ได้ปรับ'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tbl_transfers`
---
-
-INSERT INTO `tbl_transfers` (`transfer_id`, `order_no`, `order_date`, `subject`, `transfer_type`, `effective_date`, `emp_id`, `old_dept_id`, `new_dept_id`, `old_position`, `new_position`, `order_file`, `old_level`, `new_level`, `old_position_no`, `new_position_no`, `old_salary`, `new_salary`) VALUES
-('TRF344548', '123/2569', '2026-03-06', 'ย้าย', 'แต่งตั้งโยกย้าย', '2026-03-06', '0007', NULL, NULL, 'นักวิชาการคอมพิวเตอร์', 'นักวิชาการคอมพิวเตอร์', NULL, NULL, NULL, NULL, NULL, 11.00, 11.00),
-('TRF350075', '123/2569', '2026-03-06', 'ย้าย', 'แต่งตั้งโยกย้าย', '2026-03-06', '0007', NULL, NULL, 'นักวิชาการคอมพิวเตอร์', 'นักวิชาการคอมพิวเตอร์', NULL, NULL, NULL, NULL, NULL, 11.00, 11.00),
-('TRF356843', '123/2569', '2026-03-06', 'ย้าย', 'แต่งตั้งโยกย้าย', '2026-03-06', '0007', NULL, NULL, 'นักวิชาการคอมพิวเตอร์', 'นักวิชาการคอมพิวเตอร์', NULL, NULL, NULL, NULL, NULL, 11.00, 11.00),
-('TRF961927', '44444444', '2026-03-06', '', 'แต่งตั้งโยกย้าย', '2026-03-06', '0007', NULL, NULL, 'นักวิชาการคอมพิวเตอร์', '', NULL, NULL, NULL, NULL, NULL, 11.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -389,7 +382,7 @@ ALTER TABLE `tbl_users`
 -- AUTO_INCREMENT for table `tbl_leaves`
 --
 ALTER TABLE `tbl_leaves`
-  MODIFY `leave_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `leave_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `tbl_licenses`
