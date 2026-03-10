@@ -47,7 +47,7 @@
             <tr v-for="emp in filteredEmployees" :key="emp.emp_id">
               <td>
                 <div class="avatar-circle">
-                  <img v-if="emp.image" :src="getServerImageUrl(emp.image)" class="avatar-img" />
+                  <img v-if="emp.image || emp.profile_img" :src="getServerImageUrl(emp.image || emp.profile_img)" class="avatar-img" />
                   <span v-else>👤</span>
                 </div>
               </td>
@@ -77,13 +77,14 @@
         <h2 class="card-title">{{ isEditing ? 'แก้ไขข้อมูลพนักงาน' : 'เพิ่มพนักงานใหม่' }}</h2>
         <button @click="handleCancel" class="btn-outline-back">⬅ ย้อนกลับ</button>
       </div>
+
       <div class="form-section-box">
-        <h3 class="section-title">ข้อมูลพื้นฐาน</h3>
+        <h3 class="section-title">1. ข้อมูลพื้นฐานและรูปถ่าย</h3>
         <div class="form-flex-layout">
           <div class="photo-upload-area">
             <div class="photo-placeholder" @click="$refs.fileInput.click()">
               <img v-if="localPreview" :src="localPreview" class="preview-img" />
-              <img v-else-if="formData.image" :src="getServerImageUrl(formData.image)" class="preview-img" />
+              <img v-else-if="formData.image || formData.profile_img" :src="getServerImageUrl(formData.image || formData.profile_img)" class="preview-img" />
               <span v-else>📷 เลือกรูป</span>
             </div>
             <input type="file" ref="fileInput" style="display: none" accept="image/*" @change="onFileChange">
@@ -97,48 +98,104 @@
             </div>
             <div class="input-wrapper">
               <label>เลขบัตรประชาชน :</label>
-              <input type="text" class="input-modern" v-model="formData.id_card">
+              <input 
+                type="text" 
+                class="input-modern" 
+                :value="formData.id_card || formData.citizen_id" 
+                @input="handleIdCardInput"
+                maxlength="13"
+              >
             </div>
             <div class="input-wrapper">
-              <label>กลุ่มงาน (แผนก) :</label>
-              <select class="input-modern" v-model="formData.dept_id">
-                <option value="">-- เลือกกลุ่มงาน --</option>
-                <option v-for="dept in departmentList" :key="dept.id" :value="dept.id">{{ dept.name }}</option>
+              <label>คำนำหน้า :</label>
+              <select class="input-modern" v-model="formData.prefix">
+                <option value="นาย">นาย</option>
+                <option value="นาง">นาง</option>
+                <option value="นางสาว">นางสาว</option>
               </select>
             </div>
             <div class="input-wrapper">
-              <label>ตำแหน่ง :</label>
-              <select class="input-modern" v-model="formData.pos_id">
-                <option value="">-- เลือกตำแหน่ง --</option>
-                <option v-for="pos in positionList" :key="pos.id" :value="pos.id">{{ pos.name }}</option>
-              </select>
+              <label>เบอร์โทรศัพท์ :</label>
+              <input type="text" class="input-modern" v-model="formData.phone">
             </div>
-            <div class="input-wrapper">
-              <label>ประเภทการจ้าง :</label>
-              <select class="input-modern" v-model="formData.emp_type">
-                <option v-for="type in employmentTypes" :key="type" :value="type">{{ type }}</option>
-              </select>
-            </div>
-            <div class="input-wrapper">
-  <label>วันที่เริ่มงาน :</label>
-  <input type="date" class="input-modern" v-model="formData.start_date">
-</div>
-
-<div class="input-wrapper">
-  <label>เงินเดือนพื้นฐาน :</label>
-  <input type="number" class="input-modern" v-model="formData.base_salary" placeholder="0.00">
-</div>
-
-<div class="input-wrapper">
-  <label>เบอร์โทรศัพท์ :</label>
-  <input type="text" class="input-modern" v-model="formData.phone">
-</div>
           </div>
         </div>
       </div>
+
+      <div class="form-section-box">
+        <h3 class="section-title">2. ข้อมูลชื่อ-นามสกุล และวันเกิด</h3>
+        <div class="form-grid-2">
+          <div class="input-wrapper">
+            <label>ชื่อ (TH) :</label>
+            <input type="text" class="input-modern" v-model="formData.first_name_th">
+          </div>
+          <div class="input-wrapper">
+            <label>นามสกุล (TH) :</label>
+            <input type="text" class="input-modern" v-model="formData.last_name_th">
+          </div>
+          <div class="input-wrapper">
+            <label>ชื่อ (EN) :</label>
+            <input type="text" class="input-modern" v-model="formData.first_name_en">
+          </div>
+          <div class="input-wrapper">
+            <label>นามสกุล (EN) :</label>
+            <input type="text" class="input-modern" v-model="formData.last_name_en">
+          </div>
+          <div class="input-wrapper">
+            <label>วันเกิด :</label>
+            <input type="date" class="input-modern" v-model="formData.birth_date">
+          </div>
+          <div class="input-wrapper">
+            <label>เพศ :</label>
+            <select class="input-modern" v-model="formData.gender">
+              <option value="ชาย">ชาย</option>
+              <option value="หญิง">หญิง</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-wrapper full-width mt-3">
+          <label>ที่อยู่ปัจจุบัน :</label>
+          <textarea class="input-modern" v-model="formData.address" rows="2"></textarea>
+        </div>
+      </div>
+
+      <div class="form-section-box">
+        <h3 class="section-title">3. ข้อมูลการจ้างงาน</h3>
+        <div class="form-grid-2">
+          <div class="input-wrapper">
+            <label>แผนก :</label>
+            <select class="input-modern" v-model="formData.dept_id">
+              <option value="">-- เลือกกลุ่มงาน --</option>
+              <option v-for="dept in departmentList" :key="dept.id" :value="dept.id">{{ dept.name }}</option>
+            </select>
+          </div>
+          <div class="input-wrapper">
+            <label>ตำแหน่ง :</label>
+            <select class="input-modern" v-model="formData.pos_id">
+              <option value="">-- เลือกตำแหน่ง --</option>
+              <option v-for="pos in positionList" :key="pos.id" :value="pos.id">{{ pos.name }}</option>
+            </select>
+          </div>
+          <div class="input-wrapper">
+            <label>ประเภทการจ้าง :</label>
+            <select class="input-modern" v-model="formData.emp_type">
+              <option v-for="type in employmentTypes" :key="type" :value="type">{{ type }}</option>
+            </select>
+          </div>
+          <div class="input-wrapper">
+            <label>วันที่เริ่มงาน :</label>
+            <input type="date" class="input-modern" v-model="formData.start_date">
+          </div>
+          <div class="input-wrapper">
+            <label>เงินเดือน :</label>
+            <input type="number" class="input-modern" v-model="formData.base_salary">
+          </div>
+        </div>
+      </div>
+
       <div class="form-action-buttons">
         <button @click="handleCancel" class="btn-cancel-modern">ยกเลิก</button>
-        <button @click="$emit('submit')" class="btn-save-modern">บันทึกข้อมูล</button>
+        <button @click="$emit('submit')" class="btn-save-modern">บันทึกข้อมูลบุคลากร</button>
       </div>
     </div>
   </div>
@@ -157,26 +214,30 @@ const props = defineProps([
 const emit = defineEmits([
   'update:searchQuery', 'update:selectedDept', 'update:selectedPos', 
   'open-form', 'close-form', 'submit', 'edit-employee', 'delete-employee',
-  'file-selected' // <--- เพิ่ม Event ใหม่สำหรับส่งไฟล์ภาพ
+  'file-selected'
 ])
 
-// 1. จัดการรูปภาพ
 const fileInput = ref(null)
 const localPreview = ref(null)
 
-// ฟังก์ชันดึง URL รูปภาพจาก Server (ปรับ port ตาม backend ของคุณ)
 const getServerImageUrl = (name) => {
   if (!name) return ''
-  // หากเป็นชื่อไฟล์เฉยๆ ให้ดึงจากโฟลเดอร์ uploads ของ server
   return `http://localhost:3000/uploads/${name}`
+}
+
+const handleIdCardInput = (e) => {
+  const value = e.target.value.replace(/\D/g, '');
+  if (props.formData.id_card !== undefined) {
+    props.formData.id_card = value.slice(0, 13);
+  } else {
+    props.formData.citizen_id = value.slice(0, 13);
+  }
 }
 
 const onFileChange = (e) => {
   const file = e.target.files[0]
   if (file) {
-    // สร้างภาพตัวอย่าง
     localPreview.value = URL.createObjectURL(file)
-    // ส่งไฟล์จริง (Object) ไปยัง EmployeeList เพื่อใช้ส่ง API แบบ FormData
     emit('file-selected', file)
   }
 }
@@ -186,7 +247,6 @@ const handleCancel = () => {
   emit('close-form')
 }
 
-// Reset preview เมื่อมีการเปลี่ยนพนักงานที่จะแก้ไข หรือเปิดฟอร์มใหม่
 watch(() => props.showForm, (newVal) => {
   if (!newVal) localPreview.value = null
 })
