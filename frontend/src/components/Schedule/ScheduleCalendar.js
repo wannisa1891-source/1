@@ -1,6 +1,9 @@
+// สร้างปฏิทิน
 import { computed } from "vue"
 
-export default function useCalendar(currentDate){
+export default function useScheduleCalendar(currentDate) {
+
+  const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
 
   const calendarDays = computed(() => {
 
@@ -9,69 +12,37 @@ export default function useCalendar(currentDate){
     const year = date.getFullYear()
     const month = date.getMonth()
 
-    const today = new Date()
+    // วันแรกของเดือน
+    const firstDay = new Date(year, month, 1).getDay()
 
-    const firstDayOfMonth = new Date(year, month, 1)
-    const startDay = firstDayOfMonth.getDay()
-
+    // จำนวนวันของเดือน
     const daysInMonth = new Date(year, month + 1, 0).getDate()
-    const daysInPrevMonth = new Date(year, month, 0).getDate()
 
-    const days = []
+    const daysArray = []
 
-    // ===== เดือนก่อน =====
-    for(let i = startDay - 1; i >= 0; i--){
-
-      const day = daysInPrevMonth - i
-
-      const d = new Date(year, month - 1, day)
-
-      days.push({
-        date: d,
-        day: day,
-        currentMonth: false,
-        today: false
-      })
+    // ช่องว่างก่อนวันแรก
+    for (let i = 0; i < firstDay; i++) {
+      daysArray.push(null)
     }
 
-    // ===== เดือนปัจจุบัน =====
-    for(let i = 1; i <= daysInMonth; i++){
-
-      const d = new Date(year, month, i)
-
-      const isToday =
-        d.getDate() === today.getDate() &&
-        d.getMonth() === today.getMonth() &&
-        d.getFullYear() === today.getFullYear()
-
-      days.push({
-        date: d,
+    // วันจริงของเดือน
+    for (let i = 1; i <= daysInMonth; i++) {
+      daysArray.push({
         day: i,
-        currentMonth: true,
-        today: isToday
+        date: new Date(year, month, i)
       })
     }
 
-    // ===== เดือนถัดไป =====
-    const remaining = 42 - days.length
-
-    for(let i = 1; i <= remaining; i++){
-
-      const d = new Date(year, month + 1, i)
-
-      days.push({
-        date: d,
-        day: i,
-        currentMonth: false,
-        today: false
-      })
+    // เติมให้ครบ 42 ช่อง
+    while (daysArray.length < 42) {
+      daysArray.push(null)
     }
 
-    return days
-
+    return daysArray
   })
 
   return {
+    days,
     calendarDays
   }
 

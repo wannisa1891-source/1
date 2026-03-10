@@ -1,51 +1,47 @@
-import { computed } from "vue"
 
-export default function useScheduleControls(currentDate){
+import { ref, computed } from "vue"
 
-  // แสดงชื่อเดือน
-  const monthText = computed(() => {
+export default function useScheduleControls() {
 
-    const months = [
-      "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน",
-      "พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม",
-      "กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"
-    ]
+  const currentDate = ref(new Date())
+  const currentView = ref("month")
 
-    const date = new Date(currentDate.value)
+  const views = ["day", "week", "month", "year"]
 
-    const month = months[date.getMonth()]
-    const year = date.getFullYear()
-
-    return `${month} ${year}`
-
+  // เดือนที่แสดง
+  const formatMonth = computed(() => {
+    return currentDate.value.toLocaleDateString("th-TH", {
+      year: "numeric",
+      month: "long"
+    })
   })
 
   // เดือนก่อน
-  function prevMonth(){
-
-    const d = new Date(currentDate.value)
-
-    d.setMonth(d.getMonth() - 1)
-
-    currentDate.value = d
-
+  function prevMonth() {
+    const date = new Date(currentDate.value)
+    date.setMonth(date.getMonth() - 1)
+    currentDate.value = date
   }
 
   // เดือนถัดไป
-  function nextMonth(){
+  function nextMonth() {
+    const date = new Date(currentDate.value)
+    date.setMonth(date.getMonth() + 1)
+    currentDate.value = date
+  }
 
-    const d = new Date(currentDate.value)
-
-    d.setMonth(d.getMonth() + 1)
-
-    currentDate.value = d
-
+  // เปลี่ยน view
+  function changeView(view) {
+    currentView.value = view
   }
 
   return {
-    monthText,
+    currentDate,
+    currentView,
+    views,
+    formatMonth,
     prevMonth,
-    nextMonth
+    nextMonth,
+    changeView
   }
-
 }

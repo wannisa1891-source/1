@@ -1,49 +1,45 @@
+// สรุปจำนวนเวร
 import { computed } from "vue"
 
-export default function useScheduleSummary(shifts){
+export default function useScheduleSummary(schedules) {
 
-  // จำนวนเวรทั้งหมด
-  const totalShifts = computed(() => {
-    return shifts.value.length
+  const totalSchedules = computed(() => {
+    return schedules.value.length
   })
 
-  // รายชื่อพยาบาลไม่ซ้ำ
-  const nurses = computed(() => {
+  const todaySchedules = computed(() => {
 
-    const names = shifts.value.map(s => s.nurse)
+    const today = new Date().toDateString()
 
-    return [...new Set(names)]
+    return schedules.value.filter(schedule => {
+      return new Date(schedule.date).toDateString() === today
+    }).length
 
   })
 
-  // จำนวนพยาบาล
-  const nurseCount = computed(() => {
-    return nurses.value.length
-  })
+  const monthSchedules = computed(() => {
 
-  // จำนวนเวรต่อพยาบาล
-  const shiftsPerNurse = computed(() => {
+    const now = new Date()
+    const month = now.getMonth()
+    const year = now.getFullYear()
 
-    const result = {}
+    return schedules.value.filter(schedule => {
 
-    shifts.value.forEach(shift => {
+      const d = new Date(schedule.date)
 
-      if(!result[shift.nurse]){
-        result[shift.nurse] = 0
-      }
+      return (
+        d.getMonth() === month &&
+        d.getFullYear() === year
+      )
 
-      result[shift.nurse]++
-
-    })
-
-    return result
+    }).length
 
   })
 
   return {
-    totalShifts,
-    nurseCount,
-    shiftsPerNurse
+    totalSchedules,
+    todaySchedules,
+    monthSchedules
   }
 
 }

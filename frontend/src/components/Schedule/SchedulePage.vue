@@ -1,3 +1,4 @@
+// UI หลักของหน้า
 <script setup>
 
 import { ref } from "vue"

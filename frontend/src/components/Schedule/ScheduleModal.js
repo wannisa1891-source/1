@@ -1,58 +1,48 @@
+// popup เพิ่มเวร
 import { ref } from "vue"
 
-export default function useScheduleModal(){
+export default function useScheduleModal() {
 
   const showModal = ref(false)
-
   const selectedDate = ref(null)
 
-  const shiftData = ref({
+  const form = ref({
     nurse: "",
     shift: "",
-    note: ""
+    department: ""
   })
 
-  function openModal(date){
-
+  // เปิด modal
+  function openModal(date) {
     selectedDate.value = date
-
-    shiftData.value = {
-      nurse: "",
-      shift: "",
-      note: ""
-    }
-
     showModal.value = true
   }
 
-  function closeModal(){
-
+  // ปิด modal
+  function closeModal() {
     showModal.value = false
-
   }
 
-  function saveShift(){
+  // บันทึกเวร
+  function saveSchedule(schedules) {
 
-    const data = {
+    schedules.value.push({
       date: selectedDate.value,
-      nurse: shiftData.value.nurse,
-      shift: shiftData.value.shift,
-      note: shiftData.value.note
-    }
+      nurse: form.value.nurse,
+      shift: form.value.shift,
+      department: form.value.department
+    })
 
-    console.log("save shift", data)
-
-    showModal.value = false
-
+    closeModal()
   }
 
   return {
     showModal,
     selectedDate,
-    shiftData,
+    form,
     openModal,
     closeModal,
-    saveShift
+    saveSchedule
   }
 
 }
