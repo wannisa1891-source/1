@@ -6,6 +6,7 @@ import ScheduleCalendar from "./ScheduleCalendar.vue"
 import ScheduleSummary from "./ScheduleSummary.vue"
 import ScheduleStatus from "./ScheduleStatus.vue"
 import ScheduleModal from "./ScheduleModal.vue"
+import YearView from "./View/YearView.vue"   // ✅ เพิ่ม
 
 const currentDate = ref(new Date())
 
@@ -169,7 +170,7 @@ onMounted(() => {
     @export="exportSchedule"
   />
 
-  <!-- Calendar -->
+  <!-- Month View -->
   <ScheduleCalendar
     v-if="currentView === 'Month'"
     :month="month"
@@ -177,6 +178,13 @@ onMounted(() => {
     :schedules="filteredSchedules"
     @add="openModal"
     @edit="editShift"
+  />
+
+  <!-- Year View -->
+  <YearView
+    v-if="currentView === 'Year'"
+    :year="year"
+    :schedules="filteredSchedules"
   />
 
   <!-- Summary -->

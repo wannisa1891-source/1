@@ -63,7 +63,7 @@ export default {
     },
     currentView: {
       type: String,
-      default: "month"
+      default: "Month"
     },
     departments: {
       type: Array,
@@ -73,7 +73,7 @@ export default {
 
   data() {
     return {
-      views: ["Month", "Week", "Day"],
+      views: ["Month", "Week", "Day", "Year"], // ✅ เพิ่ม Year
       selectedDept: ""
     }
   },
