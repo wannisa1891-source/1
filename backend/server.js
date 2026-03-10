@@ -81,12 +81,44 @@ app.put('/api/employees/:id', upload.single('image'), (req, res) => {
     const imageName = req.file ? req.file.filename : data.image;
 
     const sql = `UPDATE tbl_employees SET 
-        prefix=?, first_name_th=?, last_name_th=?, citizen_id=?, 
-        phone=?, emp_type=?, dept_id=?, pos_id=?, 
-        start_date=?, base_salary=?, image=? 
-        WHERE emp_id=?`;
+    prefix = ?, 
+    first_name_th = ?, 
+    last_name_th = ?, 
+    first_name_en = ?, 
+    last_name_en = ?, 
+    birth_date = ?, 
+    gender = ?, 
+    address = ?, 
+    citizen_id = ?, 
+    phone = ?, 
+    emp_type = ?, 
+    dept_id = ?, 
+    pos_id = ?, 
+    start_date = ?, 
+    base_salary = ?, 
+    profile_img = ? 
+    WHERE emp_id = ?`;
 
-    const values = [data.prefix, data.first_name_th, data.last_name_th, data.id_card || data.citizen_id, data.phone, data.emp_type, data.dept_id, data.pos_id, data.start_date, data.base_salary, imageName, empId];
+// เรียงลำดับตามที่หน้าฟอร์มส่งมา และตรงกับตำแหน่งเครื่องหมาย ? ใน SQL Update
+const values = [
+    data.prefix, 
+    data.first_name_th, 
+    data.last_name_th, 
+    data.first_name_en, // (เพิ่ม)
+    data.last_name_en,  // (เพิ่ม)
+    data.birth_date,    // (เพิ่ม)
+    data.gender,        // (เพิ่ม)
+    data.address,       // (เพิ่ม)
+    data.id_card || data.citizen_id, 
+    data.phone, 
+    data.emp_type, 
+    data.dept_id, 
+    data.pos_id, 
+    data.start_date, 
+    data.base_salary, 
+    imageName,          // ชื่อไฟล์รูปภาพ
+    empId               // ID ที่ใช้เป็น WHERE clause (ตัวสุดท้าย)
+];
 
     db.query(sql, values, (err, result) => {
         if (err) return res.status(500).json({ error: err.sqlMessage });
