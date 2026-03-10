@@ -1,29 +1,30 @@
 // สถานะเวร
 import { computed } from "vue"
 
-export default function useScheduleStatus(shifts){
+export default function useScheduleStatus(schedules) {
 
-  const totalShifts = computed(() => {
-    return shifts.value.length
-  })
+  const departmentStatus = computed(() => {
 
-  const morningCount = computed(() => {
-    return shifts.value.filter(s => s.shift === "Morning").length
-  })
+    const result = {}
 
-  const eveningCount = computed(() => {
-    return shifts.value.filter(s => s.shift === "Evening").length
-  })
+    schedules.value.forEach(schedule => {
 
-  const nightCount = computed(() => {
-    return shifts.value.filter(s => s.shift === "Night").length
+      const dept = schedule.department || "Unknown"
+
+      if (!result[dept]) {
+        result[dept] = 0
+      }
+
+      result[dept]++
+
+    })
+
+    return result
+
   })
 
   return {
-    totalShifts,
-    morningCount,
-    eveningCount,
-    nightCount
+    departmentStatus
   }
 
 }
