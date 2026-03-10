@@ -1,119 +1,3 @@
-<script setup>
-import { ref, onMounted, reactive } from 'vue'
-import { employeeService } from './EmployeeService'
-import { useEmployeeLogic } from './useEmployeeLogic'
-import Employee_UI from './Employee_UI.vue'
-
-// 1. สถานะหลัก
-const localEmployees = ref([])
-const showForm = ref(false)
-const isEditing = ref(false)
-
-// *** แก้ที่ 1: เพิ่ม selectedFile ไว้เก็บ Object ไฟล์รูปภาพที่เลือกจากหน้าจอ ***
-const selectedFile = ref(null) 
-
-// 2. ข้อมูลในฟอร์ม
-const formData = reactive({
-  emp_id: '',
-  id_card: '',
-  prefix: 'นาย',
-  first_name_th: '',
-  last_name_th: '',
-  dept_id: '',
-  pos_id: '',
-  emp_type: 'พนักงานประจำ', // ต้องมีบรรทัดนี้!
-  status: 'Active',
-  image: '' // ต้องมีบรรทัดนี้!
-})
-
-// 3. ดึงข้อมูลพนักงานทั้งหมด
-const fetchAll = async () => {
-  localEmployees.value = await employeeService.fetchEmployees()
-}
-
-// 4. ดึง Logic การคำนวณและ Master Data มาใช้งาน
-const { 
-  searchQuery, 
-  selectedDept, 
-  selectedPos, 
-  selectedStatus,
-  departmentList,    
-  positionList,      
-  employmentTypes,    
-  filteredEmployees,
-  removeEmployee,
-  getDeptName,       
-  getPosName         
-} = useEmployeeLogic(localEmployees, fetchAll)
-
-// ฟังก์ชันรับไฟล์ที่ส่งขึ้นมาจาก Employee_UI (เมื่อมีการเลือกรูป)
-const onFileSelected = (file) => {
-  selectedFile.value = file
-}
-
-// *** แก้ที่ 3: ปรับปรุง handleSave ให้ใช้ FormData เพื่อให้ส่งรูปภาพได้จริง ***
-const handleSave = async () => {
-  try {
-    // สร้างตะกร้าข้อมูลแบบ FormData (ส่งได้ทั้งตัวหนังสือและไฟล์)
-    const payload = new FormData()
-    
-    // นำข้อมูลตัวหนังสือจาก formData ใส่ลงใน payload
-    Object.keys(formData).forEach(key => {
-      payload.append(key, formData[key])
-    })
-
-    // ถ้ามีการเลือกไฟล์รูปภาพใหม่ ให้ใส่ลงในช่อง 'image'
-    if (selectedFile.value) {
-      payload.append('image', selectedFile.value)
-    }
-
-    if (isEditing.value) {
-      await employeeService.updateEmployee(formData.emp_id, payload)
-      alert('แก้ไขข้อมูลสำเร็จ')
-    } else {
-      await employeeService.addEmployee(payload)
-      alert('เพิ่มพนักงานสำเร็จ')
-    }
-
-    showForm.value = false
-    selectedFile.value = null // ล้างไฟล์ที่ค้างอยู่หลังบันทึก
-    fetchAll() // โหลดรายการใหม่
-  } catch (error) {
-    console.error('Save Error:', error)
-    alert('บันทึกไม่สำเร็จ: ' + (error.response?.data?.error || error.message))
-  }
-}
-
-// 6. เตรียมข้อมูลเมื่อกดปุ่ม "แก้ไข"
-const prepareEdit = (emp) => {
-  isEditing.value = true
-  selectedFile.value = null // ล้างรูปภาพที่อาจเลือกค้างไว้ก่อนหน้า
-  Object.assign(formData, emp)
-  showForm.value = true
-}
-
-// 7. ล้างข้อมูลเมื่อกดปุ่ม "เพิ่มพนักงานใหม่"
-const prepareAdd = () => {
-  isEditing.value = false
-  selectedFile.value = null
-  Object.assign(formData, {
-    emp_id: '', 
-    id_card: '', 
-    prefix: 'นาย', 
-    first_name_th: '', 
-    last_name_th: '',
-    dept_id: '', 
-    pos_id: '', 
-    emp_type: 'พนักงานประจำ',
-    status: 'Active',
-    image: ''
-  })
-  showForm.value = true
-}
-
-onMounted(fetchAll)
-</script>
-
 <template>
   <Employee_UI 
     :showForm="showForm"
@@ -141,3 +25,138 @@ onMounted(fetchAll)
     @file-selected="onFileSelected" 
   />
 </template>
+
+<script setup>
+import { ref, onMounted, reactive } from 'vue'
+import { employeeService } from './EmployeeService'
+import { useEmployeeLogic } from './useEmployeeLogic'
+import Employee_UI from './Employee_UI.vue'
+
+// 1. สถานะหลัก
+const localEmployees = ref([])
+const showForm = ref(false)
+const isEditing = ref(false)
+const selectedFile = ref(null) 
+
+// 2. ข้อมูลในฟอร์ม (เพิ่มฟิลด์ใหม่ให้ครบตามหน้า UI และ Database)
+const formData = reactive({
+  emp_id: '',
+  id_card: '',
+  prefix: 'นาย',
+  first_name_th: '',
+  last_name_th: '',
+  first_name_en: '', // <--- เพิ่มใหม่
+  last_name_en: '',  // <--- เพิ่มใหม่
+  birth_date: '',    // <--- เพิ่มใหม่
+  gender: 'ชาย',      // <--- เพิ่มใหม่
+  address: '',       // <--- เพิ่มใหม่
+  dept_id: '',
+  pos_id: '',
+  emp_type: 'พนักงานประจำ',
+  status: 'Active',
+  image: '',
+  start_date: '',    // <--- เพิ่มใหม่ (ถ้ายังไม่มี)
+  base_salary: 0     // <--- เพิ่มใหม่ (ถ้ายังไม่มี)
+})
+
+// 3. ดึงข้อมูลพนักงานทั้งหมด
+const fetchAll = async () => {
+  localEmployees.value = await employeeService.fetchEmployees()
+}
+
+// 4. ดึง Logic การคำนวณและ Master Data
+const { 
+  searchQuery, 
+  selectedDept, 
+  selectedPos, 
+  selectedStatus,
+  departmentList,    
+  positionList,      
+  employmentTypes,    
+  filteredEmployees,
+  removeEmployee,
+  getDeptName,       
+  getPosName         
+} = useEmployeeLogic(localEmployees, fetchAll)
+
+const onFileSelected = (file) => {
+  selectedFile.value = file
+}
+
+// 5. บันทึกข้อมูล
+const handleSave = async () => {
+  try {
+    const payload = new FormData()
+    
+    // วนลูปเอาข้อมูลจาก formData ใส่ FormData object
+    Object.keys(formData).forEach(key => {
+      // ป้องกันกรณีค่าเป็น null ให้ส่งเป็นสายอักขระว่างแทน
+      const value = formData[key] === null ? '' : formData[key]
+      payload.append(key, value)
+    })
+
+    if (selectedFile.value) {
+      payload.append('image', selectedFile.value)
+    }
+
+    if (isEditing.value) {
+      await employeeService.updateEmployee(formData.emp_id, payload)
+      alert('แก้ไขข้อมูลสำเร็จ')
+    } else {
+      await employeeService.addEmployee(payload)
+      alert('เพิ่มพนักงานสำเร็จ')
+    }
+
+    showForm.value = false
+    selectedFile.value = null 
+    fetchAll() 
+  } catch (error) {
+    console.error('Save Error:', error)
+    alert('บันทึกไม่สำเร็จ: ' + (error.response?.data?.error || error.message))
+  }
+}
+
+// 6. เตรียมแก้ไข (Mapping ข้อมูลจาก Database ลง Form)
+const prepareEdit = (emp) => {
+  isEditing.value = true
+  selectedFile.value = null
+  
+  // ใช้ Object.assign เพื่อ copy ค่าทั้งหมดจาก emp เข้า formData
+  // รวมถึงฟิลด์ใหม่ๆ เช่น first_name_en, birth_date ด้วย
+  Object.assign(formData, emp)
+  
+  // จัดการกรณีชื่อตัวแปรไม่ตรงกัน (เช่น citizen_id vs id_card)
+  if (emp.citizen_id) formData.id_card = emp.citizen_id
+  
+  showForm.value = true
+}
+
+// 7. เตรียมเพิ่มใหม่ (ล้างข้อมูลให้ว่างทุกช่อง)
+const prepareAdd = () => {
+  isEditing.value = false
+  selectedFile.value = null
+  Object.assign(formData, {
+    emp_id: '', 
+    id_card: '', 
+    prefix: 'นาย', 
+    first_name_th: '', 
+    last_name_th: '',
+    first_name_en: '', // <--- ล้างค่า
+    last_name_en: '',  // <--- ล้างค่า
+    birth_date: '',    // <--- ล้างค่า
+    gender: 'ชาย',      // <--- ล้างค่า
+    address: '',       // <--- ล้างค่า
+    dept_id: '', 
+    pos_id: '', 
+    emp_type: 'พนักงานประจำ',
+    status: 'Active',
+    image: '',
+    start_date: '',
+    base_salary: 0
+  })
+  showForm.value = true
+}
+
+onMounted(fetchAll)
+</script>
+

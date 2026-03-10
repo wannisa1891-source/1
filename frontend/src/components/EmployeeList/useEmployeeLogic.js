@@ -1,14 +1,13 @@
 // ส่วนคำนวณการค้นหา/กรอง และจัดการ Master Data
 import { ref, computed } from 'vue'
 import { employeeService } from './EmployeeService'
-
 export function useEmployeeLogic(employees, refreshCallback) {
   const searchQuery = ref('')
   const selectedDept = ref('')
   const selectedPos = ref('')
   const selectedStatus = ref('')
-
   // --- 1. Master Data: ข้อมูลอ้างอิงสำหรับ Dropdown ---
+  // (ปรับ ID ให้ตรงตามที่คุณออกแบบไว้ในระบบหรือ Database)
   const departmentList = ref([
     { id: 'D001', name: 'กลุ่มงานการพยาบาล' },
     { id: 'D002', name: 'กลุ่มงานการแพทย์' },
@@ -21,7 +20,6 @@ export function useEmployeeLogic(employees, refreshCallback) {
     { id: 'D009', name: 'กลุ่มงานยุทธศาสตร์ฯ' },
     { id: 'D010', name: 'กลุ่มงานโภชนาการ' }
   ])
-
   const positionList = ref([
     { id: 'P001', name: 'พยาบาลวิชาชีพ' },
     { id: 'P002', name: 'นายแพทย์' },
@@ -34,30 +32,27 @@ export function useEmployeeLogic(employees, refreshCallback) {
     { id: 'P009', name: 'นักวิเคราะห์นโยบายและแผน' },
     { id: 'P010', name: 'โภชนากร' }
   ])
-
+  // ปรับให้ตรงตามรูปที่ 3 (พนักงานประจำ, พนักงานชั่วคราว, ลูกจ้างรายวัน)
   const employmentTypes = ref(['พนักงานประจำ', 'พนักงานชั่วคราว', 'ลูกจ้างรายวัน'])
-
-  // --- 2. Helper Functions: แปลง ID เป็นชื่อเพื่อแสดงผลในตาราง ---
+  // --- 2. Helper Functions ---
   const getDeptName = (id) => {
     return departmentList.value.find(d => d.id === id)?.name || 'ไม่ระบุ'
   }
-
   const getPosName = (id) => {
     return positionList.value.find(p => p.id === id)?.name || 'ไม่ระบุ'
   }
-
-  // --- 3. Filter Logic: การกรองข้อมูลพนักงาน ---
+  // --- 3. Filter Logic (ปรับปรุงให้ค้นหาชื่อ EN ได้ด้วย) ---
   const filteredEmployees = computed(() => {
     if (!employees.value) return []
-    
     return employees.value.filter(emp => {
-      // ค้นหาจากชื่อ-นามสกุล หรือรหัส
+      // ค้นหาจากชื่อ-นามสกุล (ไทย/อังกฤษ) หรือรหัส
       const q = searchQuery.value.toLowerCase()
       const matchSearch = !q || 
         (emp.emp_id && emp.emp_id.toLowerCase().includes(q)) || 
         (emp.first_name_th && emp.first_name_th.includes(q)) ||
-        (emp.last_name_th && emp.last_name_th.includes(q))    
-
+        (emp.last_name_th && emp.last_name_th.includes(q)) ||
+        (emp.first_name_en && emp.first_name_en.toLowerCase().includes(q)) || // เพิ่มค้นหาชื่อ EN
+        (emp.last_name_en && emp.last_name_en.toLowerCase().includes(q))      // เพิ่มค้นหานามสกุล EN
       // กรองตาม Dropdown
       const matchDept = !selectedDept.value || emp.dept_id === selectedDept.value
       const matchPos = !selectedPos.value || emp.pos_id === selectedPos.value
@@ -66,21 +61,18 @@ export function useEmployeeLogic(employees, refreshCallback) {
       return matchSearch && matchDept && matchPos && matchStatus
     })
   })
-
-  // --- 4. CRUD Logic: ฟังก์ชันลบพนักงาน ---
+  // --- 4. CRUD Logic ---
   const removeEmployee = async (emp_id) => {
     if (confirm(`คุณต้องการลบพนักงานรหัส ${emp_id} ใช่หรือไม่?`)) {
       try {
         await employeeService.deleteEmployee(emp_id)
         alert('ลบข้อมูลสำเร็จ')
-        if (refreshCallback) refreshCallback() // เรียก fetchAll() ในตัวรวม
+        if (refreshCallback) refreshCallback()
       } catch (error) {
         alert('ลบไม่สำเร็จ: ' + (error.response?.data?.error || error.message))
       }
     }
   }
-
-  // ส่งค่าที่จำเป็นออกไปใช้งาน
   return {
     searchQuery,
     selectedDept,

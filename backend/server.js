@@ -1,12 +1,27 @@
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 const app = express();
 app.use(cors()); 
 app.use(express.json()); 
+app.use('/uploads', express.static('uploads'));
 
-// การตั้งค่าฐานข้อมูลเบื้องต้น
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const dir = 'uploads/';
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir); 
+        cb(null, dir);
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); 
+    }
+});
+const upload = multer({ storage: storage });
+
 const dbConfig = {
     host: 'localhost',
     user: 'root',
@@ -14,287 +29,210 @@ const dbConfig = {
     database: 'hrm_db'
 };
 
-let db; // ตัวแปรสำหรับเก็บการเชื่อมต่อ
-
-// ฟังก์ชันสำหรับลองเชื่อมต่อพอร์ตแบบสลับอัตโนมัติ
+let db;
 function connectDatabase(port) {
     const connection = mysql.createConnection({ ...dbConfig, port: port });
-
     connection.connect((err) => {
         if (err) {
             if (port === 3306) {
-                // ถ้า 3306 เข้าไม่ได้ (เครื่องคุณ) ให้ข้ามมาลอง 3307
-                console.log('⚠️ Port 3306 เข้าไม่ได้... กำลังสลับไปลอง Port 3307');
+                console.log('⚠️ สลับไปลอง Port 3307');
                 connectDatabase(3307);
             } else {
-                // ถ้าทั้ง 3306 และ 3307 ยังไม่ได้อีก แสดงว่าปัญหาอื่น (เช่น ลืมเปิด MySQL หรือรหัสผิด)
-                console.error('❌ เชื่อมต่อไม่ได้ทั้ง 3306 และ 3307:', err.sqlMessage);
+                console.error('❌ เชื่อมต่อไม่ได้:', err.sqlMessage);
             }
             return;
         }
-        db = connection; // เก็บการเชื่อมต่อที่สำเร็จไว้ใช้งานใน API
-        console.log(`✅ เชื่อมต่อฐานข้อมูลสำเร็จ! (ใช้ Port: ${port})`);
+        db = connection;
+        console.log(`✅ เชื่อมต่อฐานข้อมูลสำเร็จ! (Port: ${port})`);
     });
 }
-
-// เริ่มรันการเชื่อมต่อ (เริ่มที่ 3306 ก่อนเสมอ)
 connectDatabase(3306);
 
 // ============================================
-// API ทั้งหมด (คงเดิมตามที่คุณเขียนไว้)
+// API Employees (จัดการข้อมูลพนักงาน)
 // ============================================
 
 app.get('/api/employees', (req, res) => {
-    db.query("SELECT * FROM tbl_employees", (err, results) => {
+    db.query("SELECT * FROM tbl_employees ORDER BY emp_id DESC", (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(results); 
     });
 });
 
-app.post('/api/employees', (req, res) => {
-    const { 
-        emp_id, prefix, first_name_th, last_name_th, 
-        emp_type, dept_id, pos_id, start_date, base_salary 
-    } = req.body;
-    const citizen_id = req.body.citizen_id || '0000000000000'; 
-    const phone = req.body.phone || '000-000-0000';
+// ➕ แก้ไขส่วน POST: เพิ่มพนักงานใหม่ (ให้รับฟิลด์ใหม่ๆ ได้)
+app.post('/api/employees', upload.single('image'), (req, res) => {
+    const data = req.body;
+    const imageName = req.file ? req.file.filename : null;
+    
+    // ดึงค่า citizen_id และ phone มาพักไว้
+    const citizen_id = data.id_card || data.citizen_id || '0000000000000'; 
+    const phone = data.phone || '';
 
+    // เพิ่มคอลัมน์ใหม่ๆ ลงใน SQL Insert
     const sql = `INSERT INTO tbl_employees 
-        (emp_id, prefix, first_name_th, last_name_th, citizen_id, phone, emp_type, dept_id, pos_id, start_date, base_salary, status) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Active')`;
+        (emp_id, prefix, first_name_th, last_name_th, first_name_en, last_name_en, 
+         birth_date, gender, address, citizen_id, phone, emp_type, 
+         dept_id, pos_id, start_date, base_salary, status, image) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Active', ?)`;
 
-    const values = [emp_id, prefix, first_name_th, last_name_th, citizen_id, phone, emp_type, dept_id, pos_id, start_date, base_salary];
+    // เรียงลำดับตัวแปรให้ตรงกับ ?
+    const values = [
+        data.emp_id, 
+        data.prefix, 
+        data.first_name_th, 
+        data.last_name_th,
+        data.first_name_en || '', 
+        data.last_name_en || '', 
+        data.birth_date || null, 
+        data.gender || 'ชาย', 
+        data.address || '',
+        citizen_id, 
+        phone, 
+        data.emp_type, 
+        data.dept_id, 
+        data.pos_id, 
+        data.start_date || null, 
+        data.base_salary || 0, 
+        imageName
+    ];
 
     db.query(sql, values, (err, result) => {
         if (err) {
-            console.error('❌ บันทึกไม่สำเร็จ:', err.sqlMessage);
+            console.error("Insert Error:", err.sqlMessage);
             return res.status(500).json({ error: err.sqlMessage });
         }
-        res.json({ message: '✅ บันทึกพนักงานใหม่สำเร็จ!', id: result.insertId });
+        res.json({ message: '✅ บันทึกพนักงานใหม่สำเร็จ!' });
     });
 });
 
-app.get('/api/leaves', (req, res) => {
-    const sql = `
-        SELECT l.*, e.first_name_th, e.last_name_th, e.dept_id, d.dept_name 
-        FROM tbl_leaves l
-        LEFT JOIN tbl_employees e ON l.emp_id = e.emp_id
-        LEFT JOIN tbl_departments d ON e.dept_id = d.dept_id
-        ORDER BY l.start_date DESC
-    `;
-    db.query(sql, (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json(results); 
-    });
-});
+// 📝 แก้ไขส่วน PUT: แก้ไขข้อมูลพนักงาน (ปรับชื่อคอลัมน์รูปภาพให้ตรงกัน)
+app.put('/api/employees/:id', upload.single('image'), (req, res) => {
+    const empId = req.params.id; 
+    const data = req.body;
+    const imageName = req.file ? req.file.filename : data.image;
 
-app.post('/api/leaves', (req, res) => {
-    const { emp_id, leave_type_id, start_date, end_date, reason } = req.body;
-    const leave_id = 'L' + Math.floor(1000 + Math.random() * 9000);
-    const sql = `INSERT INTO tbl_leaves (leave_id, emp_id, leave_type_id, start_date, end_date, reason, status) 
-                VALUES (?, ?, ?, ?, ?, ?, 'Pending')`;
-    const values = [leave_id, emp_id, leave_type_id, start_date, end_date, reason];
+    const sql = `UPDATE tbl_employees SET 
+        prefix = ?, 
+        first_name_th = ?, 
+        last_name_th = ?, 
+        first_name_en = ?, 
+        last_name_en = ?, 
+        birth_date = ?, 
+        gender = ?, 
+        address = ?, 
+        citizen_id = ?, 
+        phone = ?, 
+        emp_type = ?, 
+        dept_id = ?, 
+        pos_id = ?, 
+        start_date = ?, 
+        base_salary = ?, 
+        image = ? 
+        WHERE emp_id = ?`; // *** เปลี่ยน profile_img เป็น image ให้ตรงกับตาราง ***
+
+    const values = [
+        data.prefix, 
+        data.first_name_th, 
+        data.last_name_th, 
+        data.first_name_en,
+        data.last_name_en, 
+        data.birth_date,   
+        data.gender,       
+        data.address,      
+        data.id_card || data.citizen_id, 
+        data.phone, 
+        data.emp_type, 
+        data.dept_id, 
+        data.pos_id, 
+        data.start_date, 
+        data.base_salary, 
+        imageName,         
+        empId               
+    ];
 
     db.query(sql, values, (err, result) => {
-        if (err) return res.status(500).json({ success: false, message: err.sqlMessage });
-        res.json({ success: true, message: '✅ ส่งใบลาสำเร็จ!' });
+        if (err) {
+            console.error("Update Error:", err.sqlMessage);
+            return res.status(500).json({ error: err.sqlMessage });
+        }
+        res.json({ message: '✅ แก้ไขสำเร็จ!' });
     });
 });
 
-app.put('/api/leaves/:id', (req, res) => {
-    const leaveId = req.params.id;
-    const { status } = req.body;
-    const sql = "UPDATE tbl_leaves SET status = ? WHERE leave_id = ?";
-    db.query(sql, [status, leaveId], (err, result) => {
-        if (err) return res.status(500).json({ message: "เกิดข้อผิดพลาดในการอัปเดต" });
-        res.json({ message: "อัปเดตสถานะเรียบร้อยแล้ว", status: status });
-    });
-});
-
-// API สำหรับดึงประวัติการโยกย้ายทั้งหมดมาโชว์ที่ตารางหน้าแรก
-app.get('/api/transfers', (req, res) => {
-    const sql = `
-        SELECT t.*, CONCAT(e.prefix, e.first_name_th, ' ', e.last_name_th) as staffName 
-        FROM tbl_transfers t
-        LEFT JOIN tbl_employees e ON t.emp_id = e.emp_id
-        ORDER BY t.order_date DESC
-    `;
-    db.query(sql, (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json(results);
-    });
-});
-
-// API สำหรับค้นหาพนักงานเพื่อดึงข้อมูลมาใส่ในฟอร์มโยกย้าย
+// ✅ เพิ่มกลับมา: ค้นหาพนักงาน (สำหรับหน้าย้ายพนักงาน)
 app.get('/api/staff-search', (req, res) => {
     const query = req.query.q;
-    const sql = `
-        SELECT e.emp_id as id, 
-               CONCAT(e.prefix, e.first_name_th, ' ', e.last_name_th) as name, 
-               p.pos_name as pos, 
-               d.dept_name as dept,
-               e.position_level as lv,
-               e.position_no as posNo,
-               e.base_salary as salary
-        FROM tbl_employees e
-        LEFT JOIN tbl_positions p ON e.pos_id = p.pos_id
-        LEFT JOIN tbl_departments d ON e.dept_id = d.dept_id
-        WHERE e.first_name_th LIKE ? OR e.emp_id LIKE ?`;
-    
+    const sql = `SELECT e.emp_id as id, CONCAT(e.prefix, e.first_name_th, ' ', e.last_name_th) as name, p.pos_name as pos, d.dept_name as dept, e.base_salary as salary FROM tbl_employees e LEFT JOIN tbl_positions p ON e.pos_id = p.pos_id LEFT JOIN tbl_departments d ON e.dept_id = d.dept_id WHERE e.first_name_th LIKE ? OR e.emp_id LIKE ?`;
     db.query(sql, [`%${query}%`, `%${query}%`], (err, results) => {
         if (err) return res.status(500).json(err);
         res.json(results);
     });
 });
 
-// ตรวจสอบว่าต้องมี require multer และประกาศ upload ไว้ที่ด้านบนของไฟล์ด้วยนะครับ
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+// ✅ เพิ่มกลับมา: ดึงพนักงานแยกตามแผนก (สำหรับผังองค์กร)
+app.get('/api/employees/dept/:deptId', (req, res) => {
+    const sql = `SELECT e.*, p.pos_name FROM tbl_employees e LEFT JOIN tbl_positions p ON e.pos_id = p.pos_id WHERE e.dept_id = ? AND e.status = 'Active'`;
+    db.query(sql, [req.params.deptId], (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(results);
+    });
+});
 
-// API สำหรับบันทึกการโยกย้าย (ใช้ชื่อคอลัมน์ 'order_file' ตาม SQL เดิมของคุณ)
+// ============================================
+// API Leaves & Transfers
+// ============================================
+app.get('/api/leaves', (req, res) => {
+    const sql = `SELECT l.*, e.first_name_th, e.last_name_th, d.dept_name FROM tbl_leaves l LEFT JOIN tbl_employees e ON l.emp_id = e.emp_id LEFT JOIN tbl_departments d ON e.dept_id = d.dept_id ORDER BY l.start_date DESC`;
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(results); 
+    });
+});
+// ✅ เพิ่มกลับมา: บันทึกใบลา & อัปเดตสถานะลา
+app.post('/api/leaves', (req, res) => {
+    const { emp_id, leave_type_id, start_date, end_date, reason } = req.body;
+    const leave_id = 'L' + Date.now().toString().slice(-4);
+    db.query("INSERT INTO tbl_leaves (leave_id, emp_id, leave_type_id, start_date, end_date, reason, status) VALUES (?,?,?,?,?,?,'Pending')", [leave_id, emp_id, leave_type_id, start_date, end_date, reason], (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ success: true });
+    });
+});
+app.put('/api/leaves/:id', (req, res) => {
+    db.query("UPDATE tbl_leaves SET status = ? WHERE leave_id = ?", [req.body.status, req.params.id], (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ success: true });
+    });
+});
 app.post('/api/transfers', upload.single('order_file'), (req, res) => {
     try {
         const data = JSON.parse(req.body.data);
         const fileName = req.file ? req.file.filename : null; 
-        
         const transfer_id = 'TRF' + Date.now().toString().slice(-8);
-
-        // ใช้ชื่อคอลัมน์ 'order_file' ตามที่มีใน SQL ของคุณ
-        const sql = `INSERT INTO tbl_transfers 
-            (transfer_id, order_no, order_date, subject, transfer_type, effective_date, emp_id, 
-             old_dept_id, new_dept_id, old_position, new_position, order_file, old_salary, new_salary) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-        const values = [
-            transfer_id,
-            data.orderNo,
-            data.orderDate,
-            data.title || 'ย้าย',
-            'แต่งตั้งโยกย้าย',
-            data.orderDate,
-            data.empId,
-            data.oldDeptId || null,
-            data.newDeptId || null,
-            data.oldPos,
-            data.newPos,
-            fileName,            // ใส่ชื่อไฟล์ลงในคอลัมน์ order_file
-            parseFloat(data.oldSalary) || 0,
-            parseFloat(data.newSalary) || 0
-        ];
-
-        db.query(sql, values, (err, result) => {
-            if (err) {
-                console.error("❌ SQL Error:", err);
-                return res.status(500).json({ success: false, message: err.message });
-            }
-            res.json({ success: true, message: 'บันทึกสำเร็จ' });
+        const sql = `INSERT INTO tbl_transfers (transfer_id, order_no, order_date, subject, transfer_type, effective_date, emp_id, old_dept_id, new_dept_id, old_position, new_position, order_file, old_salary, new_salary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        db.query(sql, [transfer_id, data.orderNo, data.orderDate, data.title, 'แต่งตั้งโยกย้าย', data.orderDate, data.empId, data.oldDeptId, data.newDeptId, data.oldPos, data.newPos, fileName, data.oldSalary, data.newSalary], (err) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ success: true });
         });
-    } catch (error) {
-        console.error("❌ Error:", error);
-        res.status(400).json({ success: false, message: 'ข้อมูลไม่ถูกต้อง' });
-    }
+    } catch (e) { res.status(400).send('Invalid data'); }
 });
 
-app.listen(3000, () => {
-    console.log('🚀 เซิร์ฟเวอร์รันที่ http://localhost:3000');
-});
 // ============================================
-// API Departments
+// Master Data
 // ============================================
-
-// ดึงข้อมูลแผนก
 app.get('/api/departments', (req, res) => {
-
-    const sql = `
-        SELECT dept_id, dept_name, sub_dept, capacity
-        FROM tbl_departments
-        ORDER BY dept_id
-    `;
-
-    db.query(sql, (err, results) => {
-
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: err.message });
-        }
-
-        // เพิ่ม isOpen ให้ Vue ใช้งาน
-        const data = results.map(d => ({
-            ...d,
-            isOpen: false
-        }));
-
-        res.json(data);
+    db.query("SELECT * FROM tbl_departments ORDER BY dept_id", (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(results.map(d => ({ ...d, isOpen: false })));
     });
-
 });
-
-
-// ============================================
-// API Positions
-// ============================================
-
 app.get('/api/positions', (req, res) => {
-
-    const sql = `
-        SELECT pos_id, pos_name
-        FROM tbl_positions
-    `;
-
-    db.query(sql, (err, results) => {
-
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-
+    db.query("SELECT * FROM tbl_positions", (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
         res.json(results);
-
     });
-
 });
 
-
-// ============================================
-// API Employees by Department
-// ============================================
-
-app.get('/api/employees/dept/:deptId', (req, res) => {
-
-    const deptId = req.params.deptId;
-
-    const sql = `
-        SELECT 
-            e.emp_id,
-            e.prefix,
-            e.first_name_th,
-            e.last_name_th,
-            e.position_no,
-            e.dept_id,
-            e.pos_id,
-            p.pos_name
-        FROM tbl_employees e
-        LEFT JOIN tbl_positions p ON e.pos_id = p.pos_id
-        WHERE e.dept_id = ?
-        AND e.status = 'Active'
-    `;
-
-    db.query(sql, [deptId], (err, results) => {
-
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-
-        res.json(results);
-
-    });
-
-});
-
-
-// ============================================
-// START SERVER
-// ============================================
-
-app.listen(3000, () => {
-    console.log('🚀 Server running at http://localhost:3000');
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
