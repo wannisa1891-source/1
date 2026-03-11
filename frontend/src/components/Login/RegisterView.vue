@@ -1124,7 +1124,7 @@ const submitForm = async () => {
   opacity: 0;
   transform: translateY(-8px);
 }
-
+/*แก้ไม้ได้*/
 /* ========== Responsive ========== */
 @media (max-width: 600px) {
   .register-panel {
