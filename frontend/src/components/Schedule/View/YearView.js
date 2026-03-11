@@ -1,4 +1,4 @@
-// มุมมองรายปี
+// logic รายปี
 import { computed } from "vue"
 
 export default function useYearView(currentDate, shifts){

@@ -1,14 +1,18 @@
-
+// ควบคุมเดือน / เปลี่ยน view
 import { ref, computed } from "vue"
 
 export default function useScheduleControls() {
 
+  // วันที่ปัจจุบัน
   const currentDate = ref(new Date())
+
+  // view ปัจจุบัน
   const currentView = ref("month")
 
+  // view ที่มีในระบบ
   const views = ["day", "week", "month", "year"]
 
-  // เดือนที่แสดง
+  // เดือนที่แสดงบนหัวปฏิทิน
   const formatMonth = computed(() => {
     return currentDate.value.toLocaleDateString("th-TH", {
       year: "numeric",
@@ -18,20 +22,24 @@ export default function useScheduleControls() {
 
   // เดือนก่อน
   function prevMonth() {
-    const date = new Date(currentDate.value)
-    date.setMonth(date.getMonth() - 1)
-    currentDate.value = date
+    const newDate = new Date(currentDate.value)
+    newDate.setMonth(newDate.getMonth() - 1)
+    currentDate.value = newDate
   }
 
   // เดือนถัดไป
   function nextMonth() {
-    const date = new Date(currentDate.value)
-    date.setMonth(date.getMonth() + 1)
-    currentDate.value = date
+    const newDate = new Date(currentDate.value)
+    newDate.setMonth(newDate.getMonth() + 1)
+    currentDate.value = newDate
   }
 
-  // เปลี่ยน view
+  // เปลี่ยน view (day / week / month / year)
   function changeView(view) {
+
+    // ป้องกัน view ที่ไม่มี
+    if (!views.includes(view)) return
+
     currentView.value = view
   }
 

@@ -1,66 +1,49 @@
-// มุมมองรายวัน
+// logic รายวัน
 import { computed } from "vue"
 
-export default function useWeekView(currentDate, shifts){
+export default function useDayView(currentDate, shifts) {
 
-  // คำนวณวันในสัปดาห์
-  const weekDays = computed(() => {
-
-    const date = new Date(currentDate.value)
-
-    const day = date.getDay()
-
-    const start = new Date(date)
-    start.setDate(date.getDate() - day)
-
-    const days = []
-
-    for(let i = 0; i < 7; i++){
-
-      const d = new Date(start)
-
-      d.setDate(start.getDate() + i)
-
-      days.push(d)
-
-    }
-
-    return days
-
+  // วันที่ปัจจุบัน
+  const currentDay = computed(() => {
+    return new Date(currentDate.value)
   })
 
 
-  // เวรในสัปดาห์
-  const weekShifts = computed(() => {
+  // เวรของวันนั้น
+  const dayShifts = computed(() => {
 
-    const days = weekDays.value
+    const day = currentDay.value
 
-    return days.map(day => {
+    return shifts.value.filter(shift => {
 
-      const dayShifts = shifts.value.filter(shift => {
+      const shiftDate = new Date(shift.date)
 
-        const shiftDate = new Date(shift.date)
-
-        return (
-          shiftDate.getFullYear() === day.getFullYear() &&
-          shiftDate.getMonth() === day.getMonth() &&
-          shiftDate.getDate() === day.getDate()
-        )
-
-      })
-
-      return {
-        date: day,
-        shifts: dayShifts
-      }
+      return (
+        shiftDate.getFullYear() === day.getFullYear() &&
+        shiftDate.getMonth() === day.getMonth() &&
+        shiftDate.getDate() === day.getDate()
+      )
 
     })
 
   })
 
+
+  // format วันที่
+  const formatDate = computed(() => {
+    return currentDay.value.toLocaleDateString("th-TH", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    })
+  })
+
+
   return {
-    weekDays,
-    weekShifts
+    currentDay,
+    dayShifts,
+    formatDate
   }
 
 }

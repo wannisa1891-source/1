@@ -1,4 +1,4 @@
-// UI หลักของหน้า
+// UI หลัก
 <script setup>
 import { ref } from "vue"
 
@@ -17,9 +17,12 @@ const schedules = ref([])
 // controls
 const {
   currentDate,
+  currentView,
+  views,
   formatMonth,
   prevMonth,
-  nextMonth
+  nextMonth,
+  changeView
 } = useScheduleControls()
 
 
@@ -63,6 +66,7 @@ const {
 
 </script>
 
+
 <template>
 
 <div class="schedule-page">
@@ -75,9 +79,20 @@ const {
 
     <button @click="prevMonth">◀</button>
 
-    <span>{{ formatMonth }}</span>
+    <span class="month">{{ formatMonth }}</span>
 
     <button @click="nextMonth">▶</button>
+
+    <div class="view-buttons">
+      <button
+        v-for="v in views"
+        :key="v"
+        @click="changeView(v)"
+        :class="{ active: currentView === v }"
+      >
+        {{ v }}
+      </button>
+    </div>
 
   </div>
 
@@ -103,9 +118,13 @@ const {
       v-for="(day,index) in calendarDays"
       :key="index"
       class="calendar-day"
-      @click="openModal(getDate(day))"
+      @click="day && openModal(getDate(day))"
     >
-      {{ getDayNumber(day) }}
+
+      <div class="date-number">
+        {{ getDayNumber(day) }}
+      </div>
+
     </div>
 
   </div>
@@ -131,6 +150,7 @@ const {
     <div
       v-for="(count,dept) in departmentStatus"
       :key="dept"
+      class="dept-row"
     >
       {{ dept }} : {{ count }} เวร
     </div>
@@ -143,15 +163,20 @@ const {
 
     <h3>เพิ่มเวร</h3>
 
+    <div class="modal-date">
+      วันที่: {{ selectedDate }}
+    </div>
+
     <input v-model="form.nurse" placeholder="ชื่อพยาบาล" />
 
-    <input v-model="form.shift" placeholder="เวร" />
+    <input v-model="form.shift" placeholder="เวร (เช้า/บ่าย/ดึก)" />
 
     <input v-model="form.department" placeholder="แผนก" />
 
-    <button @click="saveSchedule(schedules)">บันทึก</button>
-
-    <button @click="closeModal">ปิด</button>
+    <div class="modal-buttons">
+      <button @click="saveSchedule(schedules)">บันทึก</button>
+      <button @click="closeModal">ปิด</button>
+    </div>
 
   </div>
 
@@ -164,18 +189,38 @@ const {
 
 .schedule-page{
   padding:20px;
+  max-width:900px;
 }
 
 .controls{
   display:flex;
+  align-items:center;
   gap:10px;
   margin-bottom:20px;
+}
+
+.month{
+  font-weight:bold;
+}
+
+.view-buttons{
+  margin-left:20px;
+}
+
+.view-buttons button{
+  margin-right:5px;
+}
+
+.active{
+  background:#1976d2;
+  color:white;
 }
 
 .calendar-header{
   display:grid;
   grid-template-columns:repeat(7,1fr);
   font-weight:bold;
+  text-align:center;
 }
 
 .calendar-grid{
@@ -190,6 +235,14 @@ const {
   cursor:pointer;
 }
 
+.calendar-day:hover{
+  background:#f5f5f5;
+}
+
+.date-number{
+  font-size:14px;
+}
+
 .summary{
   margin-top:20px;
 }
@@ -198,13 +251,29 @@ const {
   margin-top:20px;
 }
 
+.dept-row{
+  margin-bottom:5px;
+}
+
 .modal{
   position:fixed;
   top:30%;
-  left:40%;
+  left:50%;
+  transform:translateX(-50%);
   background:white;
   padding:20px;
   border:1px solid #ccc;
+  width:250px;
+}
+
+.modal input{
+  width:100%;
+  margin-bottom:10px;
+}
+
+.modal-buttons{
+  display:flex;
+  gap:10px;
 }
 
 </style>
