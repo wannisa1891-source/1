@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import axios from 'axios'
 
 import Login from './components/Login/LoginView.vue'
+import Register from './components/Login/RegisterView.vue'
 import Sidebar from './components/Sidebar/SideBar.vue'
 import Dashboard from './components/Dashboard/Dashboard.vue'
 import EmployeeList from './components/EmployeeList/EmployeeList.vue'
@@ -15,6 +16,7 @@ import Payroll from './components/Payroll/Payroll.vue'
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary.vue'
 
 const isLoggedIn = ref(false)
+const currentPage = ref('login') // 'login' | 'register'
 const employees = ref([])
 const activeMenu = ref('dashboard')
 const isSidebarCollapsed = ref(false)
@@ -36,8 +38,17 @@ const currentComponent = computed(() => {
 
 const handleLoginSuccess = async () => {
   isLoggedIn.value = true
+  currentPage.value = 'login'
   activeMenu.value = 'dashboard'
   await fetchEmployees()
+}
+
+const goToRegister = () => {
+  currentPage.value = 'register'
+}
+
+const goToLogin = () => {
+  currentPage.value = 'login'
 }
 
 const handleLogout = () => {
@@ -68,8 +79,15 @@ const fetchEmployees = async () => {
 
   <!-- LOGIN -->
   <Login
-    v-if="!isLoggedIn"
+    v-if="!isLoggedIn && currentPage === 'login'"
     @login-success="handleLoginSuccess"
+    @go-register="goToRegister"
+  />
+
+  <!-- REGISTER -->
+  <Register
+    v-if="!isLoggedIn && currentPage === 'register'"
+    @go-login="goToLogin"
   />
 
   <!-- SYSTEM -->

@@ -34,6 +34,21 @@
         เข้าสู่ระบบ
       </button>
 
+      <div class="divider">
+        <span>หรือ</span>
+      </div>
+
+      <button @click="$emit('go-register')" class="signin-button">
+        ✨ Sign In / สมัครสมาชิก
+      </button>
+
+      <div class="register-link">
+        <p>
+          ยังไม่มีบัญชี?
+          <a href="#" @click.prevent="$emit('go-register')">สมัครสมาชิกที่นี่</a>
+        </p>
+      </div>
+
       <div class="footer">
         <p>Hospital Management Platform</p>
       </div>
@@ -46,7 +61,7 @@
 import { ref, onMounted } from 'vue'
 import { loginUser } from '../../services/authService'
 
-const emit = defineEmits(['login-success'])
+const emit = defineEmits(['login-success', 'go-register'])
 
 import img1 from '../../assets/1.jpg'
 import img2 from '../../assets/2.jpg'
@@ -210,10 +225,70 @@ const login = async () => {
   box-shadow:0 8px 20px rgba(0,0,0,0.25);
 }
 
-.footer{
-  margin-top:20px;
+/* Divider */
+.divider{
+  display:flex;
+  align-items:center;
+  margin:18px 0;
+  gap:12px;
+}
+.divider::before,
+.divider::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:rgba(255,255,255,0.25);
+}
+.divider span{
   font-size:12px;
-  color:#000;
+  color:rgba(255,255,255,0.6);
+  white-space:nowrap;
+}
+
+/* Sign In Button */
+.signin-button{
+  width:100%;
+  padding:13px;
+  border:2px solid rgba(255,255,255,0.25);
+  border-radius:10px;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(6px);
+  color:white;
+  font-weight:600;
+  font-size:15px;
+  cursor:pointer;
+  transition:all 0.3s ease;
+  letter-spacing:0.5px;
+}
+.signin-button:hover{
+  background:rgba(255,255,255,0.18);
+  border-color:rgba(96,165,250,0.5);
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(96,165,250,0.2);
+}
+
+/* Register Link */
+.register-link{
+  text-align:center;
+  margin-top:16px;
+  font-size:13px;
+  color:rgba(255,255,255,0.6);
+}
+.register-link a{
+  color:#60a5fa;
+  text-decoration:none;
+  font-weight:600;
+  transition:color 0.2s;
+}
+.register-link a:hover{
+  color:#93c5fd;
+  text-decoration:underline;
+}
+
+.footer{
+  margin-top:16px;
+  font-size:12px;
+  color:rgba(255,255,255,0.5);
 }
 .logo-area{
   text-align:center;
