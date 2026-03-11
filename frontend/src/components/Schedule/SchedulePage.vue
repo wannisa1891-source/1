@@ -3,12 +3,13 @@
 import { ref } from "vue"
 
 import useScheduleControls from "./ScheduleControls"
-import useScheduleCalendar from "./ScheduleCalendar"
-import useMonthView from "./View/MonthView"
 import useScheduleModal from "./ScheduleModal"
 import useScheduleSummary from "./ScheduleSummary"
 import useScheduleStatus from "./ScheduleStatus"
 import YearView from "./View/YearView.vue"
+import MonthView from "./View/MonthView.vue"
+import WeekView from "./View/WeekView.vue"
+import DayView from "./View/DayView.vue"
 
 // ===== Data =====
 const schedules = ref([])
@@ -18,22 +19,15 @@ const {
   currentDate,
   currentView,
   views,
-  formatMonth,
-  formatYear,
+  formatDisplay,
   formatDate,
-  prevMonth,
-  nextMonth,
-  prevYear,
-  nextYear,
+  goPrev,
+  goNext,
   goToday,
   changeView
 } = useScheduleControls()
 
-// ===== Calendar =====
-const { days, calendarDays } = useScheduleCalendar(currentDate)
 
-// ===== MonthView helpers =====
-const { getDayNumber, getDate } = useMonthView(days, calendarDays)
 
 // ===== Modal =====
 const {
@@ -108,6 +102,11 @@ function openMonth(monthIndex) {
   currentDate.value = newDate
   changeView("month")
 }
+
+function openDay(date) {
+  currentDate.value = date
+  changeView("day")
+}
 </script>
 
 
@@ -169,9 +168,9 @@ function openMonth(monthIndex) {
     <div class="cal-controls">
 
       <div class="cal-nav">
-        <button class="btn-nav" @click="currentView === 'year' ? prevYear() : prevMonth()" title="ก่อนหน้า">◀</button>
-        <h2 class="cal-month">{{ currentView === 'year' ? formatYear : formatMonth }}</h2>
-        <button class="btn-nav" @click="currentView === 'year' ? nextYear() : nextMonth()" title="ถัดไป">▶</button>
+        <button class="btn-nav" @click="goPrev" title="ก่อนหน้า">◀</button>
+        <h2 class="cal-month">{{ formatDisplay }}</h2>
+        <button class="btn-nav" @click="goNext" title="ถัดไป">▶</button>
         <button class="btn-today" @click="goToday">Today</button>
       </div>
 
@@ -189,64 +188,49 @@ function openMonth(monthIndex) {
 
     </div>
 
-    <!-- Day headers -->
-    <div class="cal-header" v-if="currentView === 'month'">
-      <div
-        v-for="d in days"
-        :key="d"
-        class="cal-day-name"
-        :class="{ weekend: d === 'Sun' || d === 'Sat' }"
-      >
-        {{ d }}
-      </div>
-    </div>
+    <!-- Day View -->
+    <DayView
+      v-if="currentView === 'day'"
+      :currentDate="currentDate"
+      :schedules="schedules"
+      :getShiftColor="getShiftColor"
+      :getShiftDot="getShiftDot"
+      @openDay="openModal"
+      @openEditModal="openEditModal"
+    />
 
-    <!-- Grid -->
-    <div class="cal-grid" v-if="currentView === 'month'">
-      <div
-        v-for="(day, idx) in calendarDays"
-        :key="idx"
-        class="cal-cell"
-        :class="{
-          empty: !day,
-          today: checkIsToday(day),
-          weekend: day && (idx % 7 === 0 || idx % 7 === 6)
-        }"
-        @click="onDayClick(day)"
-      >
-        <template v-if="day">
-          <!-- Day number -->
-          <div class="cell-num" :class="{ 'today-num': checkIsToday(day) }">
-            {{ getDayNumber(day) }}
-          </div>
+    <!-- Week View -->
+    <WeekView
+      v-else-if="currentView === 'week'"
+      :currentDate="currentDate"
+      :schedules="schedules"
+      :getShiftColor="getShiftColor"
+      :getShiftDot="getShiftDot"
+      @openDay="openDay"
+      @openEditModal="openEditModal"
+    />
 
-          <!-- Schedules in cell -->
-          <div class="cell-schedules">
-            <div
-              v-for="sch in getDaySchedules(day)"
-              :key="sch.id"
-              class="cell-shift"
-              :style="{ borderLeftColor: getShiftColor(sch.shift) }"
-              @click="onScheduleClick(sch, $event)"
-              :title="`${sch.nurseName} — ${sch.shift} — ${sch.department}`"
-            >
-              <span class="shift-dot">{{ getShiftDot(sch.shift) }}</span>
-              <span class="shift-text">{{ sch.nurseName }}</span>
-            </div>
-          </div>
-        </template>
-      </div>
-    </div>
+    <!-- Month View -->
+    <MonthView
+      v-else-if="currentView === 'month'"
+      :currentDate="currentDate"
+      :schedules="schedules"
+      :getShiftColor="getShiftColor"
+      :getShiftDot="getShiftDot"
+      @openDay="openDay"
+      @openEditModal="openEditModal"
+    />
 
     <!-- Year View -->
     <YearView
       v-else-if="currentView === 'year'"
       :currentDate="currentDate"
+      :schedules="schedules"
       @openMonth="openMonth"
     />
 
     <!-- Shift Legend -->
-    <div class="shift-legend" v-if="currentView === 'month'">
+    <div class="shift-legend" v-if="currentView !== 'year'">
       <div class="legend-item" v-for="st in shiftTypes" :key="st.value">
         <span class="legend-dot" :style="{ background: st.color }"></span>
         <span>{{ st.value }}</span>

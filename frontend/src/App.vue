@@ -15,10 +15,10 @@ import LeaveSystem from './components/LeaveSystem/Leave_System.vue'
 import Payroll from './components/Payroll/Payroll.vue'
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary.vue'
 
-const isLoggedIn = ref(false)
+const isLoggedIn = ref(true)
 const currentPage = ref('login') // 'login' | 'register'
 const employees = ref([])
-const activeMenu = ref('dashboard')
+const activeMenu = ref('schedule')
 const isSidebarCollapsed = ref(false)
 
 const componentMap = {

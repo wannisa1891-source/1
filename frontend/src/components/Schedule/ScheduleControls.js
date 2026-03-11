@@ -56,15 +56,66 @@ export default function useScheduleControls() {
     currentDate.value = d
   }
 
+  function prevDay() {
+    const d = new Date(currentDate.value)
+    d.setDate(d.getDate() - 1)
+    currentDate.value = d
+  }
+
+  function nextDay() {
+    const d = new Date(currentDate.value)
+    d.setDate(d.getDate() + 1)
+    currentDate.value = d
+  }
+
+  function prevWeek() {
+    const d = new Date(currentDate.value)
+    d.setDate(d.getDate() - 7)
+    currentDate.value = d
+  }
+
+  function nextWeek() {
+    const d = new Date(currentDate.value)
+    d.setDate(d.getDate() + 7)
+    currentDate.value = d
+  }
+
+  function goPrev() {
+    if (currentView.value === "year") prevYear()
+    else if (currentView.value === "month") prevMonth()
+    else if (currentView.value === "week") prevWeek()
+    else if (currentView.value === "day") prevDay()
+  }
+
+  function goNext() {
+    if (currentView.value === "year") nextYear()
+    else if (currentView.value === "month") nextMonth()
+    else if (currentView.value === "week") nextWeek()
+    else if (currentView.value === "day") nextDay()
+  }
+
   function goToday() {
     currentDate.value = new Date()
-    currentView.value = "month"
+    // Don't force view changes, just go to today
   }
 
   function changeView(view) {
     if (!views.includes(view)) return
     currentView.value = view
   }
+
+  const formatDisplay = computed(() => {
+    if (currentView.value === "year") return formatYear.value
+    if (currentView.value === "month") return formatMonth.value
+    if (currentView.value === "week") {
+      const d = currentDate.value
+      return `สัปดาห์ของ ${d.getDate()} ` + d.toLocaleDateString("th-TH", { month: "short", year: "numeric" })
+    }
+    if (currentView.value === "day") {
+      return currentDate.value.toLocaleDateString("th-TH", { day: "numeric", month: "long", year: "numeric" })
+    }
+    return formatMonth.value
+  })
 
   return {
     currentDate,
@@ -73,10 +124,9 @@ export default function useScheduleControls() {
     formatMonth,
     formatYear,
     formatDate,
-    prevMonth,
-    nextMonth,
-    prevYear,
-    nextYear,
+    formatDisplay,
+    goPrev,
+    goNext,
     goToday,
     changeView
   }

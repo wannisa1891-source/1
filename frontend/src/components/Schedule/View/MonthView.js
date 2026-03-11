@@ -39,30 +39,26 @@ export default function useMonthView(days, calendarDays) {
 
   // เช็คว่าวันนั้นเป็นวันนี้ไหม
   function isToday(day) {
-
-    if (!day) return false
+    const d = getDate(day)
+    if (!d) return false
 
     const today = new Date()
-
     return (
-      day.getFullYear() === today.getFullYear() &&
-      day.getMonth() === today.getMonth() &&
-      day.getDate() === today.getDate()
+      d.getFullYear() === today.getFullYear() &&
+      d.getMonth() === today.getMonth() &&
+      d.getDate() === today.getDate()
     )
-
   }
-
 
   // format วันที่
   function formatDate(day) {
+    const d = getDate(day)
+    if (!d) return ""
 
-    if (!day) return ""
-
-    return day.toLocaleDateString("th-TH", {
+    return d.toLocaleDateString("th-TH", {
       day: "numeric",
       month: "short"
     })
-
   }
 
 
