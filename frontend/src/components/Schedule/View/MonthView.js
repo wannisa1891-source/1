@@ -6,6 +6,11 @@ export default function useMonthView(days, calendarDays) {
 
     if (!day) return ""
 
+    // รองรับ object { day: number, date: Date }
+    if (day && typeof day === "object" && day.day !== undefined) {
+      return day.day
+    }
+
     if (day instanceof Date) {
       return day.getDate()
     }
@@ -18,6 +23,11 @@ export default function useMonthView(days, calendarDays) {
   function getDate(day) {
 
     if (!day) return null
+
+    // รองรับ object { day: number, date: Date }
+    if (day && typeof day === "object" && day.date) {
+      return day.date
+    }
 
     if (day instanceof Date) {
       return day

@@ -1,18 +1,13 @@
-// ควบคุมเดือน / เปลี่ยน view
+// ควบคุมเดือน / ปี / เปลี่ยน view / ปุ่ม Today
 import { ref, computed } from "vue"
 
 export default function useScheduleControls() {
 
-  // วันที่ปัจจุบัน
   const currentDate = ref(new Date())
-
-  // view ปัจจุบัน
   const currentView = ref("month")
-
-  // view ที่มีในระบบ
   const views = ["day", "week", "month", "year"]
 
-  // เดือนที่แสดงบนหัวปฏิทิน
+  // แสดงเดือน+ปี สำหรับ month view
   const formatMonth = computed(() => {
     return currentDate.value.toLocaleDateString("th-TH", {
       year: "numeric",
@@ -20,26 +15,54 @@ export default function useScheduleControls() {
     })
   })
 
-  // เดือนก่อน
+  // แสดงปี สำหรับ year view
+  const formatYear = computed(() => {
+    return currentDate.value.getFullYear() + 543 // พ.ศ.
+  })
+
+  // format วันที่สำหรับแสดงใน modal
+  const formatDate = (date) => {
+    if (!date) return ""
+    if (typeof date === "string") return date
+    return date.toLocaleDateString("th-TH", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    })
+  }
+
   function prevMonth() {
-    const newDate = new Date(currentDate.value)
-    newDate.setMonth(newDate.getMonth() - 1)
-    currentDate.value = newDate
+    const d = new Date(currentDate.value)
+    d.setMonth(d.getMonth() - 1)
+    currentDate.value = d
   }
 
-  // เดือนถัดไป
   function nextMonth() {
-    const newDate = new Date(currentDate.value)
-    newDate.setMonth(newDate.getMonth() + 1)
-    currentDate.value = newDate
+    const d = new Date(currentDate.value)
+    d.setMonth(d.getMonth() + 1)
+    currentDate.value = d
   }
 
-  // เปลี่ยน view (day / week / month / year)
+  function prevYear() {
+    const d = new Date(currentDate.value)
+    d.setFullYear(d.getFullYear() - 1)
+    currentDate.value = d
+  }
+
+  function nextYear() {
+    const d = new Date(currentDate.value)
+    d.setFullYear(d.getFullYear() + 1)
+    currentDate.value = d
+  }
+
+  function goToday() {
+    currentDate.value = new Date()
+    currentView.value = "month"
+  }
+
   function changeView(view) {
-
-    // ป้องกัน view ที่ไม่มี
     if (!views.includes(view)) return
-
     currentView.value = view
   }
 
@@ -48,8 +71,13 @@ export default function useScheduleControls() {
     currentView,
     views,
     formatMonth,
+    formatYear,
+    formatDate,
     prevMonth,
     nextMonth,
+    prevYear,
+    nextYear,
+    goToday,
     changeView
   }
 }
