@@ -91,7 +91,7 @@ const fetchEmployees = async () => {
   />
 
   <!-- SYSTEM -->
-  <div v-else class="system-container">
+  <div v-if="isLoggedIn" class="system-container">
 
     <!-- SIDEBAR -->
     <Sidebar
